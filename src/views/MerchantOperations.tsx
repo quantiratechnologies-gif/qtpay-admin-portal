@@ -5,12 +5,10 @@ import {
   XCircle,
   Search,
   Terminal,
-  FileCheck,
   ShieldCheck,
   Eye,
   Copy,
-  Check,
-  Plus
+  Check
 } from "lucide-react";
 import { StatusBadge } from "../components/Badge";
 import { Modal } from "../components/Modal";
@@ -36,7 +34,7 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
     setCopiedField(field);
-    setTimeout(() => setCopiedField(null), 1500);
+    setTimeout(() => setCopiedField(null), 1200);
   };
 
   const filtered = merchants.filter((m) => {
@@ -50,43 +48,42 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
   });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      {/* Action Header */}
+    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+      {/* Header */}
       <div style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         flexWrap: "wrap",
-        gap: "12px"
+        gap: "10px"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <Store size={18} color="#7FE87F" />
-          <h2 style={{ fontSize: "17px", fontWeight: 800, color: "#FFFFFF" }}>
-            {isAr ? "دليل التجار ونقاط البيع" : "Merchant Directory & Terminals"}
+          <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#FFFFFF" }}>
+            {isAr ? "التجار" : "Merchants"}
           </h2>
-          <span style={{ fontSize: "11.5px", color: "var(--text-muted)", fontWeight: 600 }}>({merchants.length})</span>
+          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>({merchants.length})</span>
         </div>
 
-        {/* Filter and Search Bar */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div style={{ position: "relative" }}>
             <Search size={13} color="#64748B" style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", left: "10px" }} />
             <input
               type="text"
-              placeholder={isAr ? "بحث بالاسم أو السجل..." : "Search Name or CR..."}
+              placeholder={isAr ? "بحث..." : "Search..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="input-field"
-              style={{ width: "200px", paddingLeft: "30px", height: "34px", fontSize: "12px" }}
+              style={{ width: "180px", paddingLeft: "28px", height: "32px", fontSize: "12px" }}
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="input-field"
-            style={{ cursor: "pointer", height: "34px", padding: "0 8px", fontSize: "12px" }}
+            style={{ cursor: "pointer", height: "32px", padding: "0 8px", fontSize: "12px" }}
           >
-            <option value="all">{isAr ? "الكل" : "All Statuses"}</option>
+            <option value="all">{isAr ? "الكل" : "All"}</option>
             <option value="pending_kyb">{isAr ? "معلق" : "Pending"}</option>
             <option value="active">{isAr ? "نشط" : "Active"}</option>
             <option value="suspended">{isAr ? "موقوف" : "Suspended"}</option>
@@ -94,51 +91,51 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
         </div>
       </div>
 
-      {/* Merchants Table */}
+      {/* Table */}
       <div className="admin-table-container">
         <table className="admin-table">
           <thead>
             <tr>
-              <th>{isAr ? "المنشأة" : "Merchant"}</th>
-              <th>{isAr ? "السجل التجاري والضريبة" : "Saudi CR & VAT"}</th>
+              <th>{isAr ? "التاجر" : "Merchant"}</th>
+              <th>{isAr ? "السجل / الضريبة" : "CR / VAT"}</th>
               <th>{isAr ? "المالك" : "Owner"}</th>
-              <th>{isAr ? "البنك ورقم الآيبان" : "Settlement Bank / IBAN"}</th>
-              <th>{isAr ? "نقاط البيع" : "POS Fleet"}</th>
+              <th>{isAr ? "البنك" : "Bank"}</th>
+              <th>{isAr ? "الأجهزة" : "POS"}</th>
               <th>{isAr ? "الحالة" : "Status"}</th>
-              <th>{isAr ? "الإجراء" : "Action"}</th>
+              <th>{isAr ? "إجراء" : "Action"}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((m) => (
               <tr key={m.id}>
                 <td>
-                  <div style={{ fontWeight: 700, color: "#FFFFFF", fontSize: "13px" }}>{isAr ? m.businessNameAr : m.businessName}</div>
-                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{m.category} • {m.city}</div>
+                  <div style={{ fontWeight: 700, color: "#FFFFFF", fontSize: "12.5px" }}>{isAr ? m.businessNameAr : m.businessName}</div>
+                  <div style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>{m.city}</div>
                 </td>
                 <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                    <span style={{ fontFamily: "monospace", fontSize: "12px", color: "#38BDF8", fontWeight: 600 }}>CR: {m.crNumber}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                    <span style={{ fontFamily: "monospace", fontSize: "11.5px", color: "#38BDF8", fontWeight: 600 }}>{m.crNumber}</span>
                     <button
                       onClick={() => handleCopy(m.crNumber, `cr-${m.id}`)}
                       style={{ background: "none", border: "none", color: "#64748B", cursor: "pointer", padding: "2px" }}
                     >
-                      {copiedField === `cr-${m.id}` ? <Check size={11} color="#10B981" /> : <Copy size={11} />}
+                      {copiedField === `cr-${m.id}` ? <Check size={10} color="#10B981" /> : <Copy size={10} />}
                     </button>
                   </div>
-                  <div style={{ fontFamily: "monospace", fontSize: "10.5px", color: "var(--text-muted)" }}>VAT: {m.vatNumber}</div>
+                  <div style={{ fontFamily: "monospace", fontSize: "10px", color: "var(--text-muted)" }}>{m.vatNumber}</div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 600 }}>{m.ownerName}</div>
-                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{m.mobile}</div>
+                  <div style={{ fontWeight: 600, fontSize: "12px" }}>{m.ownerName}</div>
+                  <div style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>{m.mobile}</div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 600 }}>{m.settlementBank}</div>
-                  <div style={{ fontFamily: "monospace", fontSize: "10.5px", color: "var(--text-secondary)" }}>{m.settlementIban.slice(0, 14)}...</div>
+                  <div style={{ fontWeight: 600, fontSize: "12px" }}>{m.settlementBank}</div>
+                  <div style={{ fontFamily: "monospace", fontSize: "10px", color: "var(--text-secondary)" }}>{m.settlementIban.slice(0, 14)}...</div>
                 </td>
                 <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: "4px", fontWeight: 700, fontSize: "12px" }}>
-                    <Terminal size={13} color="#7FE87F" />
-                    <span>{m.activeTerminals} Terminals</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "3px", fontWeight: 700, fontSize: "11.5px" }}>
+                    <Terminal size={12} color="#7FE87F" />
+                    <span>{m.activeTerminals}</span>
                   </div>
                 </td>
                 <td>
@@ -148,9 +145,9 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                   <button
                     onClick={() => setSelectedMerchant(m)}
                     className="btn-secondary"
-                    style={{ padding: "5px 9px", fontSize: "11.5px" }}
+                    style={{ padding: "4px 8px", fontSize: "11px" }}
                   >
-                    <Eye size={12} /> {isAr ? "مراجعة" : "Review"}
+                    <Eye size={11} /> {isAr ? "عرض" : "View"}
                   </button>
                 </td>
               </tr>
@@ -164,45 +161,45 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
         <Modal
           isOpen={true}
           onClose={() => setSelectedMerchant(null)}
-          title={`Merchant Review: ${selectedMerchant.businessName}`}
-          width="540px"
+          title={selectedMerchant.businessName}
+          width="480px"
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{
               background: "rgba(16, 185, 129, 0.08)",
-              border: "1px solid rgba(16, 185, 129, 0.25)",
-              borderRadius: "9px",
-              padding: "10px 12px",
+              border: "1px solid rgba(16, 185, 129, 0.2)",
+              borderRadius: "8px",
+              padding: "8px 12px",
               display: "flex",
               alignItems: "center",
-              gap: "8px"
+              gap: "6px"
             }}>
-              <ShieldCheck size={18} color="#10B981" />
-              <div style={{ fontSize: "12px", fontWeight: 700, color: "#10B981" }}>
-                Ministry of Commerce (Wathq) & ZATCA Verified
+              <ShieldCheck size={16} color="#10B981" />
+              <span style={{ fontSize: "12px", fontWeight: 700, color: "#10B981" }}>
+                Commercial Registration & Tax Verified
+              </span>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", fontSize: "12px" }}>
+              <div className="admin-card" style={{ padding: "8px 10px" }}>
+                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>CR Number</span>
+                <div style={{ fontWeight: 700, color: "#38BDF8", fontFamily: "monospace" }}>{selectedMerchant.crNumber}</div>
+              </div>
+              <div className="admin-card" style={{ padding: "8px 10px" }}>
+                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>VAT Number</span>
+                <div style={{ fontWeight: 700, fontFamily: "monospace" }}>{selectedMerchant.vatNumber}</div>
+              </div>
+              <div className="admin-card" style={{ padding: "8px 10px" }}>
+                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>IBAN</span>
+                <div style={{ fontWeight: 700, fontFamily: "monospace", fontSize: "10.5px" }}>{selectedMerchant.settlementIban}</div>
+              </div>
+              <div className="admin-card" style={{ padding: "8px 10px" }}>
+                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>Active POS</span>
+                <div style={{ fontWeight: 700 }}>{selectedMerchant.activeTerminals} Devices</div>
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "9px", fontSize: "12px" }}>
-              <div className="admin-card" style={{ padding: "10px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>Saudi Commercial Reg (CR)</span>
-                <div style={{ fontWeight: 700, color: "#38BDF8", fontFamily: "monospace", marginTop: "2px" }}>{selectedMerchant.crNumber}</div>
-              </div>
-              <div className="admin-card" style={{ padding: "10px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>ZATCA VAT Certificate</span>
-                <div style={{ fontWeight: 700, fontFamily: "monospace", marginTop: "2px" }}>{selectedMerchant.vatNumber}</div>
-              </div>
-              <div className="admin-card" style={{ padding: "10px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>Settlement IBAN</span>
-                <div style={{ fontWeight: 700, fontFamily: "monospace", fontSize: "11px", marginTop: "2px" }}>{selectedMerchant.settlementIban}</div>
-              </div>
-              <div className="admin-card" style={{ padding: "10px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>Assigned Terminals</span>
-                <div style={{ fontWeight: 700, marginTop: "2px" }}>{selectedMerchant.activeTerminals} Active POS</div>
-              </div>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px", marginTop: "4px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "6px", marginTop: "4px" }}>
               <button
                 onClick={() => {
                   onUpdateMerchantStatus(selectedMerchant.id, "suspended");
@@ -210,7 +207,7 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                 }}
                 className="btn-danger"
               >
-                <XCircle size={13} /> {isAr ? "إيقاف التاجر" : "Suspend Merchant"}
+                <XCircle size={12} /> {isAr ? "إيقاف" : "Suspend"}
               </button>
               <button
                 onClick={() => {
@@ -219,7 +216,7 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                 }}
                 className="btn-primary"
               >
-                <CheckCircle2 size={13} /> {isAr ? "اعتماد وتفعيل" : "Approve & Activate"}
+                <CheckCircle2 size={12} /> {isAr ? "اعتماد" : "Approve"}
               </button>
             </div>
           </div>
