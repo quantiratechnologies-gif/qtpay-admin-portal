@@ -37,6 +37,32 @@ export interface AdminUser {
   status: "active" | "suspended";
 }
 
+export interface SoftPosTerminal {
+  id: string;
+  terminalId: string;
+  merchantId: string;
+  model: string;
+  osVersion: string;
+  nfcStatus: "active" | "expired" | "pending_activation";
+  lastHeartbeat: string;
+  dailyVolumeSar: number;
+  dailyTxCount: number;
+  status: "online" | "offline" | "decommissioned";
+}
+
+export interface MerchantSettlementRecord {
+  id: string;
+  batchRef: string;
+  bankName: string;
+  grossAmountSar: number;
+  mdrFeeSar: number;
+  vatSar: number;
+  netDisbursedSar: number;
+  payoutDate: string;
+  status: "completed" | "processing" | "held" | "failed";
+  reconciliationRef: string;
+}
+
 export interface MerchantActivityLog {
   id: string;
   merchantId: string;
@@ -46,6 +72,19 @@ export interface MerchantActivityLog {
   details: string;
   actor: string;
   severity?: "info" | "success" | "warning" | "error";
+}
+
+export interface UserDeviceSession {
+  id: string;
+  deviceName: string;
+  model: string;
+  osVersion: string;
+  biometricsActive: boolean;
+  appVersion: string;
+  lastActive: string;
+  ipAddress: string;
+  city: string;
+  isCurrentDevice: boolean;
 }
 
 export interface UserActivityLog {
@@ -72,16 +111,19 @@ export interface Merchant {
   mobile: string;
   email: string;
   city: string;
+  address?: string;
   settlementBank: string;
   settlementIban: string;
   status: "active" | "pending_kyb" | "action_required" | "suspended" | "blacklisted";
   riskTier: "low" | "medium" | "high";
   activeTerminals: number;
   terminalIds?: string[];
+  terminalsList?: SoftPosTerminal[];
   monthlyVolumeSar: number;
   joinedAt: string;
   settlementHold?: boolean;
   customMdrRate?: number;
+  settlementRecords?: MerchantSettlementRecord[];
   activityLogs?: MerchantActivityLog[];
 }
 
@@ -95,17 +137,23 @@ export interface CustomerUser {
   sarieUpiId: string;
   walletBalanceSar: number;
   dailyLimitSar: number;
+  monthlyLimitSar?: number;
   kycStatus: "verified" | "pending" | "rejected";
+  nafathVerifiedAt?: string;
   riskScore: number; // 0 - 100
   isFrozen: boolean;
   totalTransferredSar: number;
+  totalReceivedSar?: number;
   joinedAt: string;
+  registeredDevices?: UserDeviceSession[];
   activityLogs?: UserActivityLog[];
 }
 
 export interface PlatformTransaction {
   id: string;
   orderRef: string;
+  merchantId?: string;
+  userId?: string;
   senderName: string;
   receiverName: string;
   amount: number;

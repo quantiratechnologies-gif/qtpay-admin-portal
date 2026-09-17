@@ -154,7 +154,9 @@ export function App() {
           {currentTab === "merchants" && (
             <MerchantOperations
               merchants={merchants}
+              transactions={transactions}
               onUpdateMerchantStatus={handleUpdateMerchantStatus}
+              onExecuteRefund={handleExecuteRefund}
               lang={lang}
             />
           )}
@@ -162,6 +164,7 @@ export function App() {
           {currentTab === "consumers" && (
             <ConsumerKYC
               customers={customers}
+              transactions={transactions}
               onToggleFreezeAccount={handleToggleFreezeAccount}
               onUpdateDailyLimit={handleUpdateDailyLimit}
               lang={lang}

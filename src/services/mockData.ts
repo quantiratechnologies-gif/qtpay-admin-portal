@@ -22,204 +22,6 @@ export const currentAdminUser: AdminUser = {
   status: "active"
 };
 
-export const mockRoleDefinitions: RoleDefinition[] = [
-  {
-    id: "superadmin",
-    title: "Super Administrator",
-    titleAr: "المدير العام للنظام",
-    description: "Full platform root control, role management, fee matrices, settlements, and emergency overrides.",
-    badgeColor: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-    memberCount: 2
-  },
-  {
-    id: "compliance_officer",
-    title: "Compliance & AML Officer",
-    titleAr: "مسؤول الامتثال ومكافحة غسل الأموال",
-    description: "SAMA compliance audits, KYC/KYB identity approvals, AML fraud screening, and wallet freezes.",
-    badgeColor: "text-sky-400 bg-sky-500/10 border-sky-500/20",
-    memberCount: 3
-  },
-  {
-    id: "settlement_manager",
-    title: "Operations & Settlements Manager",
-    titleAr: "مدير العمليات والتسويات البنكية",
-    description: "Merchant onboarding, SoftPOS terminal provisioning, IBAN verification, and batch clearing dispatch.",
-    badgeColor: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-    memberCount: 4
-  },
-  {
-    id: "risk_analyst",
-    title: "Risk & Fraud Analyst",
-    titleAr: "محلل المخاطر والاحتيال",
-    description: "Real-time velocity anomaly monitoring, transaction risk scoring, and suspicious activity flagging.",
-    badgeColor: "text-purple-400 bg-purple-500/10 border-purple-500/20",
-    memberCount: 3
-  },
-  {
-    id: "support_lead",
-    title: "Customer & Merchant Support Lead",
-    titleAr: "مسؤول دعم العملاء والتجار",
-    description: "Read-only ledger lookup, PIN/alias reset assistance, customer verification status queries.",
-    badgeColor: "text-slate-400 bg-slate-500/10 border-slate-500/20",
-    memberCount: 5
-  }
-];
-
-export const mockAdminPermissions: AdminPermission[] = [
-  {
-    id: "perm_view_dashboard",
-    name: "View Live Dashboard & Insights",
-    description: "Access to high-level volume metrics, transaction velocity, and system health",
-    category: "system",
-    superadmin: true,
-    compliance_officer: true,
-    settlement_manager: true,
-    risk_analyst: true,
-    support_lead: true
-  },
-  {
-    id: "perm_manage_roles",
-    name: "Manage Admin Roles & Staff",
-    description: "Create, assign, edit, and revoke administrative team credentials",
-    category: "system",
-    superadmin: true,
-    compliance_officer: false,
-    settlement_manager: false,
-    risk_analyst: false,
-    support_lead: false
-  },
-  {
-    id: "perm_approve_kyb",
-    name: "Approve & Suspend Merchants (KYB)",
-    description: "Verify Wathq commercial registration, tax IDs, and modify merchant onboarding status",
-    category: "merchants",
-    superadmin: true,
-    compliance_officer: true,
-    settlement_manager: true,
-    risk_analyst: false,
-    support_lead: false
-  },
-  {
-    id: "perm_provision_pos",
-    name: "Provision SoftPOS Terminals",
-    description: "Assign and de-provision terminal IDs and NFC payment keys for merchants",
-    category: "merchants",
-    superadmin: true,
-    compliance_officer: false,
-    settlement_manager: true,
-    risk_analyst: false,
-    support_lead: false
-  },
-  {
-    id: "perm_hold_settlements",
-    name: "Hold & Release Merchant Payouts",
-    description: "Place temporary holds on merchant bank settlements pending risk investigation",
-    category: "settlements",
-    superadmin: true,
-    compliance_officer: true,
-    settlement_manager: true,
-    risk_analyst: true,
-    support_lead: false
-  },
-  {
-    id: "perm_freeze_users",
-    name: "Freeze & Unfreeze Consumer Wallets",
-    description: "Immediately block outgoing Sarie transfers and QR payments for suspicious accounts",
-    category: "users",
-    superadmin: true,
-    compliance_officer: true,
-    settlement_manager: false,
-    risk_analyst: true,
-    support_lead: false
-  },
-  {
-    id: "perm_adjust_limits",
-    name: "Adjust Daily Transaction Limits",
-    description: "Override default daily transfer thresholds for VIP or verified consumers",
-    category: "users",
-    superadmin: true,
-    compliance_officer: true,
-    settlement_manager: false,
-    risk_analyst: false,
-    support_lead: false
-  },
-  {
-    id: "perm_execute_refunds",
-    name: "Execute Immediate Gateway Refunds",
-    description: "Issue immediate reversals for mada, Visa, or Apple Pay transactions",
-    category: "transactions",
-    superadmin: true,
-    compliance_officer: false,
-    settlement_manager: true,
-    risk_analyst: false,
-    support_lead: false
-  },
-  {
-    id: "perm_modify_fees",
-    name: "Modify Commission & MDR Rates",
-    description: "Edit platform percentage rates and fixed fee caps across payment rails",
-    category: "system",
-    superadmin: true,
-    compliance_officer: false,
-    settlement_manager: false,
-    risk_analyst: false,
-    support_lead: false
-  }
-];
-
-export const mockAdminTeamMembers: AdminUser[] = [
-  {
-    id: "adm_902183",
-    name: "Eng. Abdulaziz Al-Qahtani",
-    email: "admin@qtpay.sa",
-    role: "superadmin",
-    avatar: "AQ",
-    lastLogin: "Just Now",
-    ipAddress: "178.135.92.14",
-    status: "active"
-  },
-  {
-    id: "adm_902184",
-    name: "Mona Al-Shehri",
-    email: "m.shehri@qtpay.sa",
-    role: "compliance_officer",
-    avatar: "MS",
-    lastLogin: "25 mins ago",
-    ipAddress: "178.135.92.20",
-    status: "active"
-  },
-  {
-    id: "adm_902185",
-    name: "Faris Al-Harbi",
-    email: "f.harbi@qtpay.sa",
-    role: "settlement_manager",
-    avatar: "FH",
-    lastLogin: "1 hour ago",
-    ipAddress: "178.135.92.18",
-    status: "active"
-  },
-  {
-    id: "adm_902186",
-    name: "Reem Al-Otaibi",
-    email: "r.otaibi@qtpay.sa",
-    role: "risk_analyst",
-    avatar: "RO",
-    lastLogin: "3 hours ago",
-    ipAddress: "178.135.92.22",
-    status: "active"
-  },
-  {
-    id: "adm_902187",
-    name: "Yousef Al-Ghamdi",
-    email: "y.ghamdi@qtpay.sa",
-    role: "support_lead",
-    avatar: "YG",
-    lastLogin: "Yesterday",
-    ipAddress: "178.135.92.35",
-    status: "active"
-  }
-];
-
 export const mockMerchants: Merchant[] = [
   {
     id: "mch_101",
@@ -228,11 +30,12 @@ export const mockMerchants: Merchant[] = [
     crNumber: "1010789234",
     vatNumber: "310984729100003",
     nationalId: "1089234812",
-    category: "Food & Beverage",
+    category: "Food & Beverage (MCC 5812)",
     ownerName: "Fahad Al-Otaibi",
     mobile: "+966 50 123 4567",
     email: "ops@quantiracafe.sa",
-    city: "Riyadh (Olaya District)",
+    city: "Riyadh",
+    address: "Olaya St, Al Wurud District, Building 402",
     settlementBank: "Al Rajhi Bank",
     settlementIban: "SA44 8000 0456 6080 1012 3456",
     status: "active",
@@ -243,6 +46,82 @@ export const mockMerchants: Merchant[] = [
     joinedAt: "2026-05-12",
     settlementHold: false,
     customMdrRate: 0.75,
+    terminalsList: [
+      {
+        id: "term_01",
+        terminalId: "TRM-984210",
+        merchantId: "mch_101",
+        model: "iPhone 15 Pro (Apple SoftPOS)",
+        osVersion: "iOS 18.2 (Kernel 24.1)",
+        nfcStatus: "active",
+        lastHeartbeat: "3 mins ago",
+        dailyVolumeSar: 12450.00,
+        dailyTxCount: 84,
+        status: "online"
+      },
+      {
+        id: "term_02",
+        terminalId: "TRM-984211",
+        merchantId: "mch_101",
+        model: "Samsung Galaxy S24 (Android SoftPOS)",
+        osVersion: "Android 15 (OneUI 7.0)",
+        nfcStatus: "active",
+        lastHeartbeat: "10 mins ago",
+        dailyVolumeSar: 8900.00,
+        dailyTxCount: 52,
+        status: "online"
+      },
+      {
+        id: "term_03",
+        terminalId: "TRM-984212",
+        merchantId: "mch_101",
+        model: "PAX A920 Pro SmartPOS",
+        osVersion: "PayDroid 10.0",
+        nfcStatus: "active",
+        lastHeartbeat: "1 hour ago",
+        dailyVolumeSar: 4100.00,
+        dailyTxCount: 28,
+        status: "online"
+      },
+      {
+        id: "term_04",
+        terminalId: "TRM-984213",
+        merchantId: "mch_101",
+        model: "iPhone 14 (Drive-thru SoftPOS)",
+        osVersion: "iOS 18.1",
+        nfcStatus: "active",
+        lastHeartbeat: "15 mins ago",
+        dailyVolumeSar: 6200.00,
+        dailyTxCount: 40,
+        status: "online"
+      }
+    ],
+    settlementRecords: [
+      {
+        id: "stl_01",
+        batchRef: "SET-20260917-RJHI-01",
+        bankName: "Al Rajhi Bank",
+        grossAmountSar: 18450.00,
+        mdrFeeSar: 138.38,
+        vatSar: 20.76,
+        netDisbursedSar: 18290.86,
+        payoutDate: "Today, 04:15 AM",
+        status: "completed",
+        reconciliationRef: "RJH-TX-9981204"
+      },
+      {
+        id: "stl_02",
+        batchRef: "SET-20260916-RJHI-01",
+        bankName: "Al Rajhi Bank",
+        grossAmountSar: 16200.00,
+        mdrFeeSar: 121.50,
+        vatSar: 18.23,
+        netDisbursedSar: 16060.27,
+        payoutDate: "Yesterday, 04:15 AM",
+        status: "completed",
+        reconciliationRef: "RJH-TX-9978102"
+      }
+    ],
     activityLogs: [
       {
         id: "act_m_01",
@@ -259,7 +138,7 @@ export const mockMerchants: Merchant[] = [
         merchantId: "mch_101",
         timestamp: "Yesterday, 04:15 AM",
         type: "settlement_payout",
-        title: "Settlement Dispatched (SAR 18,420.50)",
+        title: "Settlement Dispatched (SAR 18,290.86)",
         details: "Transferred to Al Rajhi IBAN SA44 8000 0456 6080 1012 3456",
         actor: "Settlement Engine",
         severity: "info"
@@ -283,11 +162,12 @@ export const mockMerchants: Merchant[] = [
     crNumber: "1010923841",
     vatNumber: "310948271000003",
     nationalId: "1098231456",
-    category: "Luxury & Retail",
+    category: "Luxury & Retail (MCC 5977)",
     ownerName: "Sultan Al-Ghamdi",
     mobile: "+966 55 987 6543",
     email: "sultan@alsafwa-perfumes.sa",
-    city: "Jeddah (Red Sea Mall)",
+    city: "Jeddah",
+    address: "Red Sea Mall, Ground Floor, Gate 3",
     settlementBank: "Saudi National Bank (SNB)",
     settlementIban: "SA12 1000 0012 9081 2345 6789",
     status: "active",
@@ -297,6 +177,47 @@ export const mockMerchants: Merchant[] = [
     monthlyVolumeSar: 890400,
     joinedAt: "2026-06-01",
     settlementHold: false,
+    customMdrRate: 0.70,
+    terminalsList: [
+      {
+        id: "term_05",
+        terminalId: "TRM-771209",
+        merchantId: "mch_102",
+        model: "iPad Pro M4 + SoftPOS Reader",
+        osVersion: "iPadOS 18.2",
+        nfcStatus: "active",
+        lastHeartbeat: "1 min ago",
+        dailyVolumeSar: 34500.00,
+        dailyTxCount: 22,
+        status: "online"
+      },
+      {
+        id: "term_06",
+        terminalId: "TRM-771210",
+        merchantId: "mch_102",
+        model: "Android SmartPOS Sunmi V2s",
+        osVersion: "Android 14",
+        nfcStatus: "active",
+        lastHeartbeat: "45 mins ago",
+        dailyVolumeSar: 18200.00,
+        dailyTxCount: 14,
+        status: "online"
+      }
+    ],
+    settlementRecords: [
+      {
+        id: "stl_03",
+        batchRef: "SET-20260917-NCBK-01",
+        bankName: "Saudi National Bank (SNB)",
+        grossAmountSar: 42800.00,
+        mdrFeeSar: 299.60,
+        vatSar: 44.94,
+        netDisbursedSar: 42455.46,
+        payoutDate: "Today, 04:18 AM",
+        status: "completed",
+        reconciliationRef: "SNB-TX-440918"
+      }
+    ],
     activityLogs: [
       {
         id: "act_m_04",
@@ -307,16 +228,6 @@ export const mockMerchants: Merchant[] = [
         details: "Order SAR-892102 for SAR 1,850.00 approved without friction",
         actor: "Terminal TRM-771209",
         severity: "success"
-      },
-      {
-        id: "act_m_05",
-        merchantId: "mch_102",
-        timestamp: "2026-08-25",
-        type: "rate_override",
-        title: "Preferred MDR Tier Activated",
-        details: "High-volume discount applied (0.70% mada take)",
-        actor: "Eng. Abdulaziz Al-Qahtani",
-        severity: "info"
       }
     ]
   },
@@ -327,11 +238,12 @@ export const mockMerchants: Merchant[] = [
     crNumber: "1010672190",
     vatNumber: "310872619000003",
     nationalId: "1078345612",
-    category: "Groceries & Supermarket",
+    category: "Groceries & Supermarket (MCC 5411)",
     ownerName: "Khalid Al-Dossary",
     mobile: "+966 54 321 0987",
     email: "khalid@najd-organics.sa",
-    city: "Riyadh (Al Nakheel)",
+    city: "Riyadh",
+    address: "Al Nakheel, Prince Turki I Rd",
     settlementBank: "Riyad Bank",
     settlementIban: "SA20 2000 0003 4567 8901 2345",
     status: "pending_kyb",
@@ -341,6 +253,7 @@ export const mockMerchants: Merchant[] = [
     monthlyVolumeSar: 1250000,
     joinedAt: "2026-09-14",
     settlementHold: true,
+    terminalsList: [],
     activityLogs: [
       {
         id: "act_m_06",
@@ -361,11 +274,12 @@ export const mockMerchants: Merchant[] = [
     crNumber: "1010456123",
     vatNumber: "310123456700003",
     nationalId: "1045678912",
-    category: "Electronics",
+    category: "Electronics (MCC 5732)",
     ownerName: "Tariq Al-Shehri",
     mobile: "+966 56 789 0123",
     email: "contact@riyadhtech.sa",
-    city: "Riyadh (King Fahd Rd)",
+    city: "Riyadh",
+    address: "King Fahd Rd, Al Murabba",
     settlementBank: "Banque Saudi Fransi",
     settlementIban: "SA55 5500 0004 5678 9012 3456",
     status: "action_required",
@@ -375,18 +289,8 @@ export const mockMerchants: Merchant[] = [
     monthlyVolumeSar: 340000,
     joinedAt: "2026-09-10",
     settlementHold: false,
-    activityLogs: [
-      {
-        id: "act_m_07",
-        merchantId: "mch_104",
-        timestamp: "2026-09-15 10:00 AM",
-        type: "kyb_update",
-        title: "National Address Verification Required",
-        details: "Requested updated SPL national address document for HQ location",
-        actor: "Mona Al-Shehri",
-        severity: "warning"
-      }
-    ]
+    terminalsList: [],
+    activityLogs: []
   },
   {
     id: "mch_105",
@@ -395,11 +299,12 @@ export const mockMerchants: Merchant[] = [
     crNumber: "1010998877",
     vatNumber: "310998877600003",
     nationalId: "1034567890",
-    category: "Automotive & Travel",
+    category: "Automotive & Travel (MCC 7512)",
     ownerName: "Mansour Al-Mutairi",
     mobile: "+966 59 112 2334",
     email: "mansour@deserthorizon.sa",
-    city: "Dammam (King Khalid St)",
+    city: "Dammam",
+    address: "King Khalid St, Al Hussam",
     settlementBank: "Alinma Bank",
     settlementIban: "SA05 0500 0001 2345 6789 0123",
     status: "suspended",
@@ -409,6 +314,7 @@ export const mockMerchants: Merchant[] = [
     monthlyVolumeSar: 95000,
     joinedAt: "2026-07-22",
     settlementHold: true,
+    terminalsList: [],
     activityLogs: [
       {
         id: "act_m_08",
@@ -418,16 +324,6 @@ export const mockMerchants: Merchant[] = [
         title: "Emergency Settlement Hold Enforced",
         details: "Hold placed due to 18 rapid velocity POS attempts and chargeback flag",
         actor: "Reem Al-Otaibi",
-        severity: "error"
-      },
-      {
-        id: "act_m_09",
-        merchantId: "mch_105",
-        timestamp: "Today, 09:32 AM",
-        type: "kyb_update",
-        title: "Merchant Account Suspended",
-        details: "Suspension enacted pending full AML investigation",
-        actor: "Mona Al-Shehri",
         severity: "error"
       }
     ]
@@ -445,11 +341,40 @@ export const mockCustomers: CustomerUser[] = [
     sarieUpiId: "4567@sarie",
     walletBalanceSar: 12450.75,
     dailyLimitSar: 20000.00,
+    monthlyLimitSar: 100000.00,
     kycStatus: "verified",
+    nafathVerifiedAt: "2026-01-15 (Nafath National SSO)",
     riskScore: 12,
     isFrozen: false,
     totalTransferredSar: 84300,
+    totalReceivedSar: 96750,
     joinedAt: "2026-01-15",
+    registeredDevices: [
+      {
+        id: "dev_01",
+        deviceName: "Fahad's iPhone 16 Pro",
+        model: "iPhone 16 Pro (A3294)",
+        osVersion: "iOS 18.3",
+        biometricsActive: true,
+        appVersion: "v2.4.1 (Build 890)",
+        lastActive: "12 mins ago",
+        ipAddress: "178.135.12.8",
+        city: "Riyadh, Saudi Arabia",
+        isCurrentDevice: true
+      },
+      {
+        id: "dev_02",
+        deviceName: "Fahad iPad Mini",
+        model: "iPad Mini 7",
+        osVersion: "iPadOS 18.2",
+        biometricsActive: true,
+        appVersion: "v2.3.9",
+        lastActive: "3 days ago",
+        ipAddress: "178.135.12.8",
+        city: "Riyadh, Saudi Arabia",
+        isCurrentDevice: false
+      }
+    ],
     activityLogs: [
       {
         id: "act_u_01",
@@ -495,11 +420,28 @@ export const mockCustomers: CustomerUser[] = [
     sarieUpiId: "7890@sarie",
     walletBalanceSar: 4890.20,
     dailyLimitSar: 15000.00,
+    monthlyLimitSar: 80000.00,
     kycStatus: "verified",
+    nafathVerifiedAt: "2026-02-10 (Nafath National SSO)",
     riskScore: 8,
     isFrozen: false,
     totalTransferredSar: 41200,
+    totalReceivedSar: 46090,
     joinedAt: "2026-02-10",
+    registeredDevices: [
+      {
+        id: "dev_03",
+        deviceName: "Sara's iPhone 15",
+        model: "iPhone 15 (A3090)",
+        osVersion: "iOS 18.2",
+        biometricsActive: true,
+        appVersion: "v2.4.1",
+        lastActive: "Just Now",
+        ipAddress: "82.178.44.19",
+        city: "Jeddah, Saudi Arabia",
+        isCurrentDevice: true
+      }
+    ],
     activityLogs: [
       {
         id: "act_u_04",
@@ -510,17 +452,6 @@ export const mockCustomers: CustomerUser[] = [
         details: "Credit received from Fahad Al-Harbi",
         actor: "Sarie Switch",
         severity: "success"
-      },
-      {
-        id: "act_u_05",
-        userId: "usr_202",
-        timestamp: "2026-09-01",
-        type: "login",
-        title: "Biometric Login via iOS Device",
-        details: "Face ID authentication from iPhone 16 Pro (Riyadh, SA)",
-        actor: "User Device",
-        ipAddress: "82.178.44.19",
-        severity: "info"
       }
     ]
   },
@@ -539,18 +470,8 @@ export const mockCustomers: CustomerUser[] = [
     isFrozen: false,
     totalTransferredSar: 5600,
     joinedAt: "2026-09-12",
-    activityLogs: [
-      {
-        id: "act_u_06",
-        userId: "usr_203",
-        timestamp: "2026-09-12 11:20 AM",
-        type: "kyc_verify",
-        title: "Nafath Verification Initiated",
-        details: "Awaiting national single sign-on approval for Tier 2 limits",
-        actor: "Nafath Gateway",
-        severity: "warning"
-      }
-    ]
+    registeredDevices: [],
+    activityLogs: []
   },
   {
     id: "usr_204",
@@ -567,18 +488,8 @@ export const mockCustomers: CustomerUser[] = [
     isFrozen: false,
     totalTransferredSar: 198000,
     joinedAt: "2026-03-05",
-    activityLogs: [
-      {
-        id: "act_u_07",
-        userId: "usr_204",
-        timestamp: "Yesterday, 02:10 PM",
-        type: "transfer_out",
-        title: "Merchant POS Checkout (SAR 1,850.00)",
-        details: "Paid Al-Safwa Luxury Perfumes via Apple Pay",
-        actor: "User (Apple Pay)",
-        severity: "success"
-      }
-    ]
+    registeredDevices: [],
+    activityLogs: []
   },
   {
     id: "usr_205",
@@ -595,6 +506,7 @@ export const mockCustomers: CustomerUser[] = [
     isFrozen: true,
     totalTransferredSar: 450000,
     joinedAt: "2026-08-19",
+    registeredDevices: [],
     activityLogs: [
       {
         id: "act_u_08",
@@ -615,7 +527,9 @@ export const mockTransactions: PlatformTransaction[] = [
   {
     id: "tx_901",
     orderRef: "SAR-892104",
-    senderName: "Customer (mada)",
+    merchantId: "mch_101",
+    userId: "usr_201",
+    senderName: "Fahad Al-Harbi (mada)",
     receiverName: "Quantira Gourmet Cafe",
     amount: 145.50,
     vatAmount: 21.83,
@@ -633,6 +547,7 @@ export const mockTransactions: PlatformTransaction[] = [
   {
     id: "tx_902",
     orderRef: "SAR-892103",
+    userId: "usr_201",
     senderName: "Fahad Al-Harbi",
     receiverName: "Sara Al-Husseini",
     amount: 500.00,
@@ -648,7 +563,9 @@ export const mockTransactions: PlatformTransaction[] = [
   {
     id: "tx_903",
     orderRef: "SAR-892102",
-    senderName: "Customer (Apple Pay)",
+    merchantId: "mch_102",
+    userId: "usr_204",
+    senderName: "Noura Al-Sudairy (Apple Pay)",
     receiverName: "Al-Safwa Luxury Perfumes",
     amount: 1850.00,
     vatAmount: 277.50,
@@ -665,6 +582,7 @@ export const mockTransactions: PlatformTransaction[] = [
   {
     id: "tx_904",
     orderRef: "SAR-892101",
+    merchantId: "mch_105",
     senderName: "Customer (Visa)",
     receiverName: "Desert Horizon Car Rentals",
     amount: 4500.00,
@@ -676,6 +594,24 @@ export const mockTransactions: PlatformTransaction[] = [
     status: "flagged",
     riskFlagReason: "Rapid velocity threshold exceeded from foreign IP",
     timestamp: "2026-09-17T03:12:00Z"
+  },
+  {
+    id: "tx_905",
+    orderRef: "SAR-892100",
+    merchantId: "mch_101",
+    senderName: "Guest (Apple Pay)",
+    receiverName: "Quantira Gourmet Cafe",
+    amount: 68.00,
+    vatAmount: 10.20,
+    netAmount: 57.80,
+    platformMdrSar: 0.85,
+    paymentMethod: "apple_pay",
+    channel: "pos_softpos",
+    status: "settled",
+    terminalId: "TRM-984210",
+    madaRrn: "RRN-887102948102",
+    cardLast4: "3019",
+    timestamp: "2026-09-17T02:50:00Z"
   }
 ];
 
