@@ -125,7 +125,6 @@ export function App() {
       <Sidebar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
-        onLogout={handleLogout}
         lang={lang}
       />
 

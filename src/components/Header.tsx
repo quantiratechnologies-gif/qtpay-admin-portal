@@ -3,8 +3,7 @@ import {
   Search,
   Languages,
   RefreshCw,
-  LogOut,
-  User
+  LogOut
 } from "lucide-react";
 import type { AdminUser } from "../types";
 
@@ -41,9 +40,9 @@ export const Header: React.FC<HeaderProps> = ({
       zIndex: 30
     }}>
       {/* Search Bar */}
-      <div style={{ position: "relative", width: "300px" }}>
+      <div style={{ position: "relative", width: "280px" }}>
         <Search
-          size={15}
+          size={14}
           color="#64748B"
           style={{
             position: "absolute",
@@ -54,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
         />
         <input
           type="text"
-          placeholder={isAr ? "بحث بالرقم المرجعي أو التاجر..." : "Search Order, Merchant, User..."}
+          placeholder={isAr ? "بحث سريع..." : "Search Order, Merchant, User..."}
           style={{
             width: "100%",
             background: "#121A2D",
@@ -113,19 +112,19 @@ export const Header: React.FC<HeaderProps> = ({
           <span>{isAr ? "EN" : "عربي"}</span>
         </button>
 
-        {/* Admin User Chip */}
+        {/* Admin Profile & Single Logout Pill */}
         <div style={{
           display: "flex",
           alignItems: "center",
           gap: "8px",
-          padding: "5px 10px",
+          padding: "4px 8px 4px 10px",
           background: "#121A2D",
           borderRadius: "8px",
           border: "1px solid var(--border-subtle)"
         }}>
           <div style={{
-            width: "26px",
-            height: "26px",
+            width: "24px",
+            height: "24px",
             borderRadius: "6px",
             background: "#7FE87F",
             color: "#080C14",
@@ -133,35 +132,31 @@ export const Header: React.FC<HeaderProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "11.5px"
+            fontSize: "11px"
           }}>
             {currentUser.avatar}
           </div>
           <span style={{ fontSize: "12.5px", fontWeight: 700, color: "#FFFFFF" }}>
-            {currentUser.name}
+            {currentUser.name.split(" ")[0]}
           </span>
+          <button
+            onClick={onLogout}
+            title={isAr ? "تسجيل الخروج" : "Sign Out"}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#F87171",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              padding: "4px",
+              borderRadius: "4px",
+              marginLeft: "4px"
+            }}
+          >
+            <LogOut size={14} />
+          </button>
         </div>
-
-        {/* Clear Header Logout Button */}
-        <button
-          onClick={onLogout}
-          style={{
-            background: "rgba(239, 68, 68, 0.12)",
-            border: "1px solid rgba(239, 68, 68, 0.3)",
-            color: "#F87171",
-            borderRadius: "8px",
-            padding: "6px 12px",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            fontSize: "12px",
-            fontWeight: 700,
-            cursor: "pointer"
-          }}
-        >
-          <LogOut size={14} />
-          <span>{isAr ? "خروج" : "Logout"}</span>
-        </button>
       </div>
     </header>
   );

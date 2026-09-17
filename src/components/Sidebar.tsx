@@ -4,8 +4,7 @@ import {
   Store,
   Users,
   ReceiptText,
-  Settings,
-  LogOut
+  Settings
 } from "lucide-react";
 
 export type NavTab = "dashboard" | "merchants" | "consumers" | "ledger" | "settings";
@@ -13,14 +12,12 @@ export type NavTab = "dashboard" | "merchants" | "consumers" | "ledger" | "setti
 interface SidebarProps {
   currentTab: NavTab;
   onSelectTab: (tab: NavTab) => void;
-  onLogout: () => void;
   lang: "en" | "ar";
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentTab,
   onSelectTab,
-  onLogout,
   lang
 }) => {
   const isAr = lang === "ar";
@@ -143,30 +140,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
       </div>
 
-      {/* Bottom Logout Area */}
-      <div style={{ padding: "14px 10px", borderTop: "1px solid var(--border-subtle)" }}>
-        <button
-          onClick={onLogout}
-          style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "8px",
-            padding: "10px 12px",
-            borderRadius: "10px",
-            border: "1px solid rgba(239, 68, 68, 0.25)",
-            background: "rgba(239, 68, 68, 0.1)",
-            color: "#F87171",
-            fontWeight: 700,
-            fontSize: "13px",
-            cursor: "pointer",
-            transition: "all 0.15s ease"
-          }}
-        >
-          <LogOut size={16} />
-          <span>{isAr ? "تسجيل الخروج" : "Logout"}</span>
-        </button>
+      {/* System Status Footer */}
+      <div style={{ padding: "14px 18px", borderTop: "1px solid var(--border-subtle)", background: "rgba(0,0,0,0.15)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span className="live-indicator" style={{ width: "6px", height: "6px" }} />
+          <span style={{ fontSize: "11px", fontWeight: 700, color: "#10B981" }}>
+            Central Node Active
+          </span>
+        </div>
+        <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
+          v1.0.0 • QTPay Admin Engine
+        </div>
       </div>
     </aside>
   );
