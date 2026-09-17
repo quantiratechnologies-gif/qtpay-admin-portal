@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import {
   Users,
   ShieldCheck,
-  ShieldAlert,
   Lock,
   Unlock,
   Search,
   CheckCircle2,
   XCircle,
-  Smartphone,
-  Wallet
+  AlertTriangle
 } from "lucide-react";
 import { StatusBadge } from "../components/Badge";
+import { Modal } from "../components/Modal";
 import type { CustomerUser } from "../types";
 
 interface ConsumerKYCProps {
@@ -27,6 +26,7 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
 }) => {
   const isAr = lang === "ar";
   const [search, setSearch] = useState("");
+  const [freezeModalUser, setFreezeModalUser] = useState<CustomerUser | null>(null);
 
   const filtered = customers.filter(
     (c) =>
@@ -37,32 +37,34 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
   );
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {/* Header */}
       <div style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         flexWrap: "wrap",
-        gap: "14px"
+        gap: "12px"
       }}>
-        <div>
-          <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#FFFFFF" }}>
-            {isAr ? "دليل المستهلكين والتحقق من الهوية (Nafath/KYC)" : "Consumer KYC & Wallet Safety Directory"}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Users size={18} color="#7FE87F" />
+          <h2 style={{ fontSize: "17px", fontWeight: 800, color: "#FFFFFF" }}>
+            {isAr ? "دليل المستهلكين والتحقق من الهوية" : "Customer Accounts & KYC Directory"}
           </h2>
-          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-            {isAr ? "التحقق من الهوية الوطنية عبر نفاذ، درجات المخاطر الائتمانية، وتجميد الحسابات المشبوهة" : "Absher/Nafath National ID verification, AML risk scoring & emergency wallet safety lock"}
-          </p>
+          <span style={{ fontSize: "11.5px", color: "var(--text-muted)", fontWeight: 600 }}>({customers.length})</span>
         </div>
 
-        <input
-          type="text"
-          placeholder={isAr ? "بحث بالاسم، رقم الهوية، أو معرف سريع..." : "Search Name, National ID, or Sarie Alias..."}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="input-field"
-          style={{ width: "280px" }}
-        />
+        <div style={{ position: "relative" }}>
+          <Search size={13} color="#64748B" style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", left: "10px" }} />
+          <input
+            type="text"
+            placeholder={isAr ? "بحث بالمستخدم أو الهوية..." : "Search User, National ID..."}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input-field"
+            style={{ width: "220px", paddingLeft: "30px", height: "34px", fontSize: "12px" }}
+          />
+        </div>
       </div>
 
       {/* Customer Table */}
@@ -70,42 +72,40 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
         <table className="admin-table">
           <thead>
             <tr>
-              <th>{isAr ? "المستخدم / الهوية" : "Customer / Identity"}</th>
-              <th>{isAr ? "رقم الجوال ومعرف سريع" : "Mobile & Sarie UPI ID"}</th>
+              <th>{isAr ? "المستخدم" : "Customer"}</th>
+              <th>{isAr ? "الهوية الوطنية" : "National ID / Iqama"}</th>
+              <th>{isAr ? "رقم الجوال ومعرف سريع" : "Mobile & Sarie ID"}</th>
               <th>{isAr ? "رصيد المحفظة" : "Wallet Balance"}</th>
-              <th>{isAr ? "إجمالي التحويلات" : "Lifetime Volume"}</th>
-              <th>{isAr ? "درجة المخاطر (0-100)" : "AML Risk Score"}</th>
+              <th>{isAr ? "درجة المخاطر" : "Risk Score"}</th>
               <th>{isAr ? "حالة نفاذ" : "Nafath KYC"}</th>
-              <th>{isAr ? "إجراء الأمان" : "Safety Action"}</th>
+              <th>{isAr ? "الأمان" : "Safety"}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((c) => (
               <tr key={c.id}>
                 <td>
-                  <div style={{ fontWeight: 700, color: "#FFFFFF" }}>{isAr ? c.fullNameAr : c.fullName}</div>
-                  <div style={{ fontFamily: "monospace", fontSize: "11px", color: "var(--text-muted)" }}>ID: {c.nationalId}</div>
+                  <div style={{ fontWeight: 700, color: "#FFFFFF", fontSize: "13px" }}>{isAr ? c.fullNameAr : c.fullName}</div>
+                  <div style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>{c.email}</div>
+                </td>
+                <td>
+                  <span style={{ fontFamily: "monospace", fontSize: "12px", color: "#38BDF8" }}>{c.nationalId}</span>
                 </td>
                 <td>
                   <div style={{ fontWeight: 600 }}>{c.mobile}</div>
-                  <div style={{ fontSize: "11px", color: "#38BDF8", fontFamily: "monospace" }}>{c.sarieUpiId}</div>
+                  <div style={{ fontSize: "10.5px", color: "#7FE87F", fontFamily: "monospace" }}>{c.sarieUpiId}</div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 800, color: "#7FE87F" }}>
+                  <span style={{ fontWeight: 800, color: "#7FE87F", fontSize: "13px" }}>
                     SAR {c.walletBalanceSar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </div>
+                  </span>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 600 }}>
-                    SAR {c.totalTransferredSar.toLocaleString()}
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                     <div style={{
-                      width: "60px",
-                      height: "6px",
-                      background: "rgba(255,255,255,0.1)",
+                      width: "48px",
+                      height: "5px",
+                      background: "rgba(255,255,255,0.08)",
                       borderRadius: "3px",
                       overflow: "hidden"
                     }}>
@@ -116,7 +116,7 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
                       }} />
                     </div>
                     <span style={{
-                      fontSize: "12px",
+                      fontSize: "11px",
                       fontWeight: 700,
                       color: c.riskScore > 70 ? "#EF4444" : c.riskScore > 30 ? "#F59E0B" : "#10B981"
                     }}>
@@ -129,17 +129,17 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
                 </td>
                 <td>
                   <button
-                    onClick={() => onToggleFreezeAccount(c.id)}
+                    onClick={() => setFreezeModalUser(c)}
                     className={c.isFrozen ? "btn-primary" : "btn-danger"}
-                    style={{ padding: "6px 12px", fontSize: "12px" }}
+                    style={{ padding: "5px 10px", fontSize: "11.5px" }}
                   >
                     {c.isFrozen ? (
                       <>
-                        <Unlock size={13} /> {isAr ? "إلغاء التجميد" : "Unfreeze"}
+                        <Unlock size={12} /> {isAr ? "فك التجميد" : "Unfreeze"}
                       </>
                     ) : (
                       <>
-                        <Lock size={13} /> {isAr ? "تجميد الحساب" : "Freeze"}
+                        <Lock size={12} /> {isAr ? "تجميد" : "Freeze"}
                       </>
                     )}
                   </button>
@@ -149,6 +149,42 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
           </tbody>
         </table>
       </div>
+
+      {/* Safety Confirmation Modal */}
+      {freezeModalUser && (
+        <Modal
+          isOpen={true}
+          onClose={() => setFreezeModalUser(null)}
+          title={freezeModalUser.isFrozen ? "Unfreeze Customer Account" : "Emergency Account Freeze"}
+          width="440px"
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: "1.4", margin: 0 }}>
+              {freezeModalUser.isFrozen
+                ? `Are you sure you want to restore full wallet functionality for ${freezeModalUser.fullName}?`
+                : `Are you sure you want to immediately freeze the wallet and Sarie payments for ${freezeModalUser.fullName}? This will block outgoing transfers.`}
+            </p>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "6px" }}>
+              <button
+                onClick={() => setFreezeModalUser(null)}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  onToggleFreezeAccount(freezeModalUser.id);
+                  setFreezeModalUser(null);
+                }}
+                className={freezeModalUser.isFrozen ? "btn-primary" : "btn-danger"}
+              >
+                {freezeModalUser.isFrozen ? "Confirm Unfreeze" : "Confirm Freeze"}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Search,
   Languages,
   RefreshCw,
-  LogOut
+  LogOut,
+  ChevronDown,
+  ShieldCheck,
+  User,
+  Zap
 } from "lucide-react";
 import type { AdminUser } from "../types";
 
@@ -25,13 +29,25 @@ export const Header: React.FC<HeaderProps> = ({
   isRefreshing = false
 }) => {
   const isAr = lang === "ar";
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header style={{
-      height: "64px",
+      height: "60px",
       backgroundColor: "#0A0F1D",
       borderBottom: "1px solid var(--border-subtle)",
-      padding: "0 22px",
+      padding: "0 20px",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
@@ -39,8 +55,8 @@ export const Header: React.FC<HeaderProps> = ({
       top: 0,
       zIndex: 30
     }}>
-      {/* Search Bar */}
-      <div style={{ position: "relative", width: "280px" }}>
+      {/* Search Input */}
+      <div style={{ position: "relative", width: "260px" }}>
         <Search
           size={14}
           color="#64748B"
@@ -48,114 +64,168 @@ export const Header: React.FC<HeaderProps> = ({
             position: "absolute",
             top: "50%",
             transform: "translateY(-50%)",
-            [isAr ? "right" : "left"]: "12px"
+            [isAr ? "right" : "left"]: "10px"
           }}
         />
         <input
           type="text"
-          placeholder={isAr ? "بحث سريع..." : "Search Order, Merchant, User..."}
+          placeholder={isAr ? "بحث سريع (CR, UTR)..." : "Quick Search..."}
           style={{
             width: "100%",
             background: "#121A2D",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "8px",
-            padding: isAr ? "8px 34px 8px 12px" : "8px 12px 8px 34px",
+            borderRadius: "7px",
+            padding: isAr ? "7px 30px 7px 10px" : "7px 10px 7px 30px",
             color: "#FFFFFF",
-            fontSize: "12.5px",
+            fontSize: "12px",
             outline: "none"
           }}
         />
       </div>
 
       {/* Right Controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        {/* Live Socket Status */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+          padding: "5px 9px",
+          background: "rgba(16, 185, 129, 0.08)",
+          borderRadius: "6px",
+          border: "1px solid rgba(16, 185, 129, 0.2)",
+          fontSize: "11px",
+          color: "#10B981",
+          fontWeight: 700
+        }}>
+          <span className="live-indicator" style={{ width: "5px", height: "5px" }} />
+          <span>Live Sync</span>
+        </div>
+
         {/* Refresh Live Button */}
         <button
           onClick={onRefreshData}
           disabled={isRefreshing}
+          title={isAr ? "تحديث البيانات" : "Refresh Data"}
           style={{
             background: "#121A2D",
             border: "1px solid var(--border-subtle)",
             color: "#94A3B8",
-            borderRadius: "8px",
-            padding: "6px 10px",
+            borderRadius: "7px",
+            padding: "6px 8px",
             display: "flex",
             alignItems: "center",
-            gap: "5px",
-            fontSize: "12px",
-            fontWeight: 600,
+            justifyContent: "center",
             cursor: "pointer"
           }}
         >
           <RefreshCw size={13} className={isRefreshing ? "animate-spin" : ""} color="#7FE87F" />
-          <span>{isAr ? "تحديث" : "Refresh"}</span>
         </button>
 
         {/* Language Switcher */}
         <button
           onClick={onToggleLang}
           style={{
-            background: "rgba(127, 232, 127, 0.1)",
-            border: "1px solid rgba(127, 232, 127, 0.3)",
+            background: "rgba(127, 232, 127, 0.08)",
+            border: "1px solid rgba(127, 232, 127, 0.25)",
             color: "#7FE87F",
-            borderRadius: "8px",
-            padding: "6px 10px",
+            borderRadius: "7px",
+            padding: "5px 9px",
             display: "flex",
             alignItems: "center",
-            gap: "5px",
-            fontSize: "12px",
+            gap: "4px",
+            fontSize: "11.5px",
             fontWeight: 700,
             cursor: "pointer"
           }}
         >
-          <Languages size={13} />
+          <Languages size={12} />
           <span>{isAr ? "EN" : "عربي"}</span>
         </button>
 
-        {/* Admin Profile & Single Logout Pill */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          padding: "4px 8px 4px 10px",
-          background: "#121A2D",
-          borderRadius: "8px",
-          border: "1px solid var(--border-subtle)"
-        }}>
-          <div style={{
-            width: "24px",
-            height: "24px",
-            borderRadius: "6px",
-            background: "#7FE87F",
-            color: "#080C14",
-            fontWeight: 800,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "11px"
-          }}>
-            {currentUser.avatar}
-          </div>
-          <span style={{ fontSize: "12.5px", fontWeight: 700, color: "#FFFFFF" }}>
-            {currentUser.name.split(" ")[0]}
-          </span>
+        {/* User Profile with Dropdown */}
+        <div style={{ position: "relative" }} ref={dropdownRef}>
           <button
-            onClick={onLogout}
-            title={isAr ? "تسجيل الخروج" : "Sign Out"}
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
             style={{
-              background: "none",
-              border: "none",
-              color: "#F87171",
-              cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              padding: "4px",
-              borderRadius: "4px",
-              marginLeft: "4px"
+              gap: "7px",
+              padding: "4px 8px 4px 6px",
+              background: "#121A2D",
+              borderRadius: "7px",
+              border: "1px solid var(--border-subtle)",
+              cursor: "pointer"
             }}
           >
-            <LogOut size={14} />
+            <div style={{
+              width: "22px",
+              height: "22px",
+              borderRadius: "5px",
+              background: "#7FE87F",
+              color: "#080C14",
+              fontWeight: 800,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "10.5px"
+            }}>
+              {currentUser.avatar}
+            </div>
+            <span style={{ fontSize: "12px", fontWeight: 700, color: "#FFFFFF" }}>
+              {currentUser.name.split(" ")[0]}
+            </span>
+            <ChevronDown size={12} color="#94A3B8" />
           </button>
+
+          {/* Profile Dropdown Menu */}
+          {isProfileOpen && (
+            <div style={{
+              position: "absolute",
+              top: "calc(100% + 6px)",
+              [isAr ? "left" : "right"]: 0,
+              width: "200px",
+              background: "#0F1626",
+              border: "1px solid var(--border-strong)",
+              borderRadius: "10px",
+              padding: "8px",
+              boxShadow: "0 15px 30px rgba(0,0,0,0.6)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+              zIndex: 50
+            }}>
+              <div style={{ padding: "6px 8px", borderBottom: "1px solid var(--border-subtle)", marginBottom: "4px" }}>
+                <div style={{ fontSize: "12px", fontWeight: 700, color: "#FFFFFF" }}>{currentUser.name}</div>
+                <div style={{ fontSize: "10.5px", color: "var(--text-muted)", marginTop: "1px" }}>{currentUser.email}</div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setIsProfileOpen(false);
+                  onLogout();
+                }}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  padding: "7px 8px",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: "rgba(239, 68, 68, 0.1)",
+                  color: "#F87171",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  textAlign: isAr ? "right" : "left"
+                }}
+              >
+                <LogOut size={13} />
+                <span>{isAr ? "تسجيل الخروج" : "Sign Out"}</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>
