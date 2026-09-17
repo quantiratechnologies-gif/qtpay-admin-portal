@@ -3,7 +3,14 @@ import {
   Users,
   Search,
   Lock,
-  Unlock
+  Unlock,
+  Sliders,
+  History,
+  RefreshCw,
+  KeyRound,
+  ShieldCheck,
+  CheckCircle2,
+  AlertTriangle
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -25,22 +32,33 @@ import {
   DialogDescription,
   DialogFooter
 } from "../components/ui/dialog";
-import type { CustomerUser } from "../types";
+import type { CustomerUser, UserActivityLog } from "../types";
 
 interface ConsumerKYCProps {
   customers: CustomerUser[];
   onToggleFreezeAccount: (customerId: string) => void;
+  onUpdateDailyLimit?: (customerId: string, newLimit: number) => void;
   lang: "en" | "ar";
 }
 
 export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
   customers,
   onToggleFreezeAccount,
+  onUpdateDailyLimit,
   lang
 }) => {
   const isAr = lang === "ar";
   const [search, setSearch] = useState("");
-  const [freezeModalUser, setFreezeModalUser] = useState<CustomerUser | null>(null);
+  const [selectedUser, setSelectedUser] = useState<CustomerUser | null>(null);
+  const [activityModalUser, setActivityModalUser] = useState<CustomerUser | null>(null);
+  const [limitModalUser, setLimitModalUser] = useState<CustomerUser | null>(null);
+  const [tempLimit, setTempLimit] = useState<number>(20000);
+  const [feedbackNotice, setFeedbackNotice] = useState<string | null>(null);
+
+  const showNotice = (msg: string) => {
+    setFeedbackNotice(msg);
+    setTimeout(() => setFeedbackNotice(null), 3000);
+  };
 
   const filtered = customers.filter(
     (c) =>
@@ -57,7 +75,7 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-[#7FE87F]" />
           <h2 className="text-base font-extrabold text-white">
-            {isAr ? "المستخدمين" : "Users"}
+            {isAr ? "المستخدمين والتحكم بالحسابات" : "Users & Account Control"}
           </h2>
           <Badge variant="secondary" className="text-[11px]">
             {customers.length}
@@ -76,6 +94,13 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
         </div>
       </div>
 
+      {feedbackNotice && (
+        <div className="p-2.5 bg-emerald-500/15 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs font-semibold flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4" />
+          <span>{feedbackNotice}</span>
+        </div>
+      )}
+
       {/* Table */}
       <Table>
         <TableHeader>
@@ -84,9 +109,10 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
             <TableHead>{isAr ? "الهوية" : "National ID"}</TableHead>
             <TableHead>{isAr ? "الجوال / سريع" : "Mobile / Sarie"}</TableHead>
             <TableHead>{isAr ? "الرصيد" : "Balance"}</TableHead>
+            <TableHead>{isAr ? "الحد اليومي" : "Daily Limit"}</TableHead>
             <TableHead>{isAr ? "المخاطر" : "Risk"}</TableHead>
             <TableHead>{isAr ? "التحقق" : "KYC"}</TableHead>
-            <TableHead>{isAr ? "إجراء" : "Action"}</TableHead>
+            <TableHead>{isAr ? "الإجراء والنشاط" : "Control & Logs"}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -109,6 +135,23 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
                 </span>
               </TableCell>
               <TableCell>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono text-xs text-slate-300 font-semibold">
+                    SAR {(c.dailyLimitSar || 20000).toLocaleString()}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setLimitModalUser(c);
+                      setTempLimit(c.dailyLimitSar || 20000);
+                    }}
+                    title="Adjust Limit"
+                    className="text-slate-500 hover:text-white p-0.5"
+                  >
+                    <Sliders className="h-3 w-3" />
+                  </button>
+                </div>
+              </TableCell>
+              <TableCell>
                 <span
                   className={`text-xs font-bold ${
                     c.riskScore > 70
@@ -125,53 +168,161 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
                 <StatusBadge status={c.kycStatus} />
               </TableCell>
               <TableCell>
-                <Button
-                  variant={c.isFrozen ? "default" : "destructive"}
-                  size="sm"
-                  onClick={() => setFreezeModalUser(c)}
-                  className="h-7 px-2.5 text-xs gap-1"
-                >
-                  {c.isFrozen ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
-                  <span>{c.isFrozen ? (isAr ? "فك التجميد" : "Unfreeze") : (isAr ? "تجميد" : "Freeze")}</span>
-                </Button>
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant={c.isFrozen ? "default" : "destructive"}
+                    size="sm"
+                    onClick={() => onToggleFreezeAccount(c.id)}
+                    className="h-7 px-2 text-xs gap-1"
+                  >
+                    {c.isFrozen ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+                    <span>{c.isFrozen ? (isAr ? "فك التجميد" : "Unfreeze") : (isAr ? "تجميد" : "Freeze")}</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setActivityModalUser(c)}
+                    className="h-7 px-2 text-xs bg-[#10182A] hover:bg-slate-800 gap-1 text-slate-300"
+                  >
+                    <History className="h-3 w-3" />
+                    <span>{isAr ? "السجل" : "Logs"}</span>
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      {/* Confirmation Dialog */}
-      <Dialog open={!!freezeModalUser} onOpenChange={(open) => !open && setFreezeModalUser(null)}>
-        {freezeModalUser && (
-          <DialogContent className="max-w-sm">
+      {/* User Activity & Audit History Modal */}
+      <Dialog open={!!activityModalUser} onOpenChange={(open) => !open && setActivityModalUser(null)}>
+        {activityModalUser && (
+          <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>
-                {freezeModalUser.isFrozen ? "Unfreeze Account" : "Freeze Account"}
+              <DialogTitle className="flex items-center gap-2">
+                <History className="h-4 w-4 text-[#7FE87F]" />
+                <span>User Activity Audit: {activityModalUser.fullName}</span>
               </DialogTitle>
               <DialogDescription>
-                {freezeModalUser.isFrozen
-                  ? `Unfreeze wallet for ${freezeModalUser.fullName}? Outgoing transfers will be re-enabled.`
-                  : `Freeze wallet for ${freezeModalUser.fullName} to block outgoing transfers?`}
+                Real-time security telemetry, login events, and transaction history
               </DialogDescription>
             </DialogHeader>
 
-            <DialogFooter className="gap-2 sm:gap-0">
+            {/* Quick Actions Bar */}
+            <div className="flex items-center gap-2 p-2 bg-[#10182A] border border-slate-800/80 rounded-lg">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setFreezeModalUser(null)}
+                onClick={() => showNotice(`Force KYC re-verification triggered for ${activityModalUser.fullName}`)}
+                className="h-7 text-xs bg-slate-900 border-slate-800 text-slate-300 gap-1"
+              >
+                <RefreshCw className="h-3 w-3" />
+                <span>Request Re-KYC</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => showNotice(`Sarie PIN reset link dispatched to ${activityModalUser.mobile}`)}
+                className="h-7 text-xs bg-slate-900 border-slate-800 text-slate-300 gap-1"
+              >
+                <KeyRound className="h-3 w-3" />
+                <span>Reset Sarie PIN</span>
+              </Button>
+            </div>
+
+            {/* Timeline */}
+            <div className="space-y-2.5 max-h-72 overflow-y-auto py-1">
+              {(activityModalUser.activityLogs || []).length > 0 ? (
+                activityModalUser.activityLogs?.map((log) => (
+                  <div
+                    key={log.id}
+                    className="p-2.5 rounded-lg bg-[#10182A] border border-slate-800/80 space-y-1"
+                  >
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-white">{log.title}</span>
+                      <span className="text-[10px] text-slate-500 font-mono">{log.timestamp}</span>
+                    </div>
+                    <p className="text-xs text-slate-400">{log.details}</p>
+                    <div className="flex items-center gap-2 text-[10px] text-slate-500 pt-0.5">
+                      <span>Actor: {log.actor}</span>
+                      {log.ipAddress && <span>• IP: {log.ipAddress}</span>}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6 text-slate-500 text-xs">
+                  No previous security flags recorded for this user.
+                </div>
+              )}
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActivityModalUser(null)}
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
+
+      {/* Adjust Daily Limit Modal */}
+      <Dialog open={!!limitModalUser} onOpenChange={(open) => !open && setLimitModalUser(null)}>
+        {limitModalUser && (
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Adjust Daily Transfer Limit</DialogTitle>
+              <DialogDescription>
+                Set maximum outgoing daily transfer threshold for {limitModalUser.fullName}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-3 py-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400">Target Daily Limit:</span>
+                <span className="text-base font-extrabold text-[#7FE87F] font-mono">
+                  SAR {tempLimit.toLocaleString()}
+                </span>
+              </div>
+
+              <input
+                type="range"
+                min="5000"
+                max="100000"
+                step="5000"
+                value={tempLimit}
+                onChange={(e) => setTempLimit(parseInt(e.target.value))}
+                className="w-full accent-[#7FE87F] cursor-pointer"
+              />
+
+              <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                <span>SAR 5,000 (Tier 1)</span>
+                <span>SAR 100,000 (VIP)</span>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLimitModalUser(null)}
               >
                 Cancel
               </Button>
               <Button
-                variant={freezeModalUser.isFrozen ? "default" : "destructive"}
                 size="sm"
                 onClick={() => {
-                  onToggleFreezeAccount(freezeModalUser.id);
-                  setFreezeModalUser(null);
+                  if (onUpdateDailyLimit) {
+                    onUpdateDailyLimit(limitModalUser.id, tempLimit);
+                  }
+                  showNotice(`Daily limit for ${limitModalUser.fullName} updated to SAR ${tempLimit.toLocaleString()}`);
+                  setLimitModalUser(null);
                 }}
               >
-                {freezeModalUser.isFrozen ? "Unfreeze" : "Freeze"}
+                Save Limit
               </Button>
             </DialogFooter>
           </DialogContent>

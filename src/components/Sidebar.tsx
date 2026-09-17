@@ -1,13 +1,15 @@
 import React from "react";
 import {
   LayoutDashboard,
+  BarChart3,
   Store,
   Users,
   ReceiptText,
   Settings
 } from "lucide-react";
+import { Logo } from "./Logo";
 
-export type NavTab = "dashboard" | "merchants" | "consumers" | "ledger" | "settings";
+export type NavTab = "dashboard" | "insights" | "merchants" | "consumers" | "ledger" | "settings";
 
 interface SidebarProps {
   currentTab: NavTab;
@@ -24,6 +26,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const navItems: { id: NavTab; labelEn: string; labelAr: string; icon: any; badge?: string }[] = [
     { id: "dashboard", labelEn: "Dashboard", labelAr: "الرئيسية", icon: LayoutDashboard },
+    { id: "insights", labelEn: "Insights", labelAr: "التحليلات", icon: BarChart3, badge: "New" },
     { id: "merchants", labelEn: "Merchants", labelAr: "التجار", icon: Store, badge: "1" },
     { id: "consumers", labelEn: "Users", labelAr: "المستخدمين", icon: Users },
     { id: "ledger", labelEn: "Transactions", labelAr: "المعاملات", icon: ReceiptText, badge: "Live" },
@@ -35,20 +38,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       isAr ? "border-l border-slate-800/80" : "border-r border-slate-800/80"
     }`}>
       <div>
-        {/* Brand Header */}
-        <div className="p-5 border-b border-slate-800/80 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7FE87F] to-[#059669] flex items-center justify-center text-[#080C14] font-black text-lg shadow-[0_0_16px_rgba(127,232,127,0.35)]">
-            QP
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-base font-extrabold text-white tracking-tight">
-                QTPay
-              </span>
-              <span className="text-[9.5px] font-extrabold px-1.5 py-0.5 rounded bg-[#7FE87F]/15 text-[#7FE87F] border border-[#7FE87F]/30">
-                ADMIN
-              </span>
-            </div>
+        {/* Brand Header with custom SVG Logo */}
+        <div className="p-4 border-b border-slate-800/80 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Logo height={28} textColor="#FFFFFF" accentColor="#00FF24" />
+            <span className="text-[9.5px] font-extrabold px-1.5 py-0.5 rounded bg-[#7FE87F]/15 text-[#7FE87F] border border-[#7FE87F]/30">
+              ADMIN
+            </span>
           </div>
         </div>
 
@@ -73,7 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 {item.badge && (
                   <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1 border ${
-                    item.badge === "Live"
+                    item.badge === "Live" || item.badge === "New"
                       ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
                       : "bg-amber-500/20 text-amber-400 border-amber-500/30"
                   }`}>

@@ -3,6 +3,7 @@ import { Sidebar, NavTab } from "./components/Sidebar";
 import { Header } from "./components/Header";
 import { AdminLogin } from "./views/AdminLogin";
 import { ExecutiveDashboard } from "./views/ExecutiveDashboard";
+import { InsightsAnalytics } from "./views/InsightsAnalytics";
 import { MerchantOperations } from "./views/MerchantOperations";
 import { ConsumerKYC } from "./views/ConsumerKYC";
 import { GlobalLedger } from "./views/GlobalLedger";
@@ -87,6 +88,12 @@ export function App() {
     );
   };
 
+  const handleUpdateDailyLimit = (customerId: string, newLimit: number) => {
+    setCustomers((prev) =>
+      prev.map((c) => (c.id === customerId ? { ...c, dailyLimitSar: newLimit } : c))
+    );
+  };
+
   const handleExecuteRefund = (txId: string) => {
     setTransactions((prev) =>
       prev.map((tx) => (tx.id === txId ? { ...tx, status: "refunded" } : tx))
@@ -138,6 +145,12 @@ export function App() {
             />
           )}
 
+          {currentTab === "insights" && (
+            <InsightsAnalytics
+              lang={lang}
+            />
+          )}
+
           {currentTab === "merchants" && (
             <MerchantOperations
               merchants={merchants}
@@ -150,6 +163,7 @@ export function App() {
             <ConsumerKYC
               customers={customers}
               onToggleFreezeAccount={handleToggleFreezeAccount}
+              onUpdateDailyLimit={handleUpdateDailyLimit}
               lang={lang}
             />
           )}

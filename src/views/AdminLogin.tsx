@@ -15,6 +15,7 @@ import {
   CardDescription,
   CardContent
 } from "../components/ui/card";
+import { Logo } from "../components/Logo";
 import type { AdminUser } from "../types";
 
 interface AdminLoginProps {
@@ -48,7 +49,8 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, lang }) 
         role: "superadmin",
         avatar: "AD",
         lastLogin: "Just Now",
-        ipAddress: "127.0.0.1"
+        ipAddress: "127.0.0.1",
+        status: "active"
       };
       onLoginSuccess(user);
       setIsLoading(false);
@@ -56,12 +58,12 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, lang }) 
   };
 
   return (
-    <div className="w-screen min-h-screen bg-[#080C14] bg-[radial-gradient(circle_at_50%_20%,rgba(127,232,127,0.06)_0%,transparent_60%)] flex items-center justify-center p-5 text-white font-sans">
+    <div className="w-screen min-h-screen bg-[#080C14] bg-[radial-gradient(circle_at_50%_20%,rgba(0,255,36,0.06)_0%,transparent_60%)] flex items-center justify-center p-5 text-white font-sans">
       <Card className="w-full max-w-[390px] bg-[#0E1526] border border-slate-800/80 rounded-2xl p-6 shadow-2xl space-y-4">
-        {/* Brand Header */}
+        {/* Brand Header with custom SVG Logo */}
         <CardHeader className="text-center space-y-2 pb-2">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7FE87F] to-[#059669] flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(127,232,127,0.35)] text-[#080C14] font-black text-xl">
-            QP
+          <div className="flex justify-center pb-2">
+            <Logo height={44} textColor="#FFFFFF" accentColor="#00FF24" />
           </div>
           <CardTitle className="text-xl font-extrabold text-white">
             {isAr ? "لوحة تحكم الإدارة" : "QTPay Admin Portal"}

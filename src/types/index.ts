@@ -1,4 +1,30 @@
-export type AdminRole = "superadmin" | "compliance_officer" | "settlement_manager" | "risk_analyst" | "support_lead";
+export type AdminRole =
+  | "superadmin"
+  | "compliance_officer"
+  | "settlement_manager"
+  | "risk_analyst"
+  | "support_lead";
+
+export interface AdminPermission {
+  id: string;
+  name: string;
+  description: string;
+  category: "merchants" | "users" | "transactions" | "settlements" | "system";
+  superadmin: boolean;
+  compliance_officer: boolean;
+  settlement_manager: boolean;
+  risk_analyst: boolean;
+  support_lead: boolean;
+}
+
+export interface RoleDefinition {
+  id: AdminRole;
+  title: string;
+  titleAr: string;
+  description: string;
+  badgeColor: string;
+  memberCount: number;
+}
 
 export interface AdminUser {
   id: string;
@@ -8,6 +34,30 @@ export interface AdminUser {
   avatar: string;
   lastLogin: string;
   ipAddress: string;
+  status: "active" | "suspended";
+}
+
+export interface MerchantActivityLog {
+  id: string;
+  merchantId: string;
+  timestamp: string;
+  type: "terminal_pulse" | "pos_provision" | "settlement_hold" | "settlement_payout" | "kyb_update" | "rate_override";
+  title: string;
+  details: string;
+  actor: string;
+  severity?: "info" | "success" | "warning" | "error";
+}
+
+export interface UserActivityLog {
+  id: string;
+  userId: string;
+  timestamp: string;
+  type: "login" | "transfer_out" | "transfer_in" | "pin_reset" | "limit_change" | "freeze" | "kyc_verify";
+  title: string;
+  details: string;
+  actor: string;
+  ipAddress?: string;
+  severity?: "info" | "success" | "warning" | "error";
 }
 
 export interface Merchant {
@@ -27,8 +77,12 @@ export interface Merchant {
   status: "active" | "pending_kyb" | "action_required" | "suspended" | "blacklisted";
   riskTier: "low" | "medium" | "high";
   activeTerminals: number;
+  terminalIds?: string[];
   monthlyVolumeSar: number;
   joinedAt: string;
+  settlementHold?: boolean;
+  customMdrRate?: number;
+  activityLogs?: MerchantActivityLog[];
 }
 
 export interface CustomerUser {
@@ -40,11 +94,13 @@ export interface CustomerUser {
   email: string;
   sarieUpiId: string;
   walletBalanceSar: number;
+  dailyLimitSar: number;
   kycStatus: "verified" | "pending" | "rejected";
   riskScore: number; // 0 - 100
   isFrozen: boolean;
   totalTransferredSar: number;
   joinedAt: string;
+  activityLogs?: UserActivityLog[];
 }
 
 export interface PlatformTransaction {
