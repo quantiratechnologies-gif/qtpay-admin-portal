@@ -3,14 +3,13 @@ import {
   Store,
   CheckCircle2,
   XCircle,
-  AlertTriangle,
-  FileCheck,
   Search,
-  Filter,
-  Plus,
   Terminal,
   Building,
-  CreditCard
+  FileCheck,
+  ShieldCheck,
+  Eye,
+  SlidersHorizontal
 } from "lucide-react";
 import { StatusBadge } from "../components/Badge";
 import { Modal } from "../components/Modal";
@@ -43,45 +42,46 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
   });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {/* Action Header */}
       <div style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         flexWrap: "wrap",
-        gap: "14px"
+        gap: "12px"
       }}>
-        <div>
-          <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#FFFFFF" }}>
-            {isAr ? "إدارة واعتماد التجار وأجهزة نقاط البيع" : "Merchant KYB Approvals & Terminals"}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Store size={20} color="#7FE87F" />
+          <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#FFFFFF" }}>
+            {isAr ? "التجار ونقاط البيع" : "Merchants & POS Fleets"}
           </h2>
-          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-            {isAr ? "التحقق من السجلات التجارية (واثق)، الأرقام الضريبية (زاتكا)، وتخصيص أجهزة الدفع" : "Saudi Commercial Registration verification (Wathq), ZATCA VAT validation & SoftPOS fleet"}
-          </p>
+          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>({merchants.length})</span>
         </div>
 
         {/* Filter and Search Bar */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <input
-            type="text"
-            placeholder={isAr ? "بحث بالاسم، رقم السجل، أو الضريبة..." : "Search Name, CR, or VAT..."}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="input-field"
-            style={{ width: "240px" }}
-          />
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ position: "relative" }}>
+            <Search size={14} color="#64748B" style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", left: "10px" }} />
+            <input
+              type="text"
+              placeholder={isAr ? "بحث بالاسم أو السجل..." : "Search Merchant or CR..."}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="input-field"
+              style={{ width: "220px", paddingLeft: "32px", paddingRight: "10px", height: "36px" }}
+            />
+          </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="input-field"
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", height: "36px", padding: "0 10px" }}
           >
-            <option value="all">{isAr ? "كل الحالات" : "All Statuses"}</option>
-            <option value="pending_kyb">{isAr ? "في انتظار الاعتماد" : "Pending KYB"}</option>
-            <option value="active">{isAr ? "نشط ومفعل" : "Active"}</option>
-            <option value="action_required">{isAr ? "يتطلب إجراء" : "Action Required"}</option>
-            <option value="suspended">{isAr ? "موقوف مؤقتاً" : "Suspended"}</option>
+            <option value="all">{isAr ? "الكل" : "All"}</option>
+            <option value="pending_kyb">{isAr ? "معلق" : "Pending"}</option>
+            <option value="active">{isAr ? "نشط" : "Active"}</option>
+            <option value="suspended">{isAr ? "موقوف" : "Suspended"}</option>
           </select>
         </div>
       </div>
@@ -91,13 +91,13 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
         <table className="admin-table">
           <thead>
             <tr>
-              <th>{isAr ? "اسم التاجر / المنشأة" : "Merchant / Business Name"}</th>
-              <th>{isAr ? "السجل التجاري والضريبة" : "Saudi CR / VAT Number"}</th>
-              <th>{isAr ? "المالك والاتصال" : "Owner & Contact"}</th>
-              <th>{isAr ? "البنك ورقم الآيبان" : "Settlement Bank / IBAN"}</th>
-              <th>{isAr ? "الأجهزة النشطة" : "Active POS"}</th>
-              <th>{isAr ? "الحالة" : "KYB Status"}</th>
-              <th>{isAr ? "الإجراءات" : "Actions"}</th>
+              <th>{isAr ? "المنشأة" : "Merchant"}</th>
+              <th>{isAr ? "السجل والضريبة" : "CR / VAT"}</th>
+              <th>{isAr ? "المالك" : "Owner"}</th>
+              <th>{isAr ? "البنك" : "Bank & IBAN"}</th>
+              <th>{isAr ? "الأجهزة" : "Terminals"}</th>
+              <th>{isAr ? "الحالة" : "Status"}</th>
+              <th>{isAr ? "إجراء" : "Action"}</th>
             </tr>
           </thead>
           <tbody>
@@ -105,11 +105,11 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
               <tr key={m.id}>
                 <td>
                   <div style={{ fontWeight: 700, color: "#FFFFFF" }}>{isAr ? m.businessNameAr : m.businessName}</div>
-                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{m.category} • {m.city}</div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{m.city}</div>
                 </td>
                 <td>
-                  <div style={{ fontFamily: "monospace", fontSize: "12.5px", color: "#38BDF8", fontWeight: 600 }}>CR: {m.crNumber}</div>
-                  <div style={{ fontFamily: "monospace", fontSize: "11px", color: "var(--text-muted)" }}>VAT: {m.vatNumber}</div>
+                  <div style={{ fontFamily: "monospace", fontSize: "12px", color: "#38BDF8", fontWeight: 600 }}>{m.crNumber}</div>
+                  <div style={{ fontFamily: "monospace", fontSize: "10.5px", color: "var(--text-muted)" }}>{m.vatNumber}</div>
                 </td>
                 <td>
                   <div style={{ fontWeight: 600 }}>{m.ownerName}</div>
@@ -117,11 +117,11 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                 </td>
                 <td>
                   <div style={{ fontWeight: 600 }}>{m.settlementBank}</div>
-                  <div style={{ fontFamily: "monospace", fontSize: "11px", color: "var(--text-secondary)" }}>{m.settlementIban}</div>
+                  <div style={{ fontFamily: "monospace", fontSize: "10.5px", color: "var(--text-secondary)" }}>{m.settlementIban.slice(0, 12)}...</div>
                 </td>
                 <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: 700 }}>
-                    <Terminal size={14} color="#7FE87F" />
+                  <div style={{ display: "flex", alignItems: "center", gap: "4px", fontWeight: 700 }}>
+                    <Terminal size={13} color="#7FE87F" />
                     <span>{m.activeTerminals} POS</span>
                   </div>
                 </td>
@@ -132,9 +132,9 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                   <button
                     onClick={() => setSelectedMerchant(m)}
                     className="btn-secondary"
-                    style={{ padding: "6px 12px", fontSize: "12px" }}
+                    style={{ padding: "5px 10px", fontSize: "11.5px" }}
                   >
-                    {isAr ? "مراجعة الملف" : "Review KYB"}
+                    <Eye size={13} /> {isAr ? "مراجعة" : "Review"}
                   </button>
                 </td>
               </tr>
@@ -143,68 +143,50 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
         </table>
       </div>
 
-      {/* Review & Approve KYB Modal */}
+      {/* Review Modal */}
       {selectedMerchant && (
         <Modal
           isOpen={true}
           onClose={() => setSelectedMerchant(null)}
-          title={`KYB Verification: ${selectedMerchant.businessName}`}
-          width="620px"
+          title={`KYB: ${selectedMerchant.businessName}`}
+          width="540px"
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            {/* Wathq and ZATCA Live Verification Simulation Card */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div style={{
               background: "rgba(16, 185, 129, 0.1)",
               border: "1px solid rgba(16, 185, 129, 0.3)",
-              borderRadius: "12px",
-              padding: "14px",
+              borderRadius: "10px",
+              padding: "10px 14px",
               display: "flex",
               alignItems: "center",
-              gap: "12px"
+              gap: "8px"
             }}>
-              <FileCheck size={28} color="#10B981" />
-              <div>
-                <div style={{ fontSize: "13.5px", fontWeight: 800, color: "#10B981" }}>
-                  Wathq Commercial Registry & ZATCA Verified
-                </div>
-                <div style={{ fontSize: "11.5px", color: "var(--text-secondary)", marginTop: "2px" }}>
-                  Entity Status: Active in Ministry of Commerce • Tax Certificate Valid through 2027
-                </div>
+              <ShieldCheck size={20} color="#10B981" />
+              <div style={{ fontSize: "12.5px", fontWeight: 700, color: "#10B981" }}>
+                Wathq CR & ZATCA Tax Status: Verified & Active
               </div>
             </div>
 
-            {/* Merchant Details Grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", fontSize: "13px" }}>
-              <div className="admin-card" style={{ padding: "12px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>Business Name</span>
-                <div style={{ fontWeight: 700, marginTop: "2px" }}>{selectedMerchant.businessName}</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", fontSize: "12.5px" }}>
+              <div className="admin-card" style={{ padding: "10px" }}>
+                <span style={{ color: "var(--text-muted)", fontSize: "10.5px" }}>Saudi CR</span>
+                <div style={{ fontWeight: 700, color: "#38BDF8", fontFamily: "monospace" }}>{selectedMerchant.crNumber}</div>
               </div>
-              <div className="admin-card" style={{ padding: "12px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>Commercial Reg (CR)</span>
-                <div style={{ fontWeight: 700, marginTop: "2px", color: "#38BDF8" }}>{selectedMerchant.crNumber}</div>
+              <div className="admin-card" style={{ padding: "10px" }}>
+                <span style={{ color: "var(--text-muted)", fontSize: "10.5px" }}>ZATCA VAT</span>
+                <div style={{ fontWeight: 700, fontFamily: "monospace" }}>{selectedMerchant.vatNumber}</div>
               </div>
-              <div className="admin-card" style={{ padding: "12px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>ZATCA VAT ID</span>
-                <div style={{ fontWeight: 700, marginTop: "2px" }}>{selectedMerchant.vatNumber}</div>
+              <div className="admin-card" style={{ padding: "10px" }}>
+                <span style={{ color: "var(--text-muted)", fontSize: "10.5px" }}>Settlement IBAN</span>
+                <div style={{ fontWeight: 700, fontFamily: "monospace", fontSize: "11px" }}>{selectedMerchant.settlementIban}</div>
               </div>
-              <div className="admin-card" style={{ padding: "12px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>Owner National ID</span>
-                <div style={{ fontWeight: 700, marginTop: "2px" }}>{selectedMerchant.nationalId}</div>
-              </div>
-              <div className="admin-card" style={{ padding: "12px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>Settlement IBAN</span>
-                <div style={{ fontWeight: 700, marginTop: "2px", fontFamily: "monospace" }}>{selectedMerchant.settlementIban}</div>
-              </div>
-              <div className="admin-card" style={{ padding: "12px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>Risk Tier</span>
-                <div style={{ marginTop: "2px" }}>
-                  <StatusBadge status={selectedMerchant.riskTier} />
-                </div>
+              <div className="admin-card" style={{ padding: "10px" }}>
+                <span style={{ color: "var(--text-muted)", fontSize: "10.5px" }}>Risk Tier</span>
+                <div style={{ marginTop: "2px" }}><StatusBadge status={selectedMerchant.riskTier} /></div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px", marginTop: "6px" }}>
               <button
                 onClick={() => {
                   onUpdateMerchantStatus(selectedMerchant.id, "suspended");
@@ -212,9 +194,8 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                 }}
                 className="btn-danger"
               >
-                <XCircle size={15} /> {isAr ? "إيقاف التاجر" : "Suspend Merchant"}
+                <XCircle size={14} /> {isAr ? "إيقاف" : "Suspend"}
               </button>
-
               <button
                 onClick={() => {
                   onUpdateMerchantStatus(selectedMerchant.id, "active");
@@ -222,7 +203,7 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                 }}
                 className="btn-primary"
               >
-                <CheckCircle2 size={15} /> {isAr ? "اعتماد وتفعيل الأجهزة" : "Approve & Activate"}
+                <CheckCircle2 size={14} /> {isAr ? "اعتماد وتفعيل" : "Approve & Activate"}
               </button>
             </div>
           </div>
