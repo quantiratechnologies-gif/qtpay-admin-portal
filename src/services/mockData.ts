@@ -22,6 +22,47 @@ export const currentAdminUser: AdminUser = {
   status: "active"
 };
 
+export const mockSettlementBatches: SettlementBatch[] = [
+  {
+    id: "set_bat_01",
+    batchRef: "SET-20260917-RJHI-01",
+    bankName: "Al Rajhi Bank (Direct Integration)",
+    partnerBankCode: "RJHI",
+    totalMerchants: 48,
+    totalGrossSar: 1842500.00,
+    totalMdrDeductionSar: 22110.00,
+    totalNetDisbursedSar: 1820390.00,
+    status: "completed",
+    cutoffTime: "Today 04:00 AM",
+    executedAt: "Today 04:15 AM"
+  },
+  {
+    id: "set_bat_02",
+    batchRef: "SET-20260917-NCBK-01",
+    bankName: "Saudi National Bank (SNB Sarie Core)",
+    partnerBankCode: "NCBK",
+    totalMerchants: 32,
+    totalGrossSar: 1240800.00,
+    totalMdrDeductionSar: 14889.60,
+    totalNetDisbursedSar: 1225910.40,
+    status: "completed",
+    cutoffTime: "Today 04:00 AM",
+    executedAt: "Today 04:18 AM"
+  },
+  {
+    id: "set_bat_03",
+    batchRef: "SET-20260917-RIBL-02",
+    bankName: "Riyad Bank (Midday Batch)",
+    partnerBankCode: "RIBL",
+    totalMerchants: 19,
+    totalGrossSar: 685400.00,
+    totalMdrDeductionSar: 8224.80,
+    totalNetDisbursedSar: 677175.20,
+    status: "scheduled",
+    cutoffTime: "Today 02:00 PM"
+  }
+];
+
 export const mockMerchants: Merchant[] = [
   {
     id: "mch_101",

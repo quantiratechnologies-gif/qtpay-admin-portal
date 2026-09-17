@@ -5,7 +5,11 @@ import {
   RotateCcw,
   SmartphoneNfc,
   ArrowDownLeft,
-  Eye
+  Eye,
+  QrCode,
+  ShieldCheck,
+  Download,
+  FileCheck
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -63,10 +67,10 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
         <div className="flex items-center gap-2">
           <ReceiptText className="h-4 w-4 text-[#7FE87F]" />
           <h2 className="text-base font-extrabold text-white">
-            {isAr ? "سجل المعاملات" : "Transactions"}
+            {isAr ? "سجل المعاملات والعمليات الحية" : "Live Transactions & Audit Ledger"}
           </h2>
           <Badge variant="success" className="text-[10px] uppercase font-bold">
-            <span className="live-indicator w-1 h-1" /> LIVE
+            <span className="live-indicator w-1 h-1" /> LIVE STREAM
           </Badge>
         </div>
 
@@ -120,10 +124,10 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
                 <div className="text-[10px] text-[#7FE87F]">➔ {tx.receiverName}</div>
               </TableCell>
               <TableCell>
-                <span className="font-extrabold text-white text-xs">SAR {tx.amount.toFixed(2)}</span>
+                <span className="font-extrabold text-white text-xs font-mono">SAR {tx.amount.toFixed(2)}</span>
               </TableCell>
               <TableCell>
-                <span className="font-bold text-amber-400 text-xs">SAR {tx.platformMdrSar.toFixed(2)}</span>
+                <span className="font-bold text-amber-400 text-xs font-mono">SAR {tx.platformMdrSar.toFixed(2)}</span>
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-1.5 text-xs font-bold uppercase">
@@ -143,9 +147,9 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedTx(tx)}
-                  className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1"
+                  className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1 text-slate-200"
                 >
-                  <Eye className="h-3 w-3" />
+                  <Eye className="h-3 w-3 text-[#7FE87F]" />
                   <span>{isAr ? "تفاصيل" : "Inspect"}</span>
                 </Button>
               </TableCell>
@@ -154,38 +158,62 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
         </TableBody>
       </Table>
 
-      {/* Inspect Dialog */}
+      {/* Inspect & ZATCA Compliance Dialog */}
       <Dialog open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
         {selectedTx && (
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Order: {selectedTx.orderRef}</DialogTitle>
+              <div className="flex items-center justify-between">
+                <DialogTitle>Order: {selectedTx.orderRef}</DialogTitle>
+                <Badge variant="success" className="text-[10px]">ZATCA PHASE 2 VERIFIED</Badge>
+              </div>
               <DialogDescription>
-                Transaction ledger audit details
+                Transaction ledger audit details & cryptographic invoice receipt
               </DialogDescription>
             </DialogHeader>
 
-            <div className="bg-[#10182A] rounded-lg p-3 grid grid-cols-2 gap-2.5 text-xs border border-slate-800/80 my-1">
-              <div>
-                <span className="text-[10px] text-slate-400">Gross Processed</span>
-                <div className="text-sm font-extrabold text-[#7FE87F]">SAR {selectedTx.amount.toFixed(2)}</div>
+            <div className="space-y-3 py-1">
+              <div className="bg-[#10182A] rounded-lg p-3 grid grid-cols-2 gap-2.5 text-xs border border-slate-800/80">
+                <div>
+                  <span className="text-[10px] text-slate-400">Gross Processed</span>
+                  <div className="text-sm font-extrabold text-[#7FE87F] font-mono">SAR {selectedTx.amount.toFixed(2)}</div>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400">MDR Take Revenue</span>
+                  <div className="text-sm font-extrabold text-amber-400 font-mono">SAR {selectedTx.platformMdrSar.toFixed(2)}</div>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400">Sarie Instant UTR</span>
+                  <div className="font-mono font-semibold text-white text-[11px] truncate">{selectedTx.sarieUtr || "N/A"}</div>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400">mada Gateway RRN</span>
+                  <div className="font-mono font-semibold text-white text-[11px] truncate">{selectedTx.madaRrn || "N/A"}</div>
+                </div>
               </div>
-              <div>
-                <span className="text-[10px] text-slate-400">MDR Take Revenue</span>
-                <div className="text-sm font-extrabold text-amber-400">SAR {selectedTx.platformMdrSar.toFixed(2)}</div>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400">Sarie Instant UTR</span>
-                <div className="font-mono font-semibold text-white truncate">{selectedTx.sarieUtr || "N/A"}</div>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-400">mada Gateway RRN</span>
-                <div className="font-mono font-semibold text-white truncate">{selectedTx.madaRrn || "N/A"}</div>
+
+              {/* ZATCA Tax & Compliance Breakdown */}
+              <div className="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg space-y-1.5 text-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                    <ShieldCheck className="h-4 w-4" />
+                    <span>ZATCA Simplified Tax Invoice</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-slate-400">VAT: 15%</span>
+                </div>
+                <div className="flex justify-between text-[11px] text-slate-300 pt-1">
+                  <span>Net Taxable Base:</span>
+                  <span className="font-mono">SAR {(selectedTx.amount / 1.15).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-[11px] text-slate-300">
+                  <span>Calculated VAT (15%):</span>
+                  <span className="font-mono">SAR {(selectedTx.amount - selectedTx.amount / 1.15).toFixed(2)}</span>
+                </div>
               </div>
             </div>
 
-            {selectedTx.status !== "refunded" && (
-              <DialogFooter>
+            <DialogFooter className="gap-2 sm:gap-0">
+              {selectedTx.status !== "refunded" && (
                 <Button
                   variant="destructive"
                   size="sm"
@@ -199,8 +227,8 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
                   <RotateCcw className="h-3.5 w-3.5" />
                   <span>{isAr ? "استرجاع فوري (Refund)" : "Execute Refund"}</span>
                 </Button>
-              </DialogFooter>
-            )}
+              )}
+            </DialogFooter>
           </DialogContent>
         )}
       </Dialog>
