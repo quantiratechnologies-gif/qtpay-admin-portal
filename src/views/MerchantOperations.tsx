@@ -87,13 +87,13 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
               placeholder={isAr ? "بحث..." : "Search..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 h-8 text-xs bg-[#121A2D] border-[var(--border-subtle)]"
+              className="pl-8 h-8 text-xs bg-[#10182A] border-slate-800/80"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-8 px-2 text-xs bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg text-white outline-none cursor-pointer"
+            className="h-8 px-2 text-xs bg-[#10182A] border border-slate-800/80 rounded-lg text-slate-200 outline-none cursor-pointer"
           >
             <option value="all">{isAr ? "الكل" : "All"}</option>
             <option value="pending_kyb">{isAr ? "معلق" : "Pending"}</option>
@@ -136,11 +136,11 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                 <div className="font-mono text-[10px] text-slate-400">{m.vatNumber}</div>
               </TableCell>
               <TableCell>
-                <div className="font-semibold text-xs">{m.ownerName}</div>
+                <div className="font-semibold text-xs text-slate-200">{m.ownerName}</div>
                 <div className="text-[10px] text-slate-400">{m.mobile}</div>
               </TableCell>
               <TableCell>
-                <div className="font-semibold text-xs">{m.settlementBank}</div>
+                <div className="font-semibold text-xs text-slate-200">{m.settlementBank}</div>
                 <div className="font-mono text-[10px] text-slate-400">{m.settlementIban.slice(0, 14)}...</div>
               </TableCell>
               <TableCell>
@@ -157,7 +157,7 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedMerchant(m)}
-                  className="h-7 px-2.5 text-xs bg-[#121A2D] hover:bg-[#1A243B] gap-1"
+                  className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1"
                 >
                   <Eye className="h-3 w-3" />
                   <span>{isAr ? "عرض" : "View"}</span>
@@ -188,19 +188,19 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg p-2.5 space-y-0.5">
+                <div className="bg-[#10182A] border border-slate-800/80 rounded-lg p-2.5 space-y-0.5">
                   <span className="text-[10px] text-slate-400">CR Number</span>
                   <div className="font-mono font-bold text-sky-400">{selectedMerchant.crNumber}</div>
                 </div>
-                <div className="bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg p-2.5 space-y-0.5">
+                <div className="bg-[#10182A] border border-slate-800/80 rounded-lg p-2.5 space-y-0.5">
                   <span className="text-[10px] text-slate-400">VAT Number</span>
                   <div className="font-mono font-bold text-white">{selectedMerchant.vatNumber}</div>
                 </div>
-                <div className="bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg p-2.5 space-y-0.5">
+                <div className="bg-[#10182A] border border-slate-800/80 rounded-lg p-2.5 space-y-0.5">
                   <span className="text-[10px] text-slate-400">IBAN</span>
                   <div className="font-mono font-bold text-white text-[10px]">{selectedMerchant.settlementIban}</div>
                 </div>
-                <div className="bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg p-2.5 space-y-0.5">
+                <div className="bg-[#10182A] border border-slate-800/80 rounded-lg p-2.5 space-y-0.5">
                   <span className="text-[10px] text-slate-400">Active Terminals</span>
                   <div className="font-bold text-white">{selectedMerchant.activeTerminals} Devices</div>
                 </div>

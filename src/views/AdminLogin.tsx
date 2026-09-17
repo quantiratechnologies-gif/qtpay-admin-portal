@@ -56,8 +56,8 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, lang }) 
   };
 
   return (
-    <div className="w-screen min-h-screen bg-[#080C14] bg-[radial-gradient(circle_at_50%_20%,rgba(127,232,127,0.07)_0%,transparent_60%)] flex items-center justify-center p-5 text-white font-sans">
-      <Card className="w-full max-w-[400px] bg-[#0F1626] border border-white/10 rounded-2xl p-6 shadow-2xl space-y-4">
+    <div className="w-screen min-h-screen bg-[#080C14] bg-[radial-gradient(circle_at_50%_20%,rgba(127,232,127,0.06)_0%,transparent_60%)] flex items-center justify-center p-5 text-white font-sans">
+      <Card className="w-full max-w-[390px] bg-[#0E1526] border border-slate-800/80 rounded-2xl p-6 shadow-2xl space-y-4">
         {/* Brand Header */}
         <CardHeader className="text-center space-y-2 pb-2">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7FE87F] to-[#059669] flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(127,232,127,0.35)] text-[#080C14] font-black text-xl">
@@ -92,7 +92,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, lang }) 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@qtpay.sa"
-                  className="pl-9 h-10 text-xs bg-[#121A2D] border-[var(--border-subtle)] focus:border-[#7FE87F]"
+                  className="pl-9 h-10 text-xs bg-[#10182A] border-slate-800/80 focus:border-[#7FE87F]/50"
                 />
               </div>
             </div>
@@ -109,7 +109,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, lang }) 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="pl-9 pr-9 h-10 text-xs bg-[#121A2D] border-[var(--border-subtle)] focus:border-[#7FE87F]"
+                  className="pl-9 pr-9 h-10 text-xs bg-[#10182A] border-slate-800/80 focus:border-[#7FE87F]/50"
                 />
                 <button
                   type="button"

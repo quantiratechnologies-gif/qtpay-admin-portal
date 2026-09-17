@@ -6,35 +6,46 @@
 
 @layer base {
   :root {
-    --background: 222 47% 6%;
+    --background: 224 71% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222 43% 11%;
+    --card: 222 47% 7%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 43% 11%;
+    --popover: 222 47% 7%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 120 70% 70%;
     --primary-foreground: 222 47% 6%;
 
-    --secondary: 217 33% 17%;
+    --secondary: 217 33% 12%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 33% 17%;
+    --muted: 217 33% 12%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 217 33% 17%;
+    --accent: 217 33% 12%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --border: 217 33% 15%;
+    --input: 217 33% 15%;
     --ring: 120 70% 70%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
+
+    /* Theme tokens */
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.15);
+    --bg-page: #080C14;
+    --bg-card: #0E1526;
+    --bg-card-hover: #162038;
+    --brand-green: #7FE87F;
+    --brand-green-ink: #080C14;
+    --text-muted: #64748B;
+    --text-secondary: #94A3B8;
 
     --font-en: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-ar: "IBM Plex Sans Arabic", "Inter", sans-serif;
@@ -42,18 +53,30 @@
 }
 
 * {
-  border-color: hsl(var(--border));
+  box-sizing: border-box;
   font-family: var(--font-en);
 }
 
 body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background-color: #080C14;
+  color: #F8FAFC;
   overflow-x: hidden;
+  margin: 0;
 }
 
 body.rtl * {
   font-family: var(--font-ar);
+}
+
+.admin-card {
+  background-color: #0E1526;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.admin-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* Custom Scrollbars */
@@ -62,7 +85,7 @@ body.rtl * {
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: hsl(var(--background));
+  background: #080C14;
 }
 ::-webkit-scrollbar-thumb {
   background: #1E293B;

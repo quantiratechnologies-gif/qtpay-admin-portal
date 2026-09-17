@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
   const isAr = lang === "ar";
 
   return (
-    <header className="h-14 bg-[#0A0F1D] border-b border-[var(--border-subtle)] px-5 flex items-center justify-between sticky top-0 z-30">
+    <header className="h-14 bg-[#0A0F1D] border-b border-slate-800/80 px-5 flex items-center justify-between sticky top-0 z-30">
       {/* Search Input */}
       <div className="relative w-64">
         <Search
@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
         <Input
           type="text"
           placeholder={isAr ? "بحث سريع (CR, UTR)..." : "Quick Search..."}
-          className={`h-8 text-xs bg-[#121A2D] border-[var(--border-subtle)] focus:border-[#7FE87F] ${
+          className={`h-8 text-xs bg-[#10182A] border-slate-800/80 focus:border-[#7FE87F]/50 ${
             isAr ? "pr-8 pl-2.5" : "pl-8 pr-2.5"
           }`}
         />
@@ -70,7 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={onRefreshData}
           disabled={isRefreshing}
           title={isAr ? "تحديث البيانات" : "Refresh Data"}
-          className="h-8 w-8 bg-[#121A2D] border-[var(--border-subtle)] text-slate-400 hover:text-white"
+          className="h-8 w-8 bg-[#10182A] border-slate-800/80 text-slate-400 hover:text-white"
         >
           <RefreshCw className={`h-3.5 w-3.5 text-[#7FE87F] ${isRefreshing ? "animate-spin" : ""}`} />
         </Button>
@@ -92,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Button
               variant="outline"
               size="sm"
-              className="h-8 px-2 bg-[#121A2D] border-[var(--border-subtle)] text-white hover:bg-[#1A243B] gap-2"
+              className="h-8 px-2 bg-[#10182A] border-slate-800/80 text-white hover:bg-slate-800 gap-2"
             >
               <div className="w-5 h-5 rounded bg-[#7FE87F] text-[#080C14] font-extrabold flex items-center justify-center text-[10px]">
                 {currentUser.avatar}
@@ -111,7 +111,7 @@ export const Header: React.FC<HeaderProps> = ({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={onLogout}
-              className="text-red-400 focus:bg-red-500/10 focus:text-red-400 font-semibold gap-2 py-2"
+              className="text-red-400 focus:bg-red-500/10 focus:text-red-400 font-semibold gap-2 py-2 cursor-pointer"
             >
               <LogOut className="h-3.5 w-3.5" />
               <span>{isAr ? "تسجيل الخروج" : "Sign Out"}</span>

@@ -79,13 +79,13 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
               placeholder={isAr ? "بحث بالرقم المرجعي..." : "Search Ref or UTR..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 h-8 text-xs bg-[#121A2D] border-[var(--border-subtle)]"
+              className="pl-8 h-8 text-xs bg-[#10182A] border-slate-800/80"
             />
           </div>
           <select
             value={channelFilter}
             onChange={(e) => setChannelFilter(e.target.value)}
-            className="h-8 px-2 text-xs bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg text-white outline-none cursor-pointer"
+            className="h-8 px-2 text-xs bg-[#10182A] border border-slate-800/80 rounded-lg text-slate-200 outline-none cursor-pointer"
           >
             <option value="all">{isAr ? "كل القنوات" : "All Rails"}</option>
             <option value="pos_softpos">POS / SoftPOS</option>
@@ -143,7 +143,7 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedTx(tx)}
-                  className="h-7 px-2.5 text-xs bg-[#121A2D] hover:bg-[#1A243B] gap-1"
+                  className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1"
                 >
                   <Eye className="h-3 w-3" />
                   <span>{isAr ? "تفاصيل" : "Inspect"}</span>
@@ -165,7 +165,7 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="bg-[#121A2D] rounded-lg p-3 grid grid-cols-2 gap-2.5 text-xs border border-[var(--border-subtle)] my-1">
+            <div className="bg-[#10182A] rounded-lg p-3 grid grid-cols-2 gap-2.5 text-xs border border-slate-800/80 my-1">
               <div>
                 <span className="text-[10px] text-slate-400">Gross Processed</span>
                 <div className="text-sm font-extrabold text-[#7FE87F]">SAR {selectedTx.amount.toFixed(2)}</div>

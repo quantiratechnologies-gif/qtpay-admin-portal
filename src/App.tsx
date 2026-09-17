@@ -24,17 +24,8 @@ import type {
 } from "./types";
 
 export function App() {
-  const [currentUser, setCurrentUser] = useState<AdminUser | null>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("qtpay_admin_session");
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch(e) {}
-      }
-    }
-    return null;
-  });
+  // Always start unauthenticated on load to show login page
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
 
   const [currentTab, setCurrentTab] = useState<NavTab>("dashboard");
   const [lang, setLang] = useState<"en" | "ar">("en");
@@ -72,12 +63,10 @@ export function App() {
 
   const handleLoginSuccess = (user: AdminUser) => {
     setCurrentUser(user);
-    localStorage.setItem("qtpay_admin_session", JSON.stringify(user));
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
-    localStorage.removeItem("qtpay_admin_session");
   };
 
   // If not logged in, render Admin Login screen!
@@ -120,7 +109,7 @@ export function App() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "var(--bg-page)" }}>
+    <div className="flex min-h-screen bg-[#080C14] text-slate-100">
       {/* Sidebar */}
       <Sidebar
         currentTab={currentTab}
@@ -129,7 +118,7 @@ export function App() {
       />
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <div className="flex-1 flex flex-col min-w-0">
         <Header
           currentUser={currentUser}
           onLogout={handleLogout}
@@ -139,7 +128,7 @@ export function App() {
           isRefreshing={isRefreshing}
         />
 
-        <main style={{ flex: 1, padding: "20px 24px", overflowY: "auto" }}>
+        <main className="flex-1 p-5 lg:p-6 overflow-y-auto">
           {currentTab === "dashboard" && (
             <ExecutiveDashboard
               transactions={transactions}

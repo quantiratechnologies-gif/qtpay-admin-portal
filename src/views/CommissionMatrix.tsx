@@ -79,7 +79,7 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
                       step="0.05"
                       value={rateInput}
                       onChange={(e) => setRateInput(parseFloat(e.target.value))}
-                      className="w-20 h-7 text-xs bg-[#121A2D] border-[var(--border-subtle)]"
+                      className="w-20 h-7 text-xs bg-[#10182A] border-slate-800/80"
                     />
                   ) : (
                     <span className="font-extrabold text-[#7FE87F] text-xs">
@@ -94,10 +94,10 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
                       step="0.10"
                       value={fixedInput}
                       onChange={(e) => setFixedInput(parseFloat(e.target.value))}
-                      className="w-20 h-7 text-xs bg-[#121A2D] border-[var(--border-subtle)]"
+                      className="w-20 h-7 text-xs bg-[#10182A] border-slate-800/80"
                     />
                   ) : (
-                    <span className="font-semibold text-xs">SAR {tier.fixedFeeSar.toFixed(2)}</span>
+                    <span className="font-semibold text-xs text-slate-200">SAR {tier.fixedFeeSar.toFixed(2)}</span>
                   )}
                 </TableCell>
                 <TableCell>
@@ -121,7 +121,7 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
                       variant="outline"
                       size="sm"
                       onClick={() => startEdit(tier)}
-                      className="h-7 px-2.5 text-xs bg-[#121A2D] hover:bg-[#1A243B] gap-1"
+                      className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1"
                     >
                       <Settings2 className="h-3 w-3" />
                       <span>{isAr ? "تعديل" : "Edit"}</span>

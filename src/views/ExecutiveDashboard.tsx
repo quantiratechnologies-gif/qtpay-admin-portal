@@ -8,7 +8,7 @@ import {
   SmartphoneNfc,
   ArrowDownLeft
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { StatusBadge } from "../components/Badge";
 import type { PlatformTransaction, Merchant, RiskAlert } from "../types";
@@ -127,7 +127,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
           {transactions.slice(0, 5).map((tx) => (
             <div
               key={tx.id}
-              className="flex items-center justify-between p-2.5 bg-[#121A2D] rounded-lg border border-[var(--border-subtle)] hover:border-slate-700 transition-colors"
+              className="flex items-center justify-between p-2.5 bg-[#10182A] rounded-lg border border-slate-800/80 hover:border-slate-700 transition-colors"
             >
               <div className="flex items-center gap-2.5">
                 <div

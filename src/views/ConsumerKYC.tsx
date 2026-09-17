@@ -71,7 +71,7 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
             placeholder={isAr ? "بحث..." : "Search User..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 h-8 text-xs bg-[#121A2D] border-[var(--border-subtle)]"
+            className="pl-8 h-8 text-xs bg-[#10182A] border-slate-800/80"
           />
         </div>
       </div>
@@ -100,7 +100,7 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
                 <span className="font-mono text-xs text-sky-400 font-semibold">{c.nationalId}</span>
               </TableCell>
               <TableCell>
-                <div className="font-semibold text-xs">{c.mobile}</div>
+                <div className="font-semibold text-xs text-slate-200">{c.mobile}</div>
                 <div className="text-[10px] text-[#7FE87F] font-mono">{c.sarieUpiId}</div>
               </TableCell>
               <TableCell>

@@ -8,47 +8,29 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Badge({
   className,
   variant = "default",
-  style,
   ...props
 }: BadgeProps) {
-  let bg = "rgba(127, 232, 127, 0.15)";
-  let color = "#7FE87F";
-  let border = "1px solid rgba(127, 232, 127, 0.3)";
+  let variantStyles = "bg-[#7FE87F]/15 text-[#7FE87F] border border-[#7FE87F]/30";
 
   if (variant === "secondary") {
-    bg = "rgba(255, 255, 255, 0.08)";
-    color = "#94A3B8";
-    border = "1px solid var(--border-subtle)";
+    variantStyles = "bg-slate-800/60 text-slate-300 border border-slate-700/60";
   } else if (variant === "destructive") {
-    bg = "rgba(239, 68, 68, 0.15)";
-    color = "#EF4444";
-    border = "1px solid rgba(239, 68, 68, 0.3)";
+    variantStyles = "bg-red-500/15 text-red-400 border border-red-500/30";
   } else if (variant === "warning") {
-    bg = "rgba(245, 158, 11, 0.15)";
-    color = "#F59E0B";
-    border = "1px solid rgba(245, 158, 11, 0.3)";
+    variantStyles = "bg-amber-500/15 text-amber-400 border border-amber-500/30";
   } else if (variant === "success") {
-    bg = "rgba(16, 185, 129, 0.15)";
-    color = "#10B981";
-    border = "1px solid rgba(16, 185, 129, 0.3)";
+    variantStyles = "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
+  } else if (variant === "outline") {
+    variantStyles = "bg-transparent text-slate-300 border border-slate-700";
   }
 
   return (
     <div
-      className={cn("inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold", className)}
-      style={{
-        backgroundColor: bg,
-        color,
-        border,
-        fontSize: "11px",
-        fontWeight: 700,
-        padding: "2px 6px",
-        borderRadius: "6px",
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "4px",
-        ...style
-      }}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wide",
+        variantStyles,
+        className
+      )}
       {...props}
     />
   );

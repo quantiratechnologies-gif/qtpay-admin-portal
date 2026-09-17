@@ -31,56 +31,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside style={{
-      width: "240px",
-      minHeight: "100vh",
-      backgroundColor: "#0A0F1D",
-      borderRight: isAr ? "none" : "1px solid var(--border-subtle)",
-      borderLeft: isAr ? "1px solid var(--border-subtle)" : "none",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      flexShrink: 0,
-      zIndex: 40
-    }}>
+    <aside className={`w-60 min-h-screen bg-[#0A0F1D] flex flex-col justify-between flex-shrink-0 z-40 ${
+      isAr ? "border-l border-slate-800/80" : "border-r border-slate-800/80"
+    }`}>
       <div>
         {/* Brand Header */}
-        <div style={{
-          padding: "20px 18px",
-          borderBottom: "1px solid var(--border-subtle)",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px"
-        }}>
-          <div style={{
-            width: "36px",
-            height: "36px",
-            borderRadius: "10px",
-            background: "linear-gradient(135deg, #7FE87F, #059669)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#080C14",
-            fontWeight: 900,
-            fontSize: "18px",
-            boxShadow: "0 0 16px rgba(127, 232, 127, 0.35)"
-          }}>
+        <div className="p-5 border-b border-slate-800/80 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7FE87F] to-[#059669] flex items-center justify-center text-[#080C14] font-black text-lg shadow-[0_0_16px_rgba(127,232,127,0.35)]">
             QP
           </div>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ fontSize: "16px", fontWeight: 800, color: "#FFFFFF" }}>
+            <div className="flex items-center gap-2">
+              <span className="text-base font-extrabold text-white tracking-tight">
                 QTPay
               </span>
-              <span style={{
-                fontSize: "9.5px",
-                fontWeight: 800,
-                padding: "1px 5px",
-                borderRadius: "4px",
-                background: "rgba(127, 232, 127, 0.15)",
-                color: "#7FE87F",
-                border: "1px solid rgba(127, 232, 127, 0.3)"
-              }}>
+              <span className="text-[9.5px] font-extrabold px-1.5 py-0.5 rounded bg-[#7FE87F]/15 text-[#7FE87F] border border-[#7FE87F]/30">
                 ADMIN
               </span>
             </div>
@@ -88,7 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Navigation List */}
-        <nav style={{ padding: "14px 10px", display: "flex", flexDirection: "column", gap: "3px" }}>
+        <nav className="p-3 flex flex-col gap-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentTab === item.id;
@@ -96,41 +61,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={item.id}
                 onClick={() => onSelectTab(item.id)}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "10px 12px",
-                  borderRadius: "10px",
-                  border: "none",
-                  background: isActive ? "rgba(127, 232, 127, 0.12)" : "transparent",
-                  color: isActive ? "#7FE87F" : "var(--text-secondary)",
-                  fontWeight: isActive ? 700 : 500,
-                  fontSize: "13.5px",
-                  cursor: "pointer",
-                  transition: "all 0.15s ease",
-                  textAlign: isAr ? "right" : "left"
-                }}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border transition-all text-xs font-semibold cursor-pointer ${
+                  isActive
+                    ? "bg-[#7FE87F]/10 border-[#7FE87F]/30 text-[#7FE87F]"
+                    : "bg-transparent border-transparent text-slate-400 hover:text-white hover:bg-slate-800/40"
+                } ${isAr ? "text-right" : "text-left"}`}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <Icon size={17} color={isActive ? "#7FE87F" : "#94A3B8"} />
+                <div className="flex items-center gap-2.5">
+                  <Icon className={`h-4 w-4 ${isActive ? "text-[#7FE87F]" : "text-slate-400"}`} />
                   <span>{isAr ? item.labelAr : item.labelEn}</span>
                 </div>
                 {item.badge && (
-                  <span style={{
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    padding: "1px 6px",
-                    borderRadius: "10px",
-                    background: item.badge === "Live" ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.2)",
-                    color: item.badge === "Live" ? "#10B981" : "#F59E0B",
-                    border: item.badge === "Live" ? "1px solid rgba(16, 185, 129, 0.4)" : "1px solid rgba(245, 158, 11, 0.4)",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "3px"
-                  }}>
-                    {item.badge === "Live" && <span className="live-indicator" style={{ width: "4px", height: "4px" }} />}
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1 border ${
+                    item.badge === "Live"
+                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                      : "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                  }`}>
+                    {item.badge === "Live" && <span className="live-indicator w-1 h-1" />}
                     {item.badge}
                   </span>
                 )}
@@ -141,14 +88,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* System Status Footer */}
-      <div style={{ padding: "14px 18px", borderTop: "1px solid var(--border-subtle)", background: "rgba(0,0,0,0.15)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span className="live-indicator" style={{ width: "6px", height: "6px" }} />
-          <span style={{ fontSize: "11px", fontWeight: 700, color: "#10B981" }}>
+      <div className="p-4 border-t border-slate-800/80 bg-black/20">
+        <div className="flex items-center gap-2">
+          <span className="live-indicator w-1.5 h-1.5" />
+          <span className="text-xs font-bold text-emerald-400">
             Central Node Active
           </span>
         </div>
-        <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
+        <div className="text-[10px] text-slate-500 mt-1">
           v1.0.0 • QTPay Admin Engine
         </div>
       </div>
