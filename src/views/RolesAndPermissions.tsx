@@ -175,7 +175,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
                     {role.id.toUpperCase().replace(/_/g, " ")}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-slate-400 font-mono">
+                <div className="flex items-center gap-1 text-xs text-slate-400 font-semibold tabular-nums">
                   <Users className="h-3.5 w-3.5" />
                   <span>{teamMembers.filter((m) => m.role === role.id).length}</span>
                 </div>
@@ -241,7 +241,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
                   <span className="text-xs text-slate-300 font-medium">{member.lastLogin}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="font-mono text-xs text-sky-400">{member.ipAddress}</span>
+                  <span className="text-xs font-semibold text-sky-400 tabular-nums">{member.ipAddress}</span>
                 </TableCell>
                 <TableCell>
                   <Badge

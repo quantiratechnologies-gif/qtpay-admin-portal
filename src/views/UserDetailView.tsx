@@ -19,7 +19,15 @@ import {
   Check,
   Zap,
   ArrowDownLeft,
-  ArrowUpRight
+  ArrowUpRight,
+  Sparkles,
+  Phone,
+  Mail,
+  Fingerprint,
+  Calendar,
+  Activity,
+  AlertTriangle,
+  Globe
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -86,13 +94,13 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
   return (
     <div className="space-y-4">
       {/* Top Breadcrumb & Navigation */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
+      <div className="flex items-center justify-between flex-wrap gap-2.5">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={onBack}
-            className="h-8 px-2.5 bg-[#10182A] border-slate-800/80 text-slate-300 hover:text-white gap-1.5"
+            className="h-8 px-3 bg-[#10182A] border-slate-800/80 text-slate-300 hover:text-white gap-1.5"
           >
             <ArrowLeft className={`h-3.5 w-3.5 ${isAr ? "rotate-180" : ""}`} />
             <span>{isAr ? "العودة للمستخدمين" : "Back to Users"}</span>
@@ -106,9 +114,9 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
             variant="outline"
             size="sm"
             onClick={() => showNotice(`Official audit dossier for ${user.fullName} exported to CSV`)}
-            className="h-8 px-2.5 bg-[#10182A] border-slate-800/80 text-slate-300 hover:text-white gap-1.5 text-xs"
+            className="h-8 px-3 bg-[#10182A] border-slate-800/80 text-slate-300 hover:text-white gap-1.5 text-xs"
           >
-            <Download className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5 text-sky-400" />
             <span>{isAr ? "تصدير الملف" : "Export Dossier"}</span>
           </Button>
 
@@ -119,16 +127,16 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
               onToggleFreeze(user.id);
               showNotice(`Wallet ${user.isFrozen ? "unfrozen" : "frozen"} for ${user.fullName}`);
             }}
-            className="h-8 px-2.5 text-xs gap-1.5 font-bold"
+            className="h-8 px-3 text-xs gap-1.5 font-bold"
           >
-            {user.isFrozen ? <Unlock className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}
+            {user.isFrozen ? <Unlock className="h-3.5 w-3.5 text-black" /> : <Lock className="h-3.5 w-3.5" />}
             <span>{user.isFrozen ? (isAr ? "فك التجميد" : "Unfreeze Wallet") : (isAr ? "تجميد الحساب" : "Freeze Account")}</span>
           </Button>
         </div>
       </div>
 
       {notice && (
-        <div className="p-2.5 bg-emerald-500/15 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs font-semibold flex items-center gap-2">
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold flex items-center gap-2.5">
           <CheckCircle2 className="h-4 w-4" />
           <span>{notice}</span>
         </div>
@@ -137,8 +145,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
       {/* Main Header Dossier Card */}
       <Card className="p-5 space-y-4">
         <div className="flex items-start justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7FE87F]/20 to-emerald-500/10 border border-[#7FE87F]/30 flex items-center justify-center text-[#7FE87F] font-black text-base">
+          <div className="flex items-center gap-3.5">
+            <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-[#00FF24]/20 to-emerald-500/10 border border-[#00FF24]/30 flex items-center justify-center text-[#00FF24] font-black text-lg p-3">
               {user.fullName.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div>
@@ -156,23 +164,25 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                   <Badge variant="destructive">WALLET FROZEN</Badge>
                 )}
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Sarie Alias: <span className="font-mono text-[#7FE87F] font-bold">{user.sarieUpiId}</span> • Joined {user.joinedAt}
+              <p className="text-xs text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
+                <span>Sarie Alias:</span>
+                <span className="font-semibold text-[#00FF24] bg-[#00FF24]/10 px-2 py-0.5 rounded border border-[#00FF24]/20">{user.sarieUpiId}</span>
+                <span>• Joined {user.joinedAt}</span>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 font-mono">
+          <div className="flex items-center gap-4">
             <div className="text-right">
-              <span className="text-[10px] text-slate-400 block uppercase">Wallet Balance</span>
-              <span className="text-lg font-extrabold text-[#7FE87F]">
+              <span className="text-[10px] text-slate-400 block uppercase font-medium">Wallet Balance</span>
+              <span className="text-xl font-extrabold text-[#00FF24] tabular-nums">
                 SAR {user.walletBalanceSar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </span>
             </div>
-            <div className="h-8 w-px bg-slate-800" />
+            <div className="h-9 w-px bg-slate-800" />
             <div className="text-right">
-              <span className="text-[10px] text-slate-400 block uppercase">Daily Limit</span>
-              <span className="text-lg font-extrabold text-sky-400">
+              <span className="text-[10px] text-slate-400 block uppercase font-medium">Daily Limit</span>
+              <span className="text-xl font-extrabold text-sky-400 tabular-nums">
                 SAR {(user.dailyLimitSar || 20000).toLocaleString()}
               </span>
             </div>
@@ -193,9 +203,9 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
                   isActive
-                    ? "bg-[#7FE87F] text-[#080C14]"
+                    ? "bg-[#00FF24] text-black shadow-md shadow-[#00FF24]/10"
                     : "text-slate-400 hover:text-white hover:bg-slate-800/50"
                 }`}
               >
@@ -209,76 +219,103 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Tab 1: Profile & KYC Limits */}
       {activeTab === "profile" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Identity Info Card */}
-          <Card className="p-4 space-y-3">
-            <div className="flex items-center justify-between">
+          <Card className="p-5 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-[#7FE87F]" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Nafath Biometric & Absher Verification
-                </h3>
+                <div className="p-1.5 rounded-lg bg-[#00FF24]/10 text-[#00FF24]">
+                  <ShieldCheck className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                    Nafath Biometric & Absher Verification
+                  </h3>
+                  <p className="text-[11px] text-slate-400">Verified against Saudi National Information Center</p>
+                </div>
               </div>
-              <Badge variant="success" className="text-[10px]">TIER 2 VERIFIED</Badge>
+              <Badge variant="success" className="text-[10px] font-bold">TIER 2 VERIFIED</Badge>
             </div>
 
-            <div className="space-y-2.5 text-xs pt-1">
-              <div className="flex justify-between items-center py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">Saudi National ID / Iqama</span>
-                <div className="flex items-center gap-1.5 font-mono text-sky-400 font-bold">
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
+                <span className="text-slate-400 flex items-center gap-2">
+                  <Fingerprint className="h-3.5 w-3.5 text-sky-400" />
+                  Saudi National ID / Iqama
+                </span>
+                <div className="flex items-center gap-2 text-sky-400 font-bold tabular-nums">
                   <span>{user.nationalId}</span>
                   <button onClick={() => handleCopy(user.nationalId, "nid")} className="text-slate-500 hover:text-white">
-                    {copiedField === "nid" ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+                    {copiedField === "nid" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">Registered Mobile Number</span>
-                <span className="font-semibold text-white">{user.mobile}</span>
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
+                <span className="text-slate-400 flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 text-emerald-400" />
+                  Registered Mobile Number
+                </span>
+                <span className="font-semibold text-white tabular-nums">{user.mobile}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">Email Address</span>
-                <span className="text-slate-300 font-mono">{user.email}</span>
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
+                <span className="text-slate-400 flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 text-amber-400" />
+                  Email Address
+                </span>
+                <span className="text-slate-300 font-medium">{user.email}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">Sarie Instant Pay Alias</span>
-                <span className="font-mono font-bold text-[#7FE87F]">{user.sarieUpiId}</span>
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
+                <span className="text-slate-400 flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5 text-[#00FF24]" />
+                  Sarie Instant Pay Alias
+                </span>
+                <span className="font-bold text-[#00FF24]">{user.sarieUpiId}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1">
-                <span className="text-slate-400">Nafath SSO Verification</span>
-                <span className="text-xs text-emerald-400 font-medium">{user.nafathVerifiedAt || "Verified via Absher"}</span>
+              <div className="flex justify-between items-center py-1.5">
+                <span className="text-slate-400 flex items-center gap-2">
+                  <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                  Nafath SSO Verification
+                </span>
+                <span className="text-xs text-emerald-400 font-semibold">{user.nafathVerifiedAt || "Verified via Absher"}</span>
               </div>
             </div>
           </Card>
 
           {/* Transfer Limits & Actions Card */}
-          <Card className="p-4 space-y-3">
-            <div className="flex items-center justify-between">
+          <Card className="p-5 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
               <div className="flex items-center gap-2">
-                <Sliders className="h-4 w-4 text-sky-400" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Transfer Limits & Administrative Actions
-                </h3>
+                <div className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400">
+                  <Sliders className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                    Transfer Limits & Administrative Actions
+                  </h3>
+                  <p className="text-[11px] text-slate-400">Daily threshold and security parameters</p>
+                </div>
               </div>
-              <span className="text-[11px] font-mono text-[#7FE87F]">SAMA Regulated</span>
+              <Badge variant="outline" className="text-[10px] text-[#00FF24] border-[#00FF24]/30 bg-[#00FF24]/5">
+                SAMA Regulated
+              </Badge>
             </div>
 
-            <div className="space-y-3 text-xs pt-1">
-              <div className="space-y-1">
-                <div className="flex justify-between">
+            <div className="space-y-4 text-xs">
+              <div className="space-y-1.5">
+                <div className="flex justify-between font-medium">
                   <span className="text-slate-400">Daily Transfer Limit Usage:</span>
-                  <span className="font-bold text-white font-mono">SAR 500 / SAR {(user.dailyLimitSar || 20000).toLocaleString()}</span>
+                  <span className="font-bold text-white tabular-nums">SAR 500 / SAR {(user.dailyLimitSar || 20000).toLocaleString()}</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-[#121A2D] overflow-hidden border border-slate-800/80">
-                  <div className="h-full rounded-full bg-[#7FE87F]" style={{ width: "2.5%" }} />
+                <div className="w-full h-2.5 rounded-full bg-[#121A2D] overflow-hidden border border-slate-800/80">
+                  <div className="h-full rounded-full bg-[#00FF24]" style={{ width: "2.5%" }} />
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-[#10182A] border border-slate-800/80 space-y-2">
+              <div className="p-3.5 rounded-xl bg-[#10182A] border border-slate-800/80 space-y-2.5">
                 <span className="text-xs font-bold text-white block">Security & Service Triggers</span>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Button
@@ -288,27 +325,27 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                       setTempLimit(user.dailyLimitSar || 20000);
                       setIsLimitModalOpen(true);
                     }}
-                    className="h-7 text-xs bg-slate-900 border-slate-800 text-slate-300 gap-1"
+                    className="h-8 text-xs bg-slate-900 border-slate-800 text-slate-200 hover:text-white gap-1.5"
                   >
-                    <Sliders className="h-3 w-3 text-sky-400" />
+                    <Sliders className="h-3.5 w-3.5 text-sky-400" />
                     <span>Adjust Limit</span>
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => showNotice(`Sarie PIN reset instruction sent to ${user.mobile}`)}
-                    className="h-7 text-xs bg-slate-900 border-slate-800 text-slate-300 gap-1"
+                    className="h-8 text-xs bg-slate-900 border-slate-800 text-slate-200 hover:text-white gap-1.5"
                   >
-                    <KeyRound className="h-3 w-3 text-amber-400" />
+                    <KeyRound className="h-3.5 w-3.5 text-amber-400" />
                     <span>Reset PIN</span>
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => showNotice(`Nafath Re-KYC authentication initiated for ${user.fullName}`)}
-                    className="h-7 text-xs bg-slate-900 border-slate-800 text-slate-300 gap-1"
+                    className="h-8 text-xs bg-slate-900 border-slate-800 text-slate-200 hover:text-white gap-1.5"
                   >
-                    <RefreshCw className="h-3 w-3 text-[#7FE87F]" />
+                    <RefreshCw className="h-3.5 w-3.5 text-[#00FF24]" />
                     <span>Force Re-KYC</span>
                   </Button>
                 </div>
@@ -320,15 +357,22 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Tab 2: Complete Transaction Ledger */}
       {activeTab === "transactions" && (
-        <Card className="p-4 space-y-3">
-          <div className="flex items-center justify-between flex-wrap gap-2">
+        <Card className="p-5 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-800/80">
             <div className="flex items-center gap-2">
-              <ReceiptText className="h-4 w-4 text-[#7FE87F]" />
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                Transaction Ledger for {user.fullName}
-              </h3>
+              <div className="p-1.5 rounded-lg bg-[#00FF24]/10 text-[#00FF24]">
+                <ReceiptText className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                  Transaction Ledger for {user.fullName}
+                </h3>
+                <p className="text-[11px] text-slate-400">Complete historical financial ledger</p>
+              </div>
             </div>
-            <span className="text-xs text-slate-400 font-mono">{userTransactions.length} operations</span>
+            <Badge variant="outline" className="text-xs text-slate-300 font-semibold">
+              {userTransactions.length} operations
+            </Badge>
           </div>
 
           <Table>
@@ -349,7 +393,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                   return (
                     <TableRow key={tx.id}>
                       <TableCell>
-                        <div className="font-mono font-bold text-sky-400 text-xs">{tx.orderRef}</div>
+                        <div className="font-semibold text-sky-400 text-xs">{tx.orderRef}</div>
                         <div className="text-[10px] text-slate-400">{new Date(tx.timestamp).toLocaleTimeString()}</div>
                       </TableCell>
                       <TableCell>
@@ -357,7 +401,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                         <div className="text-[10px] text-slate-400">{isOutgoing ? "Debit / Outgoing" : "Credit / Incoming"}</div>
                       </TableCell>
                       <TableCell>
-                        <span className={`font-extrabold text-xs ${isOutgoing ? "text-slate-200" : "text-[#7FE87F]"}`}>
+                        <span className={`font-bold text-xs tabular-nums ${isOutgoing ? "text-slate-200" : "text-[#00FF24]"}`}>
                           {isOutgoing ? "-" : "+"}SAR {tx.amount.toFixed(2)}
                         </span>
                       </TableCell>
@@ -365,7 +409,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                         <span className="text-xs font-bold uppercase text-slate-300">{tx.paymentMethod}</span>
                       </TableCell>
                       <TableCell>
-                        <span className="font-mono text-[11px] text-sky-400">{tx.sarieUtr || "N/A"}</span>
+                        <span className="text-xs font-semibold text-sky-400 tabular-nums">{tx.sarieUtr || "N/A"}</span>
                       </TableCell>
                       <TableCell>
                         <StatusBadge status={tx.status} />
@@ -387,15 +431,22 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Tab 3: Bound Devices & Security Sessions */}
       {activeTab === "devices" && (
-        <Card className="p-4 space-y-3">
-          <div className="flex items-center justify-between">
+        <Card className="p-5 space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
             <div className="flex items-center gap-2">
-              <Smartphone className="h-4 w-4 text-sky-400" />
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                Registered Hardware & Bound Mobile Devices
-              </h3>
+              <div className="p-1.5 rounded-lg bg-sky-500/10 text-sky-400">
+                <Smartphone className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                  Registered Hardware & Bound Mobile Devices
+                </h3>
+                <p className="text-[11px] text-slate-400">Hardware tokens cryptographically registered to customer wallet</p>
+              </div>
             </div>
-            <span className="text-xs text-slate-400 font-mono">Secure Enclave Bound</span>
+            <Badge variant="outline" className="text-xs text-[#00FF24] border-[#00FF24]/30 bg-[#00FF24]/5">
+              Secure Enclave Bound
+            </Badge>
           </div>
 
           <Table>
@@ -422,7 +473,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                       <div className="text-[10px] text-slate-500">{dev.appVersion}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="success" className="text-[10px]">
+                      <Badge variant="success" className="text-[10px] font-bold">
                         FACE ID ACTIVE
                       </Badge>
                     </TableCell>
@@ -430,7 +481,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                       <span className="text-xs text-slate-300">{dev.lastActive}</span>
                     </TableCell>
                     <TableCell>
-                      <div className="font-mono text-xs text-sky-400">{dev.ipAddress}</div>
+                      <div className="text-xs font-semibold text-sky-400 tabular-nums">{dev.ipAddress}</div>
                       <div className="text-[10px] text-slate-400">{dev.city}</div>
                     </TableCell>
                     <TableCell>
@@ -438,7 +489,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                         variant="destructive"
                         size="sm"
                         onClick={() => showNotice(`Device session revoked for ${dev.deviceName}`)}
-                        className="h-7 px-2 text-xs"
+                        className="h-7 px-2.5 text-xs font-semibold"
                       >
                         Revoke
                       </Button>
@@ -459,32 +510,40 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Tab 4: Activity & Audit Trail */}
       {activeTab === "activity" && (
-        <Card className="p-4 space-y-3">
-          <div className="flex items-center justify-between">
+        <Card className="p-5 space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
             <div className="flex items-center gap-2">
-              <History className="h-4 w-4 text-[#7FE87F]" />
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                Security & Telemetry Audit Timeline
-              </h3>
+              <div className="p-1.5 rounded-lg bg-[#00FF24]/10 text-[#00FF24]">
+                <History className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                  Security & Telemetry Audit Timeline
+                </h3>
+                <p className="text-[11px] text-slate-400">Immutable chronological event log</p>
+              </div>
             </div>
-            <span className="text-xs text-slate-400 font-mono">Real-time Stream</span>
+            <Badge variant="outline" className="text-xs text-slate-300">Real-time Stream</Badge>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {(user.activityLogs || []).length > 0 ? (
               user.activityLogs?.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3 rounded-lg bg-[#10182A] border border-slate-800/80 space-y-1"
+                  className="p-3.5 rounded-xl bg-[#10182A] border border-slate-800/80 space-y-1.5 hover:border-slate-700 transition-colors"
                 >
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-white">{log.title}</span>
-                    <span className="text-[10px] text-slate-500 font-mono">{log.timestamp}</span>
+                    <span className="font-bold text-white flex items-center gap-2">
+                      <Activity className="h-3.5 w-3.5 text-[#00FF24]" />
+                      {log.title}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium">{log.timestamp}</span>
                   </div>
                   <p className="text-xs text-slate-400">{log.details}</p>
-                  <div className="flex items-center gap-2 text-[10px] text-slate-500 pt-0.5">
-                    <span>Actor: {log.actor}</span>
-                    {log.ipAddress && <span>• IP: {log.ipAddress}</span>}
+                  <div className="flex items-center gap-2 text-[10px] text-slate-500 pt-1 border-t border-slate-800/60">
+                    <span>Actor: <strong className="text-slate-300">{log.actor}</strong></span>
+                    {log.ipAddress && <span>• IP: <strong className="text-slate-300">{log.ipAddress}</strong></span>}
                   </div>
                 </div>
               ))
@@ -499,43 +558,51 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Adjust Limit Dialog */}
       <Dialog open={isLimitModalOpen} onOpenChange={setIsLimitModalOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-md p-6">
           <DialogHeader>
-            <DialogTitle>Adjust Daily Transfer Limit</DialogTitle>
-            <DialogDescription>
-              Set maximum daily outgoing transfer limit for {user.fullName}
-            </DialogDescription>
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                <Sliders className="h-6 w-6" />
+              </div>
+              <div>
+                <DialogTitle className="text-base font-bold text-white">Adjust Daily Transfer Limit</DialogTitle>
+                <DialogDescription className="text-xs text-slate-400">
+                  Set maximum daily outgoing transfer limit for {user.fullName}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
 
-          <div className="space-y-3 py-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-400">Target Daily Limit:</span>
-              <span className="text-base font-extrabold text-[#7FE87F] font-mono">
-                SAR {tempLimit.toLocaleString()}
-              </span>
-            </div>
-
-            <input
-              type="range"
-              min="5000"
-              max="100000"
-              step="5000"
-              value={tempLimit}
-              onChange={(e) => setTempLimit(parseInt(e.target.value))}
-              className="w-full accent-[#7FE87F] cursor-pointer"
-            />
-
-            <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-              <span>SAR 5,000 (Tier 1)</span>
-              <span>SAR 100,000 (VIP)</span>
+          <div className="space-y-4 py-3">
+            <div className="p-4 bg-[#10182A] border border-slate-800/80 rounded-xl space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400 font-medium">Selected Daily Limit</span>
+                <span className="text-xl font-extrabold text-[#00FF24] tabular-nums">
+                  SAR {tempLimit.toLocaleString()}
+                </span>
+              </div>
+              <input
+                type="range"
+                min="5000"
+                max="100000"
+                step="5000"
+                value={tempLimit}
+                onChange={(e) => setTempLimit(parseInt(e.target.value))}
+                className="w-full accent-[#00FF24] cursor-pointer h-2 bg-slate-800 rounded-lg"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 pt-1 font-medium">
+                <span>SAR 5,000 (Tier 1 Default)</span>
+                <span>SAR 100,000 (VIP High Roller)</span>
+              </div>
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0 pt-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setIsLimitModalOpen(false)}
+              className="border-slate-800 hover:bg-slate-800"
             >
               Cancel
             </Button>
@@ -546,6 +613,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                 showNotice(`Daily limit for ${user.fullName} set to SAR ${tempLimit.toLocaleString()}`);
                 setIsLimitModalOpen(false);
               }}
+              className="bg-[#00FF24] text-black hover:bg-[#00FF24]/90 font-bold"
             >
               Save Limit
             </Button>

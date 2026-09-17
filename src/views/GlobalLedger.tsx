@@ -9,7 +9,14 @@ import {
   QrCode,
   ShieldCheck,
   Download,
-  FileCheck
+  FileCheck,
+  Coins,
+  Percent,
+  Hash,
+  Clock,
+  ArrowRight,
+  AlertTriangle,
+  FileText
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -61,22 +68,31 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
   });
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2.5">
-        <div className="flex items-center gap-2">
-          <ReceiptText className="h-4 w-4 text-[#7FE87F]" />
-          <h2 className="text-base font-extrabold text-white">
-            {isAr ? "سجل المعاملات والعمليات الحية" : "Live Transactions & Audit Ledger"}
-          </h2>
-          <Badge variant="success" className="text-[10px] uppercase font-bold">
-            <span className="live-indicator w-1 h-1" /> LIVE STREAM
-          </Badge>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-lg bg-[#00FF24]/10 border border-[#00FF24]/30 text-[#00FF24]">
+            <ReceiptText className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-extrabold text-white">
+                {isAr ? "سجل المعاملات والعمليات الحية" : "Live Transactions & Audit Ledger"}
+              </h2>
+              <Badge variant="success" className="text-[10px] uppercase font-bold tracking-wider">
+                <span className="live-indicator w-1 h-1" /> LIVE STREAM
+              </Badge>
+            </div>
+            <p className="text-xs text-slate-400">
+              {isAr ? "متابعة فورية لجميع عمليات التحويل ونقاط البيع والفواتير الضريبية" : "Realtime Saudi SAMA, mada & SoftPOS transaction audit stream"}
+            </p>
+          </div>
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-2">
-          <div className="relative w-48">
+        <div className="flex items-center gap-2.5">
+          <div className="relative w-52">
             <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-3.5 w-3.5 text-slate-500 pointer-events-none" />
             <Input
               type="text"
@@ -89,7 +105,7 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
           <select
             value={channelFilter}
             onChange={(e) => setChannelFilter(e.target.value)}
-            className="h-8 px-2 text-xs bg-[#10182A] border border-slate-800/80 rounded-lg text-slate-200 outline-none cursor-pointer"
+            className="h-8 px-2.5 text-xs bg-[#10182A] border border-slate-800/80 rounded-lg text-slate-200 outline-none cursor-pointer focus:border-[#00FF24]/50"
           >
             <option value="all">{isAr ? "كل القنوات" : "All Rails"}</option>
             <option value="pos_softpos">POS / SoftPOS</option>
@@ -116,27 +132,32 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
           {filtered.map((tx) => (
             <TableRow key={tx.id}>
               <TableCell>
-                <div className="font-mono font-bold text-sky-400 text-xs">{tx.orderRef}</div>
-                <div className="text-[10px] text-slate-400">{new Date(tx.timestamp).toLocaleTimeString()}</div>
+                <div className="font-semibold text-sky-400 text-xs tracking-tight">{tx.orderRef}</div>
+                <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                  <Clock className="h-3 w-3 text-slate-500" />
+                  {new Date(tx.timestamp).toLocaleTimeString()}
+                </div>
               </TableCell>
               <TableCell>
-                <div className="font-bold text-white text-xs">{tx.senderName}</div>
-                <div className="text-[10px] text-[#7FE87F]">➔ {tx.receiverName}</div>
+                <div className="font-semibold text-white text-xs">{tx.senderName}</div>
+                <div className="text-[11px] text-[#00FF24] flex items-center gap-1 font-medium">
+                  <ArrowRight className="h-3 w-3" /> {tx.receiverName}
+                </div>
               </TableCell>
               <TableCell>
-                <span className="font-extrabold text-white text-xs font-mono">SAR {tx.amount.toFixed(2)}</span>
+                <span className="font-bold text-white text-xs tabular-nums">SAR {tx.amount.toFixed(2)}</span>
               </TableCell>
               <TableCell>
-                <span className="font-bold text-amber-400 text-xs font-mono">SAR {tx.platformMdrSar.toFixed(2)}</span>
+                <span className="font-bold text-amber-400 text-xs tabular-nums">SAR {tx.platformMdrSar.toFixed(2)}</span>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-1.5 text-xs font-bold uppercase">
+                <div className="flex items-center gap-1.5 text-xs font-semibold uppercase">
                   {tx.channel === "pos_softpos" ? (
-                    <SmartphoneNfc className="h-3.5 w-3.5 text-[#7FE87F]" />
+                    <SmartphoneNfc className="h-3.5 w-3.5 text-[#00FF24]" />
                   ) : (
                     <ArrowDownLeft className="h-3.5 w-3.5 text-sky-400" />
                   )}
-                  <span>{tx.paymentMethod}</span>
+                  <span className="text-slate-200">{tx.paymentMethod}</span>
                 </div>
               </TableCell>
               <TableCell>
@@ -147,9 +168,9 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedTx(tx)}
-                  className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1 text-slate-200"
+                  className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1.5 text-slate-200 border-slate-800"
                 >
-                  <Eye className="h-3 w-3 text-[#7FE87F]" />
+                  <Eye className="h-3.5 w-3.5 text-[#00FF24]" />
                   <span>{isAr ? "تفاصيل" : "Inspect"}</span>
                 </Button>
               </TableCell>
@@ -161,58 +182,97 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
       {/* Inspect & ZATCA Compliance Dialog */}
       <Dialog open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
         {selectedTx && (
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-lg p-6">
             <DialogHeader>
               <div className="flex items-center justify-between">
-                <DialogTitle>Order: {selectedTx.orderRef}</DialogTitle>
-                <Badge variant="success" className="text-[10px]">ZATCA PHASE 2 VERIFIED</Badge>
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                    <FileText className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-base font-bold text-white">Order: {selectedTx.orderRef}</DialogTitle>
+                    <DialogDescription className="text-xs text-slate-400">
+                      Transaction audit ledger & cryptographic receipt
+                    </DialogDescription>
+                  </div>
+                </div>
+                <Badge variant="success" className="text-[10px] font-bold tracking-wider">
+                  <ShieldCheck className="h-3 w-3 mr-1 inline" /> ZATCA VERIFIED
+                </Badge>
               </div>
-              <DialogDescription>
-                Transaction ledger audit details & cryptographic invoice receipt
-              </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-3 py-1">
-              <div className="bg-[#10182A] rounded-lg p-3 grid grid-cols-2 gap-2.5 text-xs border border-slate-800/80">
-                <div>
-                  <span className="text-[10px] text-slate-400">Gross Processed</span>
-                  <div className="text-sm font-extrabold text-[#7FE87F] font-mono">SAR {selectedTx.amount.toFixed(2)}</div>
+            <div className="space-y-4 py-2">
+              {/* Financial Metrics Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-[#10182A] rounded-xl p-3.5 border border-slate-800/80 space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                    <Coins className="h-3.5 w-3.5 text-[#00FF24]" />
+                    <span>Gross Processed</span>
+                  </div>
+                  <div className="text-lg font-extrabold text-[#00FF24] tabular-nums">
+                    SAR {selectedTx.amount.toFixed(2)}
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[10px] text-slate-400">MDR Take Revenue</span>
-                  <div className="text-sm font-extrabold text-amber-400 font-mono">SAR {selectedTx.platformMdrSar.toFixed(2)}</div>
+
+                <div className="bg-[#10182A] rounded-xl p-3.5 border border-slate-800/80 space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                    <Percent className="h-3.5 w-3.5 text-amber-400" />
+                    <span>MDR Take Revenue</span>
+                  </div>
+                  <div className="text-lg font-extrabold text-amber-400 tabular-nums">
+                    SAR {selectedTx.platformMdrSar.toFixed(2)}
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[10px] text-slate-400">Sarie Instant UTR</span>
-                  <div className="font-mono font-semibold text-white text-[11px] truncate">{selectedTx.sarieUtr || "N/A"}</div>
+              </div>
+
+              {/* Reference IDs Card */}
+              <div className="bg-[#10182A] rounded-xl p-4 border border-slate-800/80 space-y-2.5">
+                <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-800/60">
+                  <span className="text-slate-400 flex items-center gap-1.5 font-medium">
+                    <Hash className="h-3.5 w-3.5 text-sky-400" />
+                    Sarie Instant UTR
+                  </span>
+                  <span className="font-semibold text-white text-xs tabular-nums">
+                    {selectedTx.sarieUtr || "N/A"}
+                  </span>
                 </div>
-                <div>
-                  <span className="text-[10px] text-slate-400">mada Gateway RRN</span>
-                  <div className="font-mono font-semibold text-white text-[11px] truncate">{selectedTx.madaRrn || "N/A"}</div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-400 flex items-center gap-1.5 font-medium">
+                    <SmartphoneNfc className="h-3.5 w-3.5 text-emerald-400" />
+                    mada Gateway RRN
+                  </span>
+                  <span className="font-semibold text-white text-xs tabular-nums">
+                    {selectedTx.madaRrn || "N/A"}
+                  </span>
                 </div>
               </div>
 
               {/* ZATCA Tax & Compliance Breakdown */}
-              <div className="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg space-y-1.5 text-xs">
+              <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                  <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs">
                     <ShieldCheck className="h-4 w-4" />
-                    <span>ZATCA Simplified Tax Invoice</span>
+                    <span>ZATCA Phase 2 Simplified Tax Invoice</span>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400">VAT: 15%</span>
+                  <Badge variant="outline" className="text-[10px] text-emerald-400 border-emerald-500/30">
+                    VAT: 15%
+                  </Badge>
                 </div>
-                <div className="flex justify-between text-[11px] text-slate-300 pt-1">
-                  <span>Net Taxable Base:</span>
-                  <span className="font-mono">SAR {(selectedTx.amount / 1.15).toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-[11px] text-slate-300">
-                  <span>Calculated VAT (15%):</span>
-                  <span className="font-mono">SAR {(selectedTx.amount - selectedTx.amount / 1.15).toFixed(2)}</span>
+                <div className="space-y-1.5 pt-1 text-xs text-slate-300">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Net Taxable Base:</span>
+                    <span className="font-semibold text-white tabular-nums">SAR {(selectedTx.amount / 1.15).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Calculated VAT (15%):</span>
+                    <span className="font-semibold text-emerald-400 tabular-nums">SAR {(selectedTx.amount - selectedTx.amount / 1.15).toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="gap-2 sm:gap-0 pt-2">
               {selectedTx.status !== "refunded" && (
                 <Button
                   variant="destructive"
@@ -222,10 +282,10 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
                     setSelectedTx(null);
                     setRefundConfirmTx(tx);
                   }}
-                  className="gap-1.5"
+                  className="gap-2 font-semibold"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
-                  <span>{isAr ? "استرجاع فوري (Refund)" : "Execute Refund"}</span>
+                  <span>{isAr ? "استرجاع فوري (Refund)" : "Execute Immediate Refund"}</span>
                 </Button>
               )}
             </DialogFooter>
@@ -236,19 +296,42 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
       {/* Refund Confirmation Dialog */}
       <Dialog open={!!refundConfirmTx} onOpenChange={(open) => !open && setRefundConfirmTx(null)}>
         {refundConfirmTx && (
-          <DialogContent className="max-w-sm">
+          <DialogContent className="max-w-md p-6">
             <DialogHeader>
-              <DialogTitle>Confirm Immediate Refund</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to reverse <strong className="text-white">SAR {refundConfirmTx.amount.toFixed(2)}</strong> for order <strong className="text-sky-400">{refundConfirmTx.orderRef}</strong> back to the original payment method?
-              </DialogDescription>
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
+                  <AlertTriangle className="h-6 w-6" />
+                </div>
+                <div>
+                  <DialogTitle className="text-base font-bold text-white">Confirm Immediate Refund</DialogTitle>
+                  <DialogDescription className="text-xs text-slate-400">
+                    This action will reverse the transaction through the banking network.
+                  </DialogDescription>
+                </div>
+              </div>
             </DialogHeader>
 
-            <DialogFooter className="gap-2 sm:gap-0">
+            <div className="py-3 text-xs text-slate-300 bg-[#10182A] border border-slate-800/80 rounded-xl p-4 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Order Reference:</span>
+                <span className="font-semibold text-sky-400">{refundConfirmTx.orderRef}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Refund Amount:</span>
+                <span className="font-bold text-white tabular-nums">SAR {refundConfirmTx.amount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Target Channel:</span>
+                <span className="font-semibold text-emerald-400 uppercase">{refundConfirmTx.paymentMethod}</span>
+              </div>
+            </div>
+
+            <DialogFooter className="gap-2 sm:gap-0 pt-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setRefundConfirmTx(null)}
+                className="border-slate-800 hover:bg-slate-800"
               >
                 Cancel
               </Button>
@@ -259,8 +342,10 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
                   onExecuteRefund(refundConfirmTx.id);
                   setRefundConfirmTx(null);
                 }}
+                className="gap-1.5 font-bold"
               >
-                Confirm Refund
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Confirm & Reverse Funds</span>
               </Button>
             </DialogFooter>
           </DialogContent>

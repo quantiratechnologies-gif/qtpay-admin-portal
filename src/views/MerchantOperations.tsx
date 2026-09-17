@@ -7,7 +7,8 @@ import {
   Copy,
   Check,
   Building2,
-  ExternalLink
+  ExternalLink,
+  Coins
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -78,21 +79,30 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
   });
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2.5">
-        <div className="flex items-center gap-2">
-          <Store className="h-4 w-4 text-[#7FE87F]" />
-          <h2 className="text-base font-extrabold text-white">
-            {isAr ? "التجار والشركاء" : "Merchants & Enterprise Partners"}
-          </h2>
-          <Badge variant="secondary" className="text-[11px]">
-            {merchants.length}
-          </Badge>
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-lg bg-[#00FF24]/10 border border-[#00FF24]/30 text-[#00FF24]">
+            <Store className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-extrabold text-white">
+                {isAr ? "التجار والشركاء" : "Merchants & Enterprise Partners"}
+              </h2>
+              <Badge variant="secondary" className="text-[11px] font-bold">
+                {merchants.length} registered
+              </Badge>
+            </div>
+            <p className="text-xs text-slate-400">
+              {isAr ? "إدارة السجلات التجارية وتراخيص نقاط البيع والتسويات" : "Commercial registries, SoftPOS fleet management & settlement accounts"}
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="relative w-48">
+        <div className="flex items-center gap-2.5">
+          <div className="relative w-52">
             <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-3.5 w-3.5 text-slate-500 pointer-events-none" />
             <Input
               type="text"
@@ -105,7 +115,7 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-8 px-2 text-xs bg-[#10182A] border border-slate-800/80 rounded-lg text-slate-200 outline-none cursor-pointer"
+            className="h-8 px-2.5 text-xs bg-[#10182A] border border-slate-800/80 rounded-lg text-slate-200 outline-none cursor-pointer focus:border-[#00FF24]/50"
           >
             <option value="all">{isAr ? "الكل" : "All Status"}</option>
             <option value="pending_kyb">{isAr ? "معلق" : "Pending KYB"}</option>
@@ -123,7 +133,7 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
             <TableHead>{isAr ? "السجل / الضريبة" : "CR / VAT"}</TableHead>
             <TableHead>{isAr ? "المالك" : "Owner"}</TableHead>
             <TableHead>{isAr ? "البنك والحساب" : "Settlement Bank"}</TableHead>
-            <TableHead>{isAr ? "الأجهزة" : "POS"}</TableHead>
+            <TableHead>{isAr ? "الأجهزة" : "POS Fleet"}</TableHead>
             <TableHead>{isAr ? "حجم المعاملات" : "Monthly GMV"}</TableHead>
             <TableHead>{isAr ? "الحالة" : "Status"}</TableHead>
             <TableHead>{isAr ? "الإجراء" : "Action"}</TableHead>
@@ -137,14 +147,14 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
               className="cursor-pointer hover:bg-slate-800/50"
             >
               <TableCell>
-                <div className="font-bold text-white text-xs hover:text-[#7FE87F] transition-colors">
+                <div className="font-bold text-white text-xs hover:text-[#00FF24] transition-colors">
                   {isAr ? m.businessNameAr : m.businessName}
                 </div>
                 <div className="text-[10px] text-slate-400">{m.city} • {m.category}</div>
               </TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-mono text-xs text-sky-400 font-semibold">{m.crNumber}</span>
+                  <span className="text-xs text-sky-400 font-semibold tabular-nums">{m.crNumber}</span>
                   <button
                     onClick={() => handleCopy(m.crNumber, `cr-${m.id}`)}
                     className="text-slate-500 hover:text-white"
@@ -152,24 +162,24 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                     {copiedField === `cr-${m.id}` ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
                   </button>
                 </div>
-                <div className="font-mono text-[10px] text-slate-400">{m.vatNumber}</div>
+                <div className="text-[10px] text-slate-400 tabular-nums">{m.vatNumber}</div>
               </TableCell>
               <TableCell>
                 <div className="font-semibold text-xs text-slate-200">{m.ownerName}</div>
-                <div className="text-[10px] text-slate-400">{m.mobile}</div>
+                <div className="text-[10px] text-slate-400 tabular-nums">{m.mobile}</div>
               </TableCell>
               <TableCell>
                 <div className="font-semibold text-xs text-slate-200">{m.settlementBank}</div>
-                <div className="font-mono text-[10px] text-slate-400">{m.settlementIban.slice(0, 14)}...</div>
+                <div className="text-[10px] text-slate-400 tabular-nums">{m.settlementIban.slice(0, 14)}...</div>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-1 font-bold text-xs text-[#7FE87F]">
+                <div className="flex items-center gap-1 font-bold text-xs text-[#00FF24]">
                   <Terminal className="h-3.5 w-3.5" />
-                  <span>{m.activeTerminals}</span>
+                  <span>{m.activeTerminals} SoftPOS</span>
                 </div>
               </TableCell>
               <TableCell>
-                <span className="font-mono font-bold text-xs text-white">
+                <span className="font-bold text-xs text-white tabular-nums">
                   SAR {(m.monthlyVolumeSar / 1000).toFixed(0)}k
                 </span>
               </TableCell>
@@ -181,9 +191,9 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedMerchantId(m.id)}
-                  className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1 text-slate-200"
+                  className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1.5 text-slate-200 border-slate-800"
                 >
-                  <Eye className="h-3 w-3 text-[#7FE87F]" />
+                  <Eye className="h-3.5 w-3.5 text-[#00FF24]" />
                   <span>{isAr ? "تفاصيل" : "Dossier"}</span>
                 </Button>
               </TableCell>

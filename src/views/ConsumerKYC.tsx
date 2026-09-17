@@ -7,7 +7,8 @@ import {
   Eye,
   Sliders,
   Check,
-  Copy
+  Copy,
+  UserCheck
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -75,20 +76,29 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
   );
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2.5">
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-[#7FE87F]" />
-          <h2 className="text-base font-extrabold text-white">
-            {isAr ? "المستخدمين وحسابات الأفراد" : "Consumers & KYC Accounts"}
-          </h2>
-          <Badge variant="secondary" className="text-[11px]">
-            {customers.length}
-          </Badge>
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-lg bg-[#00FF24]/10 border border-[#00FF24]/30 text-[#00FF24]">
+            <Users className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-extrabold text-white">
+                {isAr ? "المستخدمين وحسابات الأفراد" : "Consumers & KYC Accounts"}
+              </h2>
+              <Badge variant="secondary" className="text-[11px] font-bold">
+                {customers.length} users
+              </Badge>
+            </div>
+            <p className="text-xs text-slate-400">
+              {isAr ? "التحقق من الهوية الوطنية ونفاذ والتحكم في حدود العمليات اليومية" : "Nafath & Absher biometric identity verification, Sarie aliases and daily limits"}
+            </p>
+          </div>
         </div>
 
-        <div className="relative w-48">
+        <div className="relative w-52">
           <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-3.5 w-3.5 text-slate-500 pointer-events-none" />
           <Input
             type="text"
@@ -122,14 +132,14 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
               className="cursor-pointer hover:bg-slate-800/50"
             >
               <TableCell>
-                <div className="font-bold text-white text-xs hover:text-[#7FE87F] transition-colors">
+                <div className="font-bold text-white text-xs hover:text-[#00FF24] transition-colors">
                   {isAr ? c.fullNameAr : c.fullName}
                 </div>
                 <div className="text-[10px] text-slate-400">{c.email}</div>
               </TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-mono text-xs text-sky-400 font-semibold">{c.nationalId}</span>
+                  <span className="text-xs text-sky-400 font-semibold tabular-nums">{c.nationalId}</span>
                   <button
                     onClick={() => handleCopy(c.nationalId, `nid-${c.id}`)}
                     className="text-slate-500 hover:text-white"
@@ -139,16 +149,16 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
                 </div>
               </TableCell>
               <TableCell>
-                <div className="font-semibold text-xs text-slate-200">{c.mobile}</div>
-                <div className="text-[10px] text-[#7FE87F] font-mono">{c.sarieUpiId}</div>
+                <div className="font-semibold text-xs text-slate-200 tabular-nums">{c.mobile}</div>
+                <div className="text-[10px] text-[#00FF24] font-medium">{c.sarieUpiId}</div>
               </TableCell>
               <TableCell>
-                <span className="font-extrabold text-[#7FE87F] text-xs font-mono">
+                <span className="font-extrabold text-[#00FF24] text-xs tabular-nums">
                   SAR {c.walletBalanceSar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </span>
               </TableCell>
               <TableCell>
-                <span className="font-mono text-xs text-slate-300 font-semibold">
+                <span className="text-xs text-slate-200 font-semibold tabular-nums">
                   SAR {(c.dailyLimitSar || 20000).toLocaleString()}
                 </span>
               </TableCell>
@@ -174,9 +184,9 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => setSelectedUserId(c.id)}
-                    className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1 text-slate-200"
+                    className="h-7 px-2.5 text-xs bg-[#10182A] hover:bg-slate-800 gap-1.5 text-slate-200 border-slate-800"
                   >
-                    <Eye className="h-3 w-3 text-[#7FE87F]" />
+                    <Eye className="h-3.5 w-3.5 text-[#00FF24]" />
                     <span>{isAr ? "تفاصيل" : "Dossier"}</span>
                   </Button>
                 </div>
