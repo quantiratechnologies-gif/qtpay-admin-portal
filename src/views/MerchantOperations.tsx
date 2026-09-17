@@ -10,8 +10,26 @@ import {
   Copy,
   Check
 } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
 import { StatusBadge } from "../components/Badge";
-import { Modal } from "../components/Modal";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from "../components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "../components/ui/dialog";
 import type { Merchant } from "../types";
 
 interface MerchantOperationsProps {
@@ -48,40 +66,34 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
   });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+    <div className="space-y-3.5">
       {/* Header */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: "10px"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <Store size={18} color="#7FE87F" />
-          <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#FFFFFF" }}>
+      <div className="flex items-center justify-between flex-wrap gap-2.5">
+        <div className="flex items-center gap-2">
+          <Store className="h-4 w-4 text-[#7FE87F]" />
+          <h2 className="text-base font-extrabold text-white">
             {isAr ? "التجار" : "Merchants"}
           </h2>
-          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>({merchants.length})</span>
+          <Badge variant="secondary" className="text-[11px]">
+            {merchants.length}
+          </Badge>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ position: "relative" }}>
-            <Search size={13} color="#64748B" style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", left: "10px" }} />
-            <input
+        <div className="flex items-center gap-2">
+          <div className="relative w-48">
+            <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-3.5 w-3.5 text-slate-500 pointer-events-none" />
+            <Input
               type="text"
               placeholder={isAr ? "بحث..." : "Search..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field"
-              style={{ width: "180px", paddingLeft: "28px", height: "32px", fontSize: "12px" }}
+              className="pl-8 h-8 text-xs bg-[#121A2D] border-[var(--border-subtle)]"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="input-field"
-            style={{ cursor: "pointer", height: "32px", padding: "0 8px", fontSize: "12px" }}
+            className="h-8 px-2 text-xs bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg text-white outline-none cursor-pointer"
           >
             <option value="all">{isAr ? "الكل" : "All"}</option>
             <option value="pending_kyb">{isAr ? "معلق" : "Pending"}</option>
@@ -92,136 +104,138 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
       </div>
 
       {/* Table */}
-      <div className="admin-table-container">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>{isAr ? "التاجر" : "Merchant"}</th>
-              <th>{isAr ? "السجل / الضريبة" : "CR / VAT"}</th>
-              <th>{isAr ? "المالك" : "Owner"}</th>
-              <th>{isAr ? "البنك" : "Bank"}</th>
-              <th>{isAr ? "الأجهزة" : "POS"}</th>
-              <th>{isAr ? "الحالة" : "Status"}</th>
-              <th>{isAr ? "إجراء" : "Action"}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((m) => (
-              <tr key={m.id}>
-                <td>
-                  <div style={{ fontWeight: 700, color: "#FFFFFF", fontSize: "12.5px" }}>{isAr ? m.businessNameAr : m.businessName}</div>
-                  <div style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>{m.city}</div>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                    <span style={{ fontFamily: "monospace", fontSize: "11.5px", color: "#38BDF8", fontWeight: 600 }}>{m.crNumber}</span>
-                    <button
-                      onClick={() => handleCopy(m.crNumber, `cr-${m.id}`)}
-                      style={{ background: "none", border: "none", color: "#64748B", cursor: "pointer", padding: "2px" }}
-                    >
-                      {copiedField === `cr-${m.id}` ? <Check size={10} color="#10B981" /> : <Copy size={10} />}
-                    </button>
-                  </div>
-                  <div style={{ fontFamily: "monospace", fontSize: "10px", color: "var(--text-muted)" }}>{m.vatNumber}</div>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 600, fontSize: "12px" }}>{m.ownerName}</div>
-                  <div style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>{m.mobile}</div>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 600, fontSize: "12px" }}>{m.settlementBank}</div>
-                  <div style={{ fontFamily: "monospace", fontSize: "10px", color: "var(--text-secondary)" }}>{m.settlementIban.slice(0, 14)}...</div>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: "3px", fontWeight: 700, fontSize: "11.5px" }}>
-                    <Terminal size={12} color="#7FE87F" />
-                    <span>{m.activeTerminals}</span>
-                  </div>
-                </td>
-                <td>
-                  <StatusBadge status={m.status} />
-                </td>
-                <td>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{isAr ? "التاجر" : "Merchant"}</TableHead>
+            <TableHead>{isAr ? "السجل / الضريبة" : "CR / VAT"}</TableHead>
+            <TableHead>{isAr ? "المالك" : "Owner"}</TableHead>
+            <TableHead>{isAr ? "البنك" : "Bank"}</TableHead>
+            <TableHead>{isAr ? "الأجهزة" : "POS"}</TableHead>
+            <TableHead>{isAr ? "الحالة" : "Status"}</TableHead>
+            <TableHead>{isAr ? "إجراء" : "Action"}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filtered.map((m) => (
+            <TableRow key={m.id}>
+              <TableCell>
+                <div className="font-bold text-white text-xs">{isAr ? m.businessNameAr : m.businessName}</div>
+                <div className="text-[10px] text-slate-400">{m.city}</div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono text-xs text-sky-400 font-semibold">{m.crNumber}</span>
                   <button
-                    onClick={() => setSelectedMerchant(m)}
-                    className="btn-secondary"
-                    style={{ padding: "4px 8px", fontSize: "11px" }}
+                    onClick={() => handleCopy(m.crNumber, `cr-${m.id}`)}
+                    className="text-slate-500 hover:text-white"
                   >
-                    <Eye size={11} /> {isAr ? "عرض" : "View"}
+                    {copiedField === `cr-${m.id}` ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </div>
+                <div className="font-mono text-[10px] text-slate-400">{m.vatNumber}</div>
+              </TableCell>
+              <TableCell>
+                <div className="font-semibold text-xs">{m.ownerName}</div>
+                <div className="text-[10px] text-slate-400">{m.mobile}</div>
+              </TableCell>
+              <TableCell>
+                <div className="font-semibold text-xs">{m.settlementBank}</div>
+                <div className="font-mono text-[10px] text-slate-400">{m.settlementIban.slice(0, 14)}...</div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1 font-bold text-xs text-[#7FE87F]">
+                  <Terminal className="h-3.5 w-3.5" />
+                  <span>{m.activeTerminals}</span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <StatusBadge status={m.status} />
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedMerchant(m)}
+                  className="h-7 px-2.5 text-xs bg-[#121A2D] hover:bg-[#1A243B] gap-1"
+                >
+                  <Eye className="h-3 w-3" />
+                  <span>{isAr ? "عرض" : "View"}</span>
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
 
-      {/* Review Modal */}
-      {selectedMerchant && (
-        <Modal
-          isOpen={true}
-          onClose={() => setSelectedMerchant(null)}
-          title={selectedMerchant.businessName}
-          width="480px"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{
-              background: "rgba(16, 185, 129, 0.08)",
-              border: "1px solid rgba(16, 185, 129, 0.2)",
-              borderRadius: "8px",
-              padding: "8px 12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px"
-            }}>
-              <ShieldCheck size={16} color="#10B981" />
-              <span style={{ fontSize: "12px", fontWeight: 700, color: "#10B981" }}>
-                Commercial Registration & Tax Verified
-              </span>
+      {/* Review Dialog using Radix Dialog */}
+      <Dialog open={!!selectedMerchant} onOpenChange={(open) => !open && setSelectedMerchant(null)}>
+        {selectedMerchant && (
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>{selectedMerchant.businessName}</DialogTitle>
+              <DialogDescription>
+                {selectedMerchant.city} • Registered Merchant Profile
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-3 py-1">
+              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2.5 flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                <span className="text-xs font-bold text-emerald-400">
+                  Commercial Registration & Tax Verified
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg p-2.5 space-y-0.5">
+                  <span className="text-[10px] text-slate-400">CR Number</span>
+                  <div className="font-mono font-bold text-sky-400">{selectedMerchant.crNumber}</div>
+                </div>
+                <div className="bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg p-2.5 space-y-0.5">
+                  <span className="text-[10px] text-slate-400">VAT Number</span>
+                  <div className="font-mono font-bold text-white">{selectedMerchant.vatNumber}</div>
+                </div>
+                <div className="bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg p-2.5 space-y-0.5">
+                  <span className="text-[10px] text-slate-400">IBAN</span>
+                  <div className="font-mono font-bold text-white text-[10px]">{selectedMerchant.settlementIban}</div>
+                </div>
+                <div className="bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg p-2.5 space-y-0.5">
+                  <span className="text-[10px] text-slate-400">Active Terminals</span>
+                  <div className="font-bold text-white">{selectedMerchant.activeTerminals} Devices</div>
+                </div>
+              </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", fontSize: "12px" }}>
-              <div className="admin-card" style={{ padding: "8px 10px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>CR Number</span>
-                <div style={{ fontWeight: 700, color: "#38BDF8", fontFamily: "monospace" }}>{selectedMerchant.crNumber}</div>
-              </div>
-              <div className="admin-card" style={{ padding: "8px 10px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>VAT Number</span>
-                <div style={{ fontWeight: 700, fontFamily: "monospace" }}>{selectedMerchant.vatNumber}</div>
-              </div>
-              <div className="admin-card" style={{ padding: "8px 10px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>IBAN</span>
-                <div style={{ fontWeight: 700, fontFamily: "monospace", fontSize: "10.5px" }}>{selectedMerchant.settlementIban}</div>
-              </div>
-              <div className="admin-card" style={{ padding: "8px 10px" }}>
-                <span style={{ color: "var(--text-muted)", fontSize: "10px" }}>Active POS</span>
-                <div style={{ fontWeight: 700 }}>{selectedMerchant.activeTerminals} Devices</div>
-              </div>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "6px", marginTop: "4px" }}>
-              <button
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                variant="destructive"
+                size="sm"
                 onClick={() => {
                   onUpdateMerchantStatus(selectedMerchant.id, "suspended");
                   setSelectedMerchant(null);
                 }}
-                className="btn-danger"
+                className="gap-1.5"
               >
-                <XCircle size={12} /> {isAr ? "إيقاف" : "Suspend"}
-              </button>
-              <button
+                <XCircle className="h-3.5 w-3.5" />
+                <span>{isAr ? "إيقاف" : "Suspend"}</span>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
                 onClick={() => {
                   onUpdateMerchantStatus(selectedMerchant.id, "active");
                   setSelectedMerchant(null);
                 }}
-                className="btn-primary"
+                className="gap-1.5"
               >
-                <CheckCircle2 size={12} /> {isAr ? "اعتماد" : "Approve"}
-              </button>
-            </div>
-          </div>
-        </Modal>
-      )}
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                <span>{isAr ? "اعتماد" : "Approve"}</span>
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
     </div>
   );
 };

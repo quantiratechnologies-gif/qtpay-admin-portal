@@ -5,8 +5,26 @@ import {
   Lock,
   Unlock
 } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
 import { StatusBadge } from "../components/Badge";
-import { Modal } from "../components/Modal";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from "../components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "../components/ui/dialog";
 import type { CustomerUser } from "../types";
 
 interface ConsumerKYCProps {
@@ -33,132 +51,132 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
   );
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+    <div className="space-y-3.5">
       {/* Header */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: "10px"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <Users size={18} color="#7FE87F" />
-          <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#FFFFFF" }}>
+      <div className="flex items-center justify-between flex-wrap gap-2.5">
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-[#7FE87F]" />
+          <h2 className="text-base font-extrabold text-white">
             {isAr ? "المستخدمين" : "Users"}
           </h2>
-          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>({customers.length})</span>
+          <Badge variant="secondary" className="text-[11px]">
+            {customers.length}
+          </Badge>
         </div>
 
-        <div style={{ position: "relative" }}>
-          <Search size={13} color="#64748B" style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", left: "10px" }} />
-          <input
+        <div className="relative w-48">
+          <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-3.5 w-3.5 text-slate-500 pointer-events-none" />
+          <Input
             type="text"
             placeholder={isAr ? "بحث..." : "Search User..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input-field"
-            style={{ width: "180px", paddingLeft: "28px", height: "32px", fontSize: "12px" }}
+            className="pl-8 h-8 text-xs bg-[#121A2D] border-[var(--border-subtle)]"
           />
         </div>
       </div>
 
       {/* Table */}
-      <div className="admin-table-container">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>{isAr ? "المستخدم" : "User"}</th>
-              <th>{isAr ? "الهوية" : "National ID"}</th>
-              <th>{isAr ? "الجوال / سريع" : "Mobile / Sarie"}</th>
-              <th>{isAr ? "الرصيد" : "Balance"}</th>
-              <th>{isAr ? "المخاطر" : "Risk"}</th>
-              <th>{isAr ? "التحقق" : "KYC"}</th>
-              <th>{isAr ? "إجراء" : "Action"}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((c) => (
-              <tr key={c.id}>
-                <td>
-                  <div style={{ fontWeight: 700, color: "#FFFFFF", fontSize: "12.5px" }}>{isAr ? c.fullNameAr : c.fullName}</div>
-                  <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>{c.email}</div>
-                </td>
-                <td>
-                  <span style={{ fontFamily: "monospace", fontSize: "11.5px", color: "#38BDF8" }}>{c.nationalId}</span>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 600, fontSize: "12px" }}>{c.mobile}</div>
-                  <div style={{ fontSize: "10px", color: "#7FE87F", fontFamily: "monospace" }}>{c.sarieUpiId}</div>
-                </td>
-                <td>
-                  <span style={{ fontWeight: 800, color: "#7FE87F", fontSize: "12.5px" }}>
-                    SAR {c.walletBalanceSar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </span>
-                </td>
-                <td>
-                  <span style={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: c.riskScore > 70 ? "#EF4444" : c.riskScore > 30 ? "#F59E0B" : "#10B981"
-                  }}>
-                    {c.riskScore}/100
-                  </span>
-                </td>
-                <td>
-                  <StatusBadge status={c.kycStatus} />
-                </td>
-                <td>
-                  <button
-                    onClick={() => setFreezeModalUser(c)}
-                    className={c.isFrozen ? "btn-primary" : "btn-danger"}
-                    style={{ padding: "4px 8px", fontSize: "11px" }}
-                  >
-                    {c.isFrozen ? <Unlock size={11} /> : <Lock size={11} />}
-                    <span>{c.isFrozen ? (isAr ? "فك التجميد" : "Unfreeze") : (isAr ? "تجميد" : "Freeze")}</span>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{isAr ? "المستخدم" : "User"}</TableHead>
+            <TableHead>{isAr ? "الهوية" : "National ID"}</TableHead>
+            <TableHead>{isAr ? "الجوال / سريع" : "Mobile / Sarie"}</TableHead>
+            <TableHead>{isAr ? "الرصيد" : "Balance"}</TableHead>
+            <TableHead>{isAr ? "المخاطر" : "Risk"}</TableHead>
+            <TableHead>{isAr ? "التحقق" : "KYC"}</TableHead>
+            <TableHead>{isAr ? "إجراء" : "Action"}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filtered.map((c) => (
+            <TableRow key={c.id}>
+              <TableCell>
+                <div className="font-bold text-white text-xs">{isAr ? c.fullNameAr : c.fullName}</div>
+                <div className="text-[10px] text-slate-400">{c.email}</div>
+              </TableCell>
+              <TableCell>
+                <span className="font-mono text-xs text-sky-400 font-semibold">{c.nationalId}</span>
+              </TableCell>
+              <TableCell>
+                <div className="font-semibold text-xs">{c.mobile}</div>
+                <div className="text-[10px] text-[#7FE87F] font-mono">{c.sarieUpiId}</div>
+              </TableCell>
+              <TableCell>
+                <span className="font-extrabold text-[#7FE87F] text-xs">
+                  SAR {c.walletBalanceSar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </span>
+              </TableCell>
+              <TableCell>
+                <span
+                  className={`text-xs font-bold ${
+                    c.riskScore > 70
+                      ? "text-red-400"
+                      : c.riskScore > 30
+                      ? "text-amber-400"
+                      : "text-emerald-400"
+                  }`}
+                >
+                  {c.riskScore}/100
+                </span>
+              </TableCell>
+              <TableCell>
+                <StatusBadge status={c.kycStatus} />
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant={c.isFrozen ? "default" : "destructive"}
+                  size="sm"
+                  onClick={() => setFreezeModalUser(c)}
+                  className="h-7 px-2.5 text-xs gap-1"
+                >
+                  {c.isFrozen ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+                  <span>{c.isFrozen ? (isAr ? "فك التجميد" : "Unfreeze") : (isAr ? "تجميد" : "Freeze")}</span>
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
 
-      {/* Confirmation Modal */}
-      {freezeModalUser && (
-        <Modal
-          isOpen={true}
-          onClose={() => setFreezeModalUser(null)}
-          title={freezeModalUser.isFrozen ? "Unfreeze Account" : "Freeze Account"}
-          width="400px"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: 0 }}>
-              {freezeModalUser.isFrozen
-                ? `Unfreeze wallet for ${freezeModalUser.fullName}?`
-                : `Freeze wallet for ${freezeModalUser.fullName} to block outgoing transfers?`}
-            </p>
+      {/* Confirmation Dialog */}
+      <Dialog open={!!freezeModalUser} onOpenChange={(open) => !open && setFreezeModalUser(null)}>
+        {freezeModalUser && (
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>
+                {freezeModalUser.isFrozen ? "Unfreeze Account" : "Freeze Account"}
+              </DialogTitle>
+              <DialogDescription>
+                {freezeModalUser.isFrozen
+                  ? `Unfreeze wallet for ${freezeModalUser.fullName}? Outgoing transfers will be re-enabled.`
+                  : `Freeze wallet for ${freezeModalUser.fullName} to block outgoing transfers?`}
+              </DialogDescription>
+            </DialogHeader>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "6px" }}>
-              <button
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setFreezeModalUser(null)}
-                className="btn-secondary"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={freezeModalUser.isFrozen ? "default" : "destructive"}
+                size="sm"
                 onClick={() => {
                   onToggleFreezeAccount(freezeModalUser.id);
                   setFreezeModalUser(null);
                 }}
-                className={freezeModalUser.isFrozen ? "btn-primary" : "btn-danger"}
               >
                 {freezeModalUser.isFrozen ? "Unfreeze" : "Freeze"}
-              </button>
-            </div>
-          </div>
-        </Modal>
-      )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
     </div>
   );
 };

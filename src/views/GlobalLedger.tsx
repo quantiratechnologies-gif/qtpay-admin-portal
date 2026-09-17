@@ -5,13 +5,28 @@ import {
   RotateCcw,
   SmartphoneNfc,
   ArrowDownLeft,
-  Globe,
-  Eye,
-  CheckCircle2,
-  FileCheck
+  Eye
 } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
 import { StatusBadge } from "../components/Badge";
-import { Modal } from "../components/Modal";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from "../components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "../components/ui/dialog";
 import type { PlatformTransaction } from "../types";
 
 interface GlobalLedgerProps {
@@ -42,41 +57,35 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
   });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <div className="space-y-3.5">
       {/* Header */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: "12px"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <ReceiptText size={18} color="#7FE87F" />
-          <h2 style={{ fontSize: "17px", fontWeight: 800, color: "#FFFFFF" }}>
-            {isAr ? "سجل المعاملات والعمليات الحية" : "Live Transactions & Audit Ledger"}
+      <div className="flex items-center justify-between flex-wrap gap-2.5">
+        <div className="flex items-center gap-2">
+          <ReceiptText className="h-4 w-4 text-[#7FE87F]" />
+          <h2 className="text-base font-extrabold text-white">
+            {isAr ? "سجل المعاملات" : "Transactions"}
           </h2>
-          <span className="live-indicator" style={{ width: "5px", height: "5px" }} />
+          <Badge variant="success" className="text-[10px] uppercase font-bold">
+            <span className="live-indicator w-1 h-1" /> LIVE
+          </Badge>
         </div>
 
         {/* Filters */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ position: "relative" }}>
-            <Search size={13} color="#64748B" style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", left: "10px" }} />
-            <input
+        <div className="flex items-center gap-2">
+          <div className="relative w-48">
+            <Search className="absolute top-1/2 -translate-y-1/2 left-2.5 h-3.5 w-3.5 text-slate-500 pointer-events-none" />
+            <Input
               type="text"
               placeholder={isAr ? "بحث بالرقم المرجعي..." : "Search Ref or UTR..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field"
-              style={{ width: "200px", paddingLeft: "30px", height: "34px", fontSize: "12px" }}
+              className="pl-8 h-8 text-xs bg-[#121A2D] border-[var(--border-subtle)]"
             />
           </div>
           <select
             value={channelFilter}
             onChange={(e) => setChannelFilter(e.target.value)}
-            className="input-field"
-            style={{ cursor: "pointer", height: "34px", padding: "0 8px", fontSize: "12px" }}
+            className="h-8 px-2 text-xs bg-[#121A2D] border border-[var(--border-subtle)] rounded-lg text-white outline-none cursor-pointer"
           >
             <option value="all">{isAr ? "كل القنوات" : "All Rails"}</option>
             <option value="pos_softpos">POS / SoftPOS</option>
@@ -87,147 +96,148 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
       </div>
 
       {/* Table */}
-      <div className="admin-table-container">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>{isAr ? "المرجع والتوقيت" : "Order Ref & Time"}</th>
-              <th>{isAr ? "الطرفان" : "Transaction Flow"}</th>
-              <th>{isAr ? "المبلغ" : "Gross (SAR)"}</th>
-              <th>{isAr ? "عمولة المنصة" : "MDR Take"}</th>
-              <th>{isAr ? "القناة والدفع" : "Payment Rail"}</th>
-              <th>{isAr ? "الحالة" : "Status"}</th>
-              <th>{isAr ? "الإجراء" : "Action"}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((tx) => (
-              <tr key={tx.id}>
-                <td>
-                  <div style={{ fontFamily: "monospace", fontWeight: 700, color: "#38BDF8", fontSize: "12.5px" }}>{tx.orderRef}</div>
-                  <div style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>{new Date(tx.timestamp).toLocaleTimeString()}</div>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 700, color: "#FFFFFF", fontSize: "13px" }}>{tx.senderName}</div>
-                  <div style={{ fontSize: "10.5px", color: "#7FE87F" }}>➔ {tx.receiverName}</div>
-                </td>
-                <td>
-                  <span style={{ fontWeight: 800, color: "#FFFFFF", fontSize: "13px" }}>SAR {tx.amount.toFixed(2)}</span>
-                </td>
-                <td>
-                  <span style={{ fontWeight: 700, color: "#F59E0B", fontSize: "12px" }}>SAR {tx.platformMdrSar.toFixed(2)}</span>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "12px", fontWeight: 700, textTransform: "uppercase" }}>
-                    {tx.channel === "pos_softpos" ? <SmartphoneNfc size={13} color="#7FE87F" /> : <ArrowDownLeft size={13} color="#38BDF8" />}
-                    <span>{tx.paymentMethod}</span>
-                  </div>
-                </td>
-                <td>
-                  <StatusBadge status={tx.status} />
-                </td>
-                <td>
-                  <button
-                    onClick={() => setSelectedTx(tx)}
-                    className="btn-secondary"
-                    style={{ padding: "5px 9px", fontSize: "11px" }}
-                  >
-                    <Eye size={12} /> {isAr ? "تفاصيل" : "Inspect"}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{isAr ? "المرجع والتوقيت" : "Order Ref & Time"}</TableHead>
+            <TableHead>{isAr ? "الطرفان" : "Transaction Flow"}</TableHead>
+            <TableHead>{isAr ? "المبلغ" : "Gross (SAR)"}</TableHead>
+            <TableHead>{isAr ? "عمولة المنصة" : "MDR Take"}</TableHead>
+            <TableHead>{isAr ? "القناة والدفع" : "Payment Rail"}</TableHead>
+            <TableHead>{isAr ? "الحالة" : "Status"}</TableHead>
+            <TableHead>{isAr ? "الإجراء" : "Action"}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filtered.map((tx) => (
+            <TableRow key={tx.id}>
+              <TableCell>
+                <div className="font-mono font-bold text-sky-400 text-xs">{tx.orderRef}</div>
+                <div className="text-[10px] text-slate-400">{new Date(tx.timestamp).toLocaleTimeString()}</div>
+              </TableCell>
+              <TableCell>
+                <div className="font-bold text-white text-xs">{tx.senderName}</div>
+                <div className="text-[10px] text-[#7FE87F]">➔ {tx.receiverName}</div>
+              </TableCell>
+              <TableCell>
+                <span className="font-extrabold text-white text-xs">SAR {tx.amount.toFixed(2)}</span>
+              </TableCell>
+              <TableCell>
+                <span className="font-bold text-amber-400 text-xs">SAR {tx.platformMdrSar.toFixed(2)}</span>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1.5 text-xs font-bold uppercase">
+                  {tx.channel === "pos_softpos" ? (
+                    <SmartphoneNfc className="h-3.5 w-3.5 text-[#7FE87F]" />
+                  ) : (
+                    <ArrowDownLeft className="h-3.5 w-3.5 text-sky-400" />
+                  )}
+                  <span>{tx.paymentMethod}</span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <StatusBadge status={tx.status} />
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedTx(tx)}
+                  className="h-7 px-2.5 text-xs bg-[#121A2D] hover:bg-[#1A243B] gap-1"
+                >
+                  <Eye className="h-3 w-3" />
+                  <span>{isAr ? "تفاصيل" : "Inspect"}</span>
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
 
-      {/* Inspect Modal */}
-      {selectedTx && (
-        <Modal
-          isOpen={true}
-          onClose={() => setSelectedTx(null)}
-          title={`Transaction Details: ${selectedTx.orderRef}`}
-          width="500px"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <div style={{
-              background: "#121A2D",
-              borderRadius: "10px",
-              padding: "14px",
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "10px",
-              fontSize: "12px"
-            }}>
+      {/* Inspect Dialog */}
+      <Dialog open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
+        {selectedTx && (
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Order: {selectedTx.orderRef}</DialogTitle>
+              <DialogDescription>
+                Transaction ledger audit details
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="bg-[#121A2D] rounded-lg p-3 grid grid-cols-2 gap-2.5 text-xs border border-[var(--border-subtle)] my-1">
               <div>
-                <span style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>Gross Processed</span>
-                <div style={{ fontSize: "16px", fontWeight: 800, color: "#7FE87F" }}>SAR {selectedTx.amount.toFixed(2)}</div>
+                <span className="text-[10px] text-slate-400">Gross Processed</span>
+                <div className="text-sm font-extrabold text-[#7FE87F]">SAR {selectedTx.amount.toFixed(2)}</div>
               </div>
               <div>
-                <span style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>MDR Take Revenue</span>
-                <div style={{ fontSize: "16px", fontWeight: 800, color: "#F59E0B" }}>SAR {selectedTx.platformMdrSar.toFixed(2)}</div>
+                <span className="text-[10px] text-slate-400">MDR Take Revenue</span>
+                <div className="text-sm font-extrabold text-amber-400">SAR {selectedTx.platformMdrSar.toFixed(2)}</div>
               </div>
               <div>
-                <span style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>Sarie Instant UTR</span>
-                <div style={{ fontFamily: "monospace", fontWeight: 600 }}>{selectedTx.sarieUtr || "N/A"}</div>
+                <span className="text-[10px] text-slate-400">Sarie Instant UTR</span>
+                <div className="font-mono font-semibold text-white truncate">{selectedTx.sarieUtr || "N/A"}</div>
               </div>
               <div>
-                <span style={{ fontSize: "10.5px", color: "var(--text-muted)" }}>mada Gateway RRN</span>
-                <div style={{ fontFamily: "monospace", fontWeight: 600 }}>{selectedTx.madaRrn || "N/A"}</div>
+                <span className="text-[10px] text-slate-400">mada Gateway RRN</span>
+                <div className="font-mono font-semibold text-white truncate">{selectedTx.madaRrn || "N/A"}</div>
               </div>
             </div>
 
             {selectedTx.status !== "refunded" && (
-              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "4px" }}>
-                <button
+              <DialogFooter>
+                <Button
+                  variant="destructive"
+                  size="sm"
                   onClick={() => {
                     const tx = selectedTx;
                     setSelectedTx(null);
                     setRefundConfirmTx(tx);
                   }}
-                  className="btn-danger"
+                  className="gap-1.5"
                 >
-                  <RotateCcw size={13} /> {isAr ? "استرجاع فوري (Refund)" : "Execute Refund"}
-                </button>
-              </div>
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  <span>{isAr ? "استرجاع فوري (Refund)" : "Execute Refund"}</span>
+                </Button>
+              </DialogFooter>
             )}
-          </div>
-        </Modal>
-      )}
+          </DialogContent>
+        )}
+      </Dialog>
 
-      {/* Refund Confirmation Modal */}
-      {refundConfirmTx && (
-        <Modal
-          isOpen={true}
-          onClose={() => setRefundConfirmTx(null)}
-          title="Confirm Immediate Refund"
-          width="440px"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: "1.4", margin: 0 }}>
-              Are you sure you want to reverse <strong>SAR {refundConfirmTx.amount.toFixed(2)}</strong> for order <strong>{refundConfirmTx.orderRef}</strong> back to the original payment method?
-            </p>
+      {/* Refund Confirmation Dialog */}
+      <Dialog open={!!refundConfirmTx} onOpenChange={(open) => !open && setRefundConfirmTx(null)}>
+        {refundConfirmTx && (
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Confirm Immediate Refund</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to reverse <strong className="text-white">SAR {refundConfirmTx.amount.toFixed(2)}</strong> for order <strong className="text-sky-400">{refundConfirmTx.orderRef}</strong> back to the original payment method?
+              </DialogDescription>
+            </DialogHeader>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "6px" }}>
-              <button
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setRefundConfirmTx(null)}
-                className="btn-secondary"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
                 onClick={() => {
                   onExecuteRefund(refundConfirmTx.id);
                   setRefundConfirmTx(null);
                 }}
-                className="btn-danger"
               >
                 Confirm Refund
-              </button>
-            </div>
-          </div>
-        </Modal>
-      )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
     </div>
   );
 };

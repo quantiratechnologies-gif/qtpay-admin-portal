@@ -3,10 +3,18 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  ShieldCheck,
   Eye,
   EyeOff
 } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent
+} from "../components/ui/card";
 import type { AdminUser } from "../types";
 
 interface AdminLoginProps {
@@ -48,151 +56,88 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, lang }) 
   };
 
   return (
-    <div style={{
-      width: "100vw",
-      minHeight: "100vh",
-      backgroundColor: "#080C14",
-      backgroundImage: "radial-gradient(circle at 50% 20%, rgba(127, 232, 127, 0.07) 0%, transparent 60%)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "20px",
-      boxSizing: "border-box",
-      color: "#FFFFFF",
-      fontFamily: "'Inter', sans-serif"
-    }}>
-      <div style={{
-        width: "100%",
-        maxWidth: "400px",
-        background: "#0F1626",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        borderRadius: "20px",
-        padding: "36px 30px",
-        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
-        display: "flex",
-        flexDirection: "column",
-        gap: "22px"
-      }}>
+    <div className="w-screen min-h-screen bg-[#080C14] bg-[radial-gradient(circle_at_50%_20%,rgba(127,232,127,0.07)_0%,transparent_60%)] flex items-center justify-center p-5 text-white font-sans">
+      <Card className="w-full max-w-[400px] bg-[#0F1626] border border-white/10 rounded-2xl p-6 shadow-2xl space-y-4">
         {/* Brand Header */}
-        <div style={{ textAlign: "center" }}>
-          <div style={{
-            width: "50px",
-            height: "50px",
-            borderRadius: "14px",
-            background: "linear-gradient(135deg, #7FE87F, #059669)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "0 auto 16px auto",
-            boxShadow: "0 0 20px rgba(127, 232, 127, 0.35)",
-            color: "#080C14",
-            fontWeight: 900,
-            fontSize: "22px"
-          }}>
+        <CardHeader className="text-center space-y-2 pb-2">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7FE87F] to-[#059669] flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(127,232,127,0.35)] text-[#080C14] font-black text-xl">
             QP
           </div>
-          <h1 style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px 0" }}>
+          <CardTitle className="text-xl font-extrabold text-white">
             {isAr ? "لوحة تحكم الإدارة" : "QTPay Admin Portal"}
-          </h1>
-          <p style={{ fontSize: "13px", color: "#94A3B8", margin: 0 }}>
+          </CardTitle>
+          <CardDescription className="text-xs text-slate-400">
             {isAr ? "سجل الدخول للمتابعة إلى النظام" : "Sign in to access admin control"}
-          </p>
-        </div>
+          </CardDescription>
+        </CardHeader>
 
-        {error && (
-          <div style={{
-            background: "rgba(239, 68, 68, 0.15)",
-            border: "1px solid rgba(239, 68, 68, 0.3)",
-            borderRadius: "10px",
-            padding: "10px 14px",
-            color: "#F87171",
-            fontSize: "12.5px",
-            fontWeight: 600
-          }}>
-            {error}
-          </div>
-        )}
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div>
-            <label style={{ fontSize: "12.5px", fontWeight: 600, color: "#94A3B8", display: "block", marginBottom: "6px" }}>
-              {isAr ? "البريد الإلكتروني" : "Admin Email / Username"}
-            </label>
-            <div style={{ position: "relative" }}>
-              <Mail size={16} color="#64748B" style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", left: "14px" }} />
-              <input
-                type="text"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@qtpay.sa"
-                className="input-field"
-                style={{ width: "100%", paddingLeft: "40px", paddingRight: "14px", height: "44px", fontSize: "13.5px" }}
-              />
+        <CardContent className="space-y-4 pt-0">
+          {error && (
+            <div className="bg-red-500/15 border border-red-500/30 rounded-lg p-2.5 text-red-400 text-xs font-semibold text-center">
+              {error}
             </div>
-          </div>
+          )}
 
-          <div>
-            <label style={{ fontSize: "12.5px", fontWeight: 600, color: "#94A3B8", display: "block", marginBottom: "6px" }}>
-              {isAr ? "كلمة المرور" : "Password"}
-            </label>
-            <div style={{ position: "relative" }}>
-              <Lock size={16} color="#64748B" style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", left: "14px" }} />
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="input-field"
-                style={{ width: "100%", paddingLeft: "40px", paddingRight: "40px", height: "44px", fontSize: "13.5px" }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  right: "12px",
-                  background: "none",
-                  border: "none",
-                  color: "#64748B",
-                  cursor: "pointer",
-                  padding: "4px"
-                }}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-400 block">
+                {isAr ? "البريد الإلكتروني" : "Admin Email / Username"}
+              </label>
+              <div className="relative">
+                <Mail className="absolute top-1/2 -translate-y-1/2 left-3 h-4 w-4 text-slate-500 pointer-events-none" />
+                <Input
+                  type="text"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@qtpay.sa"
+                  className="pl-9 h-10 text-xs bg-[#121A2D] border-[var(--border-subtle)] focus:border-[#7FE87F]"
+                />
+              </div>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="btn-primary"
-            style={{
-              width: "100%",
-              height: "46px",
-              justifyContent: "center",
-              marginTop: "4px",
-              fontSize: "14.5px",
-              fontWeight: 800,
-              borderRadius: "12px"
-            }}
-          >
-            {isLoading ? (
-              <span>Logging in...</span>
-            ) : (
-              <>
-                <span>{isAr ? "تسجيل الدخول" : "Sign In"}</span>
-                <ArrowRight size={16} />
-              </>
-            )}
-          </button>
-        </form>
-      </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-400 block">
+                {isAr ? "كلمة المرور" : "Password"}
+              </label>
+              <div className="relative">
+                <Lock className="absolute top-1/2 -translate-y-1/2 left-3 h-4 w-4 text-slate-500 pointer-events-none" />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="pl-9 pr-9 h-10 text-xs bg-[#121A2D] border-[var(--border-subtle)] focus:border-[#7FE87F]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-1/2 -translate-y-1/2 right-3 text-slate-500 hover:text-white"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-10 rounded-xl font-bold text-xs mt-2"
+            >
+              {isLoading ? (
+                <span>Logging in...</span>
+              ) : (
+                <>
+                  <span>{isAr ? "تسجيل الدخول" : "Sign In"}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

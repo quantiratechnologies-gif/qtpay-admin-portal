@@ -1,14 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import {
   Search,
   Languages,
   RefreshCw,
   LogOut,
-  ChevronDown,
-  ShieldCheck,
-  User,
-  Zap
+  ChevronDown
 } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "./ui/dropdown-menu";
 import type { AdminUser } from "../types";
 
 interface HeaderProps {
@@ -29,204 +36,88 @@ export const Header: React.FC<HeaderProps> = ({
   isRefreshing = false
 }) => {
   const isAr = lang === "ar";
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsProfileOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   return (
-    <header style={{
-      height: "60px",
-      backgroundColor: "#0A0F1D",
-      borderBottom: "1px solid var(--border-subtle)",
-      padding: "0 20px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      position: "sticky",
-      top: 0,
-      zIndex: 30
-    }}>
+    <header className="h-14 bg-[#0A0F1D] border-b border-[var(--border-subtle)] px-5 flex items-center justify-between sticky top-0 z-30">
       {/* Search Input */}
-      <div style={{ position: "relative", width: "260px" }}>
+      <div className="relative w-64">
         <Search
-          size={14}
-          color="#64748B"
-          style={{
-            position: "absolute",
-            top: "50%",
-            transform: "translateY(-50%)",
-            [isAr ? "right" : "left"]: "10px"
-          }}
+          className={`absolute top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500 pointer-events-none ${
+            isAr ? "right-2.5" : "left-2.5"
+          }`}
         />
-        <input
+        <Input
           type="text"
           placeholder={isAr ? "بحث سريع (CR, UTR)..." : "Quick Search..."}
-          style={{
-            width: "100%",
-            background: "#121A2D",
-            border: "1px solid var(--border-subtle)",
-            borderRadius: "7px",
-            padding: isAr ? "7px 30px 7px 10px" : "7px 10px 7px 30px",
-            color: "#FFFFFF",
-            fontSize: "12px",
-            outline: "none"
-          }}
+          className={`h-8 text-xs bg-[#121A2D] border-[var(--border-subtle)] focus:border-[#7FE87F] ${
+            isAr ? "pr-8 pl-2.5" : "pl-8 pr-2.5"
+          }`}
         />
       </div>
 
       {/* Right Controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div className="flex items-center gap-2">
         {/* Live Socket Status */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "5px",
-          padding: "5px 9px",
-          background: "rgba(16, 185, 129, 0.08)",
-          borderRadius: "6px",
-          border: "1px solid rgba(16, 185, 129, 0.2)",
-          fontSize: "11px",
-          color: "#10B981",
-          fontWeight: 700
-        }}>
-          <span className="live-indicator" style={{ width: "5px", height: "5px" }} />
+        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-md text-[11px] text-emerald-400 font-bold">
+          <span className="live-indicator w-1.5 h-1.5" />
           <span>Live Sync</span>
         </div>
 
         {/* Refresh Live Button */}
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           onClick={onRefreshData}
           disabled={isRefreshing}
           title={isAr ? "تحديث البيانات" : "Refresh Data"}
-          style={{
-            background: "#121A2D",
-            border: "1px solid var(--border-subtle)",
-            color: "#94A3B8",
-            borderRadius: "7px",
-            padding: "6px 8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer"
-          }}
+          className="h-8 w-8 bg-[#121A2D] border-[var(--border-subtle)] text-slate-400 hover:text-white"
         >
-          <RefreshCw size={13} className={isRefreshing ? "animate-spin" : ""} color="#7FE87F" />
-        </button>
+          <RefreshCw className={`h-3.5 w-3.5 text-[#7FE87F] ${isRefreshing ? "animate-spin" : ""}`} />
+        </Button>
 
         {/* Language Switcher */}
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={onToggleLang}
-          style={{
-            background: "rgba(127, 232, 127, 0.08)",
-            border: "1px solid rgba(127, 232, 127, 0.25)",
-            color: "#7FE87F",
-            borderRadius: "7px",
-            padding: "5px 9px",
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-            fontSize: "11.5px",
-            fontWeight: 700,
-            cursor: "pointer"
-          }}
+          className="h-8 px-2.5 bg-[#7FE87F]/10 border-[#7FE87F]/30 text-[#7FE87F] hover:bg-[#7FE87F]/20 text-xs font-bold gap-1.5"
         >
-          <Languages size={12} />
+          <Languages className="h-3.5 w-3.5" />
           <span>{isAr ? "EN" : "عربي"}</span>
-        </button>
+        </Button>
 
-        {/* User Profile with Dropdown */}
-        <div style={{ position: "relative" }} ref={dropdownRef}>
-          <button
-            onClick={() => setIsProfileOpen(!isProfileOpen)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "7px",
-              padding: "4px 8px 4px 6px",
-              background: "#121A2D",
-              borderRadius: "7px",
-              border: "1px solid var(--border-subtle)",
-              cursor: "pointer"
-            }}
-          >
-            <div style={{
-              width: "22px",
-              height: "22px",
-              borderRadius: "5px",
-              background: "#7FE87F",
-              color: "#080C14",
-              fontWeight: 800,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "10.5px"
-            }}>
-              {currentUser.avatar}
-            </div>
-            <span style={{ fontSize: "12px", fontWeight: 700, color: "#FFFFFF" }}>
-              {currentUser.name.split(" ")[0]}
-            </span>
-            <ChevronDown size={12} color="#94A3B8" />
-          </button>
-
-          {/* Profile Dropdown Menu */}
-          {isProfileOpen && (
-            <div style={{
-              position: "absolute",
-              top: "calc(100% + 6px)",
-              [isAr ? "left" : "right"]: 0,
-              width: "200px",
-              background: "#0F1626",
-              border: "1px solid var(--border-strong)",
-              borderRadius: "10px",
-              padding: "8px",
-              boxShadow: "0 15px 30px rgba(0,0,0,0.6)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-              zIndex: 50
-            }}>
-              <div style={{ padding: "6px 8px", borderBottom: "1px solid var(--border-subtle)", marginBottom: "4px" }}>
-                <div style={{ fontSize: "12px", fontWeight: 700, color: "#FFFFFF" }}>{currentUser.name}</div>
-                <div style={{ fontSize: "10.5px", color: "var(--text-muted)", marginTop: "1px" }}>{currentUser.email}</div>
+        {/* User Profile Dropdown using Radix DropdownMenu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-2 bg-[#121A2D] border-[var(--border-subtle)] text-white hover:bg-[#1A243B] gap-2"
+            >
+              <div className="w-5 h-5 rounded bg-[#7FE87F] text-[#080C14] font-extrabold flex items-center justify-center text-[10px]">
+                {currentUser.avatar}
               </div>
-
-              <button
-                onClick={() => {
-                  setIsProfileOpen(false);
-                  onLogout();
-                }}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "7px",
-                  padding: "7px 8px",
-                  borderRadius: "6px",
-                  border: "none",
-                  background: "rgba(239, 68, 68, 0.1)",
-                  color: "#F87171",
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  textAlign: isAr ? "right" : "left"
-                }}
-              >
-                <LogOut size={13} />
-                <span>{isAr ? "تسجيل الخروج" : "Sign Out"}</span>
-              </button>
-            </div>
-          )}
-        </div>
+              <span className="text-xs font-bold">
+                {currentUser.name.split(" ")[0]}
+              </span>
+              <ChevronDown className="h-3 w-3 text-slate-400" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align={isAr ? "start" : "end"} className="w-52">
+            <DropdownMenuLabel className="space-y-0.5">
+              <div className="font-bold text-xs text-white">{currentUser.name}</div>
+              <div className="text-[10px] text-slate-400 truncate">{currentUser.email}</div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={onLogout}
+              className="text-red-400 focus:bg-red-500/10 focus:text-red-400 font-semibold gap-2 py-2"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>{isAr ? "تسجيل الخروج" : "Sign Out"}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
