@@ -1,10 +1,10 @@
 import React from "react";
 import {
-  Bell,
   Search,
   Languages,
   RefreshCw,
-  LogOut
+  LogOut,
+  User
 } from "lucide-react";
 import type { AdminUser } from "../types";
 
@@ -40,8 +40,8 @@ export const Header: React.FC<HeaderProps> = ({
       top: 0,
       zIndex: 30
     }}>
-      {/* Global Search Bar */}
-      <div style={{ position: "relative", width: "320px" }}>
+      {/* Search Bar */}
+      <div style={{ position: "relative", width: "300px" }}>
         <Search
           size={15}
           color="#64748B"
@@ -54,13 +54,13 @@ export const Header: React.FC<HeaderProps> = ({
         />
         <input
           type="text"
-          placeholder={isAr ? "بحث سريع..." : "Quick search CR, UTR, Order..."}
+          placeholder={isAr ? "بحث بالرقم المرجعي أو التاجر..." : "Search Order, Merchant, User..."}
           style={{
             width: "100%",
             background: "#121A2D",
             border: "1px solid var(--border-subtle)",
             borderRadius: "8px",
-            padding: isAr ? "8px 36px 8px 12px" : "8px 12px 8px 36px",
+            padding: isAr ? "8px 34px 8px 12px" : "8px 12px 8px 34px",
             color: "#FFFFFF",
             fontSize: "12.5px",
             outline: "none"
@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right Controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         {/* Refresh Live Button */}
         <button
           onClick={onRefreshData}
@@ -89,7 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
           }}
         >
           <RefreshCw size={13} className={isRefreshing ? "animate-spin" : ""} color="#7FE87F" />
-          <span>{isAr ? "تحديث" : "Sync"}</span>
+          <span>{isAr ? "تحديث" : "Refresh"}</span>
         </button>
 
         {/* Language Switcher */}
@@ -113,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
           <span>{isAr ? "EN" : "عربي"}</span>
         </button>
 
-        {/* Admin Profile Chip */}
+        {/* Admin User Chip */}
         <div style={{
           display: "flex",
           alignItems: "center",
@@ -124,8 +124,8 @@ export const Header: React.FC<HeaderProps> = ({
           border: "1px solid var(--border-subtle)"
         }}>
           <div style={{
-            width: "28px",
-            height: "28px",
+            width: "26px",
+            height: "26px",
             borderRadius: "6px",
             background: "#7FE87F",
             color: "#080C14",
@@ -133,38 +133,34 @@ export const Header: React.FC<HeaderProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "12px"
+            fontSize: "11.5px"
           }}>
             {currentUser.avatar}
           </div>
-          <div style={{ textAlign: isAr ? "right" : "left" }}>
-            <div style={{ fontSize: "12px", fontWeight: 700, color: "#FFFFFF" }}>
-              {currentUser.name.split(" ")[0]}
-            </div>
-            <div style={{ fontSize: "10px", color: "#7FE87F", fontWeight: 600, textTransform: "uppercase" }}>
-              {currentUser.role}
-            </div>
-          </div>
+          <span style={{ fontSize: "12.5px", fontWeight: 700, color: "#FFFFFF" }}>
+            {currentUser.name}
+          </span>
         </div>
 
-        {/* Logout Button */}
+        {/* Clear Header Logout Button */}
         <button
           onClick={onLogout}
-          title={isAr ? "تسجيل الخروج" : "Logout"}
           style={{
             background: "rgba(239, 68, 68, 0.12)",
-            border: "1px solid rgba(239, 68, 68, 0.25)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
             color: "#F87171",
             borderRadius: "8px",
-            width: "34px",
-            height: "34px",
+            padding: "6px 12px",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            gap: "6px",
+            fontSize: "12px",
+            fontWeight: 700,
             cursor: "pointer"
           }}
         >
-          <LogOut size={15} />
+          <LogOut size={14} />
+          <span>{isAr ? "خروج" : "Logout"}</span>
         </button>
       </div>
     </header>
