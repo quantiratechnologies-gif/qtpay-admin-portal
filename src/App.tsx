@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Sidebar, NavTab } from "./components/Sidebar";
 import { Header } from "./components/Header";
+import { AdminLogin } from "./views/AdminLogin";
 import { ExecutiveDashboard } from "./views/ExecutiveDashboard";
 import { MerchantOperations } from "./views/MerchantOperations";
 import { ConsumerKYC } from "./views/ConsumerKYC";
@@ -21,6 +22,7 @@ import {
 } from "./services/mockData";
 import { subscribeToPlatformTransactions } from "./services/supabaseClient";
 import type {
+  AdminUser,
   Merchant,
   CustomerUser,
   PlatformTransaction,
@@ -31,6 +33,19 @@ import type {
 } from "./types";
 
 export function App() {
+  // Authentication Gate State
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("qtpay_admin_session");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch(e) {}
+      }
+    }
+    return null;
+  });
+
   const [currentTab, setCurrentTab] = useState<NavTab>("dashboard");
   const [lang, setLang] = useState<"en" | "ar">("en");
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -58,10 +73,11 @@ export function App() {
 
   // Connect to Supabase Realtime Platform Stream
   useEffect(() => {
+    if (!currentUser) return;
+
     const unsubscribe = subscribeToPlatformTransactions((newTx) => {
       setTransactions((prev) => [newTx, ...prev]);
 
-      // Add audit log for realtime event
       const log: SamaAuditLog = {
         id: `aud_${Date.now()}`,
         timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
@@ -80,7 +96,22 @@ export function App() {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [currentUser]);
+
+  const handleLoginSuccess = (user: AdminUser) => {
+    setCurrentUser(user);
+    localStorage.setItem("qtpay_admin_session", JSON.stringify(user));
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("qtpay_admin_session");
+  };
+
+  // If not logged in, render Admin Login screen!
+  if (!currentUser) {
+    return <AdminLogin onLoginSuccess={handleLoginSuccess} lang={lang} />;
+  }
 
   // Action Handlers
   const handleUpdateMerchantStatus = (merchantId: string, newStatus: Merchant["status"]) => {
@@ -91,13 +122,13 @@ export function App() {
     const log: SamaAuditLog = {
       id: `aud_${Date.now()}`,
       timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
-      adminName: currentAdminUser.name,
-      adminEmail: currentAdminUser.email,
+      adminName: currentUser.name,
+      adminEmail: currentUser.email,
       action: newStatus === "active" ? "APPROVE_MERCHANT_KYB" : "SUSPEND_MERCHANT",
       category: "KYB_APPROVAL",
       targetEntity: target ? target.businessName : merchantId,
       details: `Changed merchant KYB status to ${newStatus.toUpperCase()}`,
-      ipAddress: currentAdminUser.ipAddress,
+      ipAddress: currentUser.ipAddress,
       status: "SUCCESS"
     };
     setAuditLogs((prev) => [log, ...prev]);
@@ -112,13 +143,13 @@ export function App() {
     const log: SamaAuditLog = {
       id: `aud_${Date.now()}`,
       timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
-      adminName: currentAdminUser.name,
-      adminEmail: currentAdminUser.email,
+      adminName: currentUser.name,
+      adminEmail: currentUser.email,
       action: isNowFrozen ? "FREEZE_CUSTOMER_WALLET" : "UNFREEZE_CUSTOMER_WALLET",
       category: "ACCOUNT_FREEZE",
       targetEntity: target ? target.fullName : customerId,
       details: isNowFrozen ? "Locked wallet safety lock due to compliance investigation" : "Restored wallet access",
-      ipAddress: currentAdminUser.ipAddress,
+      ipAddress: currentUser.ipAddress,
       status: "SUCCESS"
     };
     setAuditLogs((prev) => [log, ...prev]);
@@ -132,13 +163,13 @@ export function App() {
     const log: SamaAuditLog = {
       id: `aud_${Date.now()}`,
       timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
-      adminName: currentAdminUser.name,
-      adminEmail: currentAdminUser.email,
+      adminName: currentUser.name,
+      adminEmail: currentUser.email,
       action: "EXECUTE_REFUND",
       category: "REFUND_EXECUTION",
       targetEntity: target ? target.orderRef : txId,
       details: `Reversed SAR ${target?.amount} back to original payment rail`,
-      ipAddress: currentAdminUser.ipAddress,
+      ipAddress: currentUser.ipAddress,
       status: "SUCCESS"
     };
     setAuditLogs((prev) => [log, ...prev]);
@@ -152,13 +183,13 @@ export function App() {
     const log: SamaAuditLog = {
       id: `aud_${Date.now()}`,
       timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
-      adminName: currentAdminUser.name,
-      adminEmail: currentAdminUser.email,
+      adminName: currentUser.name,
+      adminEmail: currentUser.email,
       action: "DISPATCH_SETTLEMENT_BATCH",
       category: "SETTLEMENT_DISPATCH",
       targetEntity: target ? target.batchRef : batchId,
       details: `Dispatched net SAR ${target?.totalNetDisbursedSar.toLocaleString()} to partner bank`,
-      ipAddress: currentAdminUser.ipAddress,
+      ipAddress: currentUser.ipAddress,
       status: "SUCCESS"
     };
     setAuditLogs((prev) => [log, ...prev]);
@@ -199,13 +230,15 @@ export function App() {
       {/* Main Content Area */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
         <Header
+          currentUser={currentUser}
+          onLogout={handleLogout}
           lang={lang}
           onToggleLang={() => setLang(lang === "en" ? "ar" : "en")}
           onRefreshData={handleRefreshData}
           isRefreshing={isRefreshing}
         />
 
-        <main style={{ flex: 1, padding: "24px 28px", overflowY: "auto" }}>
+        <main style={{ flex: 1, padding: "20px 24px", overflowY: "auto" }}>
           {currentTab === "dashboard" && (
             <ExecutiveDashboard
               transactions={transactions}
