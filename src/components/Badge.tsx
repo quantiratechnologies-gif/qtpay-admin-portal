@@ -1,29 +1,34 @@
 import React from "react";
+import { useTranslation } from "../lib/i18n/LanguageContext";
 
 interface BadgeProps {
   status: string;
   text?: string;
+  lang?: "en" | "ar";
 }
 
 export const StatusBadge: React.FC<BadgeProps> = ({ status, text }) => {
-  const displayLabel = text || status.replace(/_/g, " ").toUpperCase();
-  
-  let bg = "bg-slate-800/60";
-  let color = "text-slate-400";
-  let border = "border-slate-700/60";
-  let dot = "bg-slate-400";
+  const { translateStatus } = useTranslation();
+  const displayLabel = text || translateStatus(status);
 
-  if (["active", "settled", "completed", "verified", "low"].includes(status.toLowerCase())) {
-    bg = "bg-emerald-500/10";
-    color = "text-emerald-400";
-    border = "border-emerald-500/25";
-    dot = "bg-emerald-400";
-  } else if (["pending", "pending_kyb", "processing", "scheduled", "medium", "action_required"].includes(status.toLowerCase())) {
+  let bg = "bg-[#182236]";
+  let color = "text-[#A2A2BA]";
+  let border = "border-[#2C2C44]";
+  let dot = "bg-[#A2A2BA]";
+
+  const s = status.toLowerCase();
+
+  if (["active", "settled", "completed", "verified", "low", "online"].includes(s)) {
+    bg = "bg-[#7FE87F]/15";
+    color = "text-[#7FE87F]";
+    border = "border-[#7FE87F]/35";
+    dot = "bg-[#7FE87F]";
+  } else if (["pending", "pending_kyb", "processing", "scheduled", "medium", "action_required"].includes(s)) {
     bg = "bg-amber-500/10";
-    color = "text-amber-400";
+    color = "text-amber-300";
     border = "border-amber-500/25";
     dot = "bg-amber-400";
-  } else if (["failed", "suspended", "blacklisted", "rejected", "critical", "high", "flagged"].includes(status.toLowerCase())) {
+  } else if (["failed", "suspended", "blacklisted", "rejected", "critical", "high", "flagged", "offline"].includes(s)) {
     bg = "bg-red-500/10";
     color = "text-red-400";
     border = "border-red-500/25";

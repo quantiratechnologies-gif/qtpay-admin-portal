@@ -1,22 +1,29 @@
 import React from "react";
-import {
-  FileCheck,
-  ShieldCheck,
-  Search,
-  Download,
-  Lock,
-  History
-} from "lucide-react";
+import { Download } from "lucide-react";
 import { StatusBadge } from "../components/Badge";
+import { useTranslation } from "../lib/i18n/LanguageContext";
 import type { SamaAuditLog } from "../types";
 
 interface SamaAuditLogsProps {
   logs: SamaAuditLog[];
-  lang: "en" | "ar";
+  lang?: "en" | "ar";
 }
 
-export const SamaAuditLogs: React.FC<SamaAuditLogsProps> = ({ logs, lang }) => {
-  const isAr = lang === "ar";
+export const SamaAuditLogs: React.FC<SamaAuditLogsProps> = ({ logs }) => {
+  const { lang, isAr } = useTranslation();
+
+  const getActionLabel = (action: string) => {
+    if (!isAr) return action;
+    const map: Record<string, string> = {
+      "KYB_APPROVAL": "اعتماد KYB",
+      "SETTLEMENT_DISPATCH": "إرسال التسوية",
+      "ACCOUNT_FREEZE": "تجميد الحساب",
+      "FEE_OVERRIDE": "تعديل الرسوم",
+      "REFUND_EXECUTION": "تنفيذ الاسترجاع",
+      "AML_FLAG": "إشعار غسل الأموال"
+    };
+    return map[action] || action;
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -30,15 +37,17 @@ export const SamaAuditLogs: React.FC<SamaAuditLogsProps> = ({ logs, lang }) => {
       }}>
         <div>
           <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#FFFFFF" }}>
-            {isAr ? "سجل الامتثال والتدقيق الإداري الصارم (SAMA Immutable Audit)" : "SAMA Compliance & Immutable Audit Log"}
+            {isAr ? "سجل التدقيق والامتثال" : "Audit & Compliance Log"}
           </h2>
           <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-            {isAr ? "سجل مشفر وغير قابل للتعديل لجميع العمليات الإدارية، التسويات، وتجميد الحسابات" : "Tamper-evident administrative action ledger required by Saudi Central Bank cyber regulations"}
+            {isAr
+              ? "سجل العمليات الإدارية والتسويات وتجميد الحسابات"
+              : "Immutable administrative action and settlement ledger"}
           </p>
         </div>
 
         <button className="btn-secondary">
-          <Download size={14} /> {isAr ? "تنزيل تقرير التدقيق الموثق" : "Export Official Audit Packet"}
+          <Download size={14} /> {isAr ? "تصدير التقرير" : "Export Audit Log"}
         </button>
       </div>
 
@@ -64,7 +73,7 @@ export const SamaAuditLogs: React.FC<SamaAuditLogsProps> = ({ logs, lang }) => {
                 </td>
                 <td>
                   <div style={{ fontWeight: 700, color: "#FFFFFF" }}>{log.adminName}</div>
-                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{log.adminEmail}</div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>{log.adminEmail}</div>
                 </td>
                 <td>
                   <span style={{
@@ -72,14 +81,14 @@ export const SamaAuditLogs: React.FC<SamaAuditLogsProps> = ({ logs, lang }) => {
                     fontWeight: 800,
                     padding: "3px 8px",
                     borderRadius: "6px",
-                    background: "rgba(56, 189, 248, 0.15)",
-                    color: "#38BDF8"
+                    background: "rgba(212, 175, 55, 0.15)",
+                    color: "#F1D77A"
                   }}>
-                    {log.action}
+                    {getActionLabel(log.action)}
                   </span>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 600, color: "#7FE87F" }}>{log.targetEntity}</div>
+                  <div style={{ fontWeight: 600, color: "#F1D77A" }}>{log.targetEntity}</div>
                 </td>
                 <td>
                   <div style={{ fontSize: "12px", color: "var(--text-secondary)", maxWidth: "340px" }}>{log.details}</div>
@@ -98,3 +107,4 @@ export const SamaAuditLogs: React.FC<SamaAuditLogsProps> = ({ logs, lang }) => {
     </div>
   );
 };
+

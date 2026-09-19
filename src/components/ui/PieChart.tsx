@@ -91,7 +91,7 @@ export const PieChart: React.FC<PieChartProps> = ({
                 d={slice.pathData}
                 fill={slice.color}
                 opacity={hoveredIndex === null || isHovered ? 1 : 0.45}
-                stroke="#0E1526"
+                stroke="#171717"
                 strokeWidth={2}
                 className="transition-all duration-200 cursor-pointer"
                 style={{
@@ -110,7 +110,7 @@ export const PieChart: React.FC<PieChartProps> = ({
           <span className="text-sm font-extrabold text-white tracking-tight">
             {activeSlice ? `${activeSlice.percentage}%` : centerValue || `${total.toLocaleString()}`}
           </span>
-          <span className="text-[10px] font-medium text-slate-400 truncate max-w-[80px]">
+          <span className="text-[10px] font-medium text-neutral-400 truncate max-w-[80px]">
             {activeSlice ? activeSlice.name : centerLabel || "Total"}
           </span>
         </div>
@@ -127,8 +127,8 @@ export const PieChart: React.FC<PieChartProps> = ({
               onMouseLeave={() => setHoveredIndex(null)}
               className={`flex items-center justify-between p-2 rounded-lg border transition-all cursor-pointer ${
                 isHovered
-                  ? "bg-slate-800/80 border-slate-700"
-                  : "bg-[#10182A] border-slate-800/60 hover:bg-slate-800/40"
+                  ? "bg-[#1E1E1E] border-[#D4AF37]/50 shadow-sm"
+                  : "bg-[#121212] border-[#262626] hover:bg-[#1A1A1A]"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -141,7 +141,7 @@ export const PieChart: React.FC<PieChartProps> = ({
                     {item.name}
                   </span>
                   {item.subtext && (
-                    <span className="text-[10px] text-slate-400 block">
+                    <span className="text-[10px] text-neutral-400 block">
                       {item.subtext}
                     </span>
                   )}

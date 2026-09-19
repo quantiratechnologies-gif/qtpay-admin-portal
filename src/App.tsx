@@ -16,6 +16,7 @@ import {
   mockFeeTiers
 } from "./services/mockData";
 import { subscribeToPlatformTransactions } from "./services/supabaseClient";
+import { LanguageProvider, useTranslation } from "./lib/i18n/LanguageContext";
 import type {
   AdminUser,
   Merchant,
@@ -24,12 +25,13 @@ import type {
   CommissionFeeTier
 } from "./types";
 
-export function App() {
+function AppContent() {
+  const { lang, isAr, toggleLang } = useTranslation();
+
   // Always start unauthenticated on load to show login page
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
 
   const [currentTab, setCurrentTab] = useState<NavTab>("dashboard");
-  const [lang, setLang] = useState<"en" | "ar">("en");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Application Data States
@@ -37,17 +39,6 @@ export function App() {
   const [customers, setCustomers] = useState<CustomerUser[]>(mockCustomers);
   const [transactions, setTransactions] = useState<PlatformTransaction[]>(mockTransactions);
   const [feeTiers, setFeeTiers] = useState<CommissionFeeTier[]>(mockFeeTiers);
-
-  // Sync RTL direction
-  useEffect(() => {
-    if (lang === "ar") {
-      document.body.classList.add("rtl");
-      document.documentElement.dir = "rtl";
-    } else {
-      document.body.classList.remove("rtl");
-      document.documentElement.dir = "ltr";
-    }
-  }, [lang]);
 
   // Connect to Supabase Realtime Platform Stream
   useEffect(() => {
@@ -103,7 +94,7 @@ export function App() {
   const handleUpdateFee = (id: string, newRate: number, newFixed: number) => {
     setFeeTiers((prev) =>
       prev.map((t) =>
-        t.id === id ? { ...t, ratePercentage: newRate, fixedFeeSar: newFixed, lastUpdated: "Just Now" } : t
+        t.id === id ? { ...t, ratePercentage: newRate, fixedFeeSar: newFixed, lastUpdated: isAr ? "الآن" : "Just Now" } : t
       )
     );
   };
@@ -130,24 +121,28 @@ export function App() {
           currentUser={currentUser}
           onLogout={handleLogout}
           lang={lang}
-          onToggleLang={() => setLang(lang === "en" ? "ar" : "en")}
+          onToggleLang={toggleLang}
           onRefreshData={handleRefreshData}
           isRefreshing={isRefreshing}
         />
 
-        <main className="flex-1 p-5 lg:p-6 overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-5 lg:p-6 overflow-y-auto">
           {currentTab === "dashboard" && (
             <ExecutiveDashboard
               transactions={transactions}
               merchants={merchants}
+              customers={customers}
               riskAlerts={mockRiskAlerts}
               lang={lang}
+              onSelectTab={setCurrentTab}
+              onLogout={handleLogout}
             />
           )}
 
           {currentTab === "insights" && (
             <InsightsAnalytics
               lang={lang}
+              onSelectTab={setCurrentTab}
             />
           )}
 
@@ -189,5 +184,13 @@ export function App() {
         </main>
       </div>
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }

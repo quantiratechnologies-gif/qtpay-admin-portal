@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   ArrowLeft,
+  ArrowRight,
   Store,
   ShieldCheck,
   CheckCircle2,
@@ -14,8 +15,6 @@ import {
   History,
   Building2,
   MapPin,
-  Phone,
-  Mail,
   Copy,
   Check,
   Download,
@@ -24,17 +23,13 @@ import {
   RotateCcw,
   SmartphoneNfc,
   Coins,
-  Cpu,
-  Layers,
   FileText,
   Clock,
-  Activity,
-  AlertCircle
+  Activity
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Input } from "../components/ui/input";
 import { StatusBadge } from "../components/Badge";
 import {
   Table,
@@ -52,7 +47,8 @@ import {
   DialogDescription,
   DialogFooter
 } from "../components/ui/dialog";
-import type { Merchant, PlatformTransaction, SoftPosTerminal } from "../types";
+import { useTranslation } from "../lib/i18n/LanguageContext";
+import type { Merchant, PlatformTransaction } from "../types";
 
 interface MerchantDetailViewProps {
   merchant: Merchant;
@@ -60,7 +56,7 @@ interface MerchantDetailViewProps {
   onBack: () => void;
   onUpdateStatus: (merchantId: string, newStatus: Merchant["status"]) => void;
   onExecuteRefund?: (txId: string) => void;
-  lang: "en" | "ar";
+  lang?: "en" | "ar";
 }
 
 export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
@@ -68,10 +64,9 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
   transactions,
   onBack,
   onUpdateStatus,
-  onExecuteRefund,
-  lang
+  onExecuteRefund
 }) => {
-  const isAr = lang === "ar";
+  const { isAr, t, formatCurrency, formatDate, translateCategory, translatePaymentMethod } = useTranslation();
   const [activeTab, setActiveTab] = useState<"profile" | "terminals" | "transactions" | "settlements" | "activity">("profile");
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [isProvisionModalOpen, setIsProvisionModalOpen] = useState(false);
@@ -93,6 +88,8 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
     (tx) => tx.merchantId === merchant.id || tx.receiverName.toLowerCase().includes(merchant.businessName.toLowerCase().slice(0, 8))
   );
 
+  const BackIcon = isAr ? ArrowRight : ArrowLeft;
+
   return (
     <div className="space-y-4">
       {/* Top Breadcrumb & Navigation */}
@@ -102,24 +99,24 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
             variant="outline"
             size="sm"
             onClick={onBack}
-            className="h-8 px-3 bg-[#10182A] border-slate-800/80 text-slate-300 hover:text-white gap-1.5"
+            className="h-8 px-3 bg-[#171717] border-[#262626] text-neutral-300 hover:text-white hover:border-[#D4AF37]/40 gap-1.5 cursor-pointer"
           >
-            <ArrowLeft className={`h-3.5 w-3.5 ${isAr ? "rotate-180" : ""}`} />
-            <span>{isAr ? "العودة للتجار" : "Back to Merchants"}</span>
+            <BackIcon className="h-3.5 w-3.5" />
+            <span>{isAr ? "العودة" : "Back"}</span>
           </Button>
-          <span className="text-slate-600 text-xs">/</span>
-          <span className="text-xs font-bold text-white">{isAr ? merchant.businessNameAr : merchant.businessName}</span>
+          <span className="text-neutral-600 text-xs">/</span>
+          <span className="text-xs font-bold text-white">{isAr && merchant.businessNameAr ? merchant.businessNameAr : merchant.businessName}</span>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => showNotice("Official merchant statement exported to PDF / CSV")}
-            className="h-8 px-3 bg-[#10182A] border-slate-800/80 text-slate-300 hover:text-white gap-1.5 text-xs"
+            onClick={() => showNotice(isAr ? "تم تصدير كشف حساب التاجر الرسمي بنجاح" : "Official merchant dossier exported")}
+            className="h-8 px-3 bg-[#171717] border-[#262626] text-neutral-300 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 gap-1.5 text-xs cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5 text-sky-400" />
-            <span>{isAr ? "تصدير كشف حساب" : "Export Dossier"}</span>
+            <Download className="h-3.5 w-3.5 text-[#F1D77A]" />
+            <span>{t("common.export")}</span>
           </Button>
 
           {merchant.status === "active" ? (
@@ -128,9 +125,9 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               size="sm"
               onClick={() => {
                 onUpdateStatus(merchant.id, "suspended");
-                showNotice(`Merchant ${merchant.businessName} suspended`);
+                showNotice(isAr ? `تم إيقاف التاجر ${merchant.businessNameAr || merchant.businessName}` : `Merchant ${merchant.businessName} suspended`);
               }}
-              className="h-8 px-3 text-xs gap-1.5 font-bold"
+              className="h-8 px-3 text-xs gap-1.5 font-bold cursor-pointer"
             >
               <XCircle className="h-3.5 w-3.5" />
               <span>{isAr ? "إيقاف التاجر" : "Suspend Merchant"}</span>
@@ -141,59 +138,59 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               size="sm"
               onClick={() => {
                 onUpdateStatus(merchant.id, "active");
-                showNotice(`Merchant ${merchant.businessName} approved & activated`);
+                showNotice(isAr ? `تم اعتماد وتفعيل التاجر ${merchant.businessNameAr || merchant.businessName}` : `Merchant ${merchant.businessName} activated`);
               }}
-              className="h-8 px-3 text-xs gap-1.5 font-bold"
+              className="h-8 px-3 text-xs gap-1.5 font-bold cursor-pointer bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 shadow-md shadow-[#D4AF37]/20"
             >
-              <CheckCircle2 className="h-3.5 w-3.5 text-black" />
-              <span>{isAr ? "اعتماد التاجر" : "Approve & Activate"}</span>
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#0B0B0B]" />
+              <span>{isAr ? "اعتماد وتفعيل" : "Approve & Activate"}</span>
             </Button>
           )}
         </div>
       </div>
 
       {notice && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs font-semibold flex items-center gap-2.5">
-          <CheckCircle2 className="h-4 w-4" />
+        <div className="p-3 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl text-[#F1D77A] text-xs font-semibold flex items-center gap-2.5">
+          <CheckCircle2 className="h-4 w-4 text-[#D4AF37]" />
           <span>{notice}</span>
         </div>
       )}
 
       {/* Main Header Dossier Card */}
-      <Card className="p-5 space-y-4">
+      <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-[#00FF24]/20 to-emerald-500/10 border border-[#00FF24]/30 flex items-center justify-center text-[#00FF24] p-3">
+            <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-[#F1D77A]/20 to-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center text-[#F1D77A] p-3 shadow-inner">
               <Store className="h-7 w-7" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-lg font-extrabold text-white">
-                  {isAr ? merchant.businessNameAr : merchant.businessName}
+                  {isAr && merchant.businessNameAr ? merchant.businessNameAr : merchant.businessName}
                 </h1>
                 <StatusBadge status={merchant.status} />
                 <Badge variant={merchant.riskTier === "low" ? "success" : merchant.riskTier === "medium" ? "warning" : "destructive"}>
-                  {merchant.riskTier.toUpperCase()} RISK
+                  {merchant.riskTier === "low" ? (isAr ? "مخاطر منخفضة" : "LOW RISK") : merchant.riskTier === "medium" ? (isAr ? "مخاطر متوسطة" : "MEDIUM RISK") : (isAr ? "مخاطر مرتفعة" : "HIGH RISK")}
                 </Badge>
               </div>
-              <p className="text-xs text-slate-400 mt-1 flex items-center gap-2">
-                <span>{merchant.category}</span>
-                <span>• Joined {merchant.joinedAt}</span>
+              <p className="text-xs text-neutral-400 mt-1 flex items-center gap-2">
+                <span>{translateCategory(merchant.category)}</span>
+                <span>• {isAr ? "تاريخ الانضمام" : "Joined"} {merchant.joinedAt}</span>
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="text-right">
-              <span className="text-[10px] text-slate-400 block uppercase font-medium">Monthly GMV</span>
-              <span className="text-xl font-extrabold text-[#00FF24] tabular-nums">
-                SAR {merchant.monthlyVolumeSar.toLocaleString()}
+            <div className={isAr ? "text-left" : "text-right"}>
+              <span className="text-[10px] text-neutral-400 block uppercase font-medium">{t("merchants.tableVolume")}</span>
+              <span className="text-xl font-extrabold text-[#F1D77A] tabular-nums">
+                {formatCurrency(merchant.monthlyVolumeSar, { decimals: 0 })}
               </span>
             </div>
-            <div className="h-9 w-px bg-slate-800" />
-            <div className="text-right">
-              <span className="text-[10px] text-slate-400 block uppercase font-medium">Active Terminals</span>
-              <span className="text-xl font-extrabold text-sky-400 tabular-nums">
+            <div className="h-9 w-px bg-[#262626]" />
+            <div className={isAr ? "text-left" : "text-right"}>
+              <span className="text-[10px] text-neutral-400 block uppercase font-medium">{t("merchants.tableTerminals")}</span>
+              <span className="text-xl font-extrabold text-white tabular-nums">
                 {merchant.activeTerminals} SoftPOS
               </span>
             </div>
@@ -201,13 +198,13 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
         </div>
 
         {/* Sub Navigation Bar */}
-        <div className="flex items-center gap-1.5 border-t border-slate-800/60 pt-3 overflow-x-auto">
+        <div className="flex items-center gap-1.5 border-t border-[#262626] pt-3 overflow-x-auto">
           {[
-            { id: "profile", labelEn: "Profile & Legal Info", labelAr: "البيانات القانونية والبنكية", icon: Building2 },
-            { id: "terminals", labelEn: `SoftPOS Terminals (${(merchant.terminalsList || []).length || merchant.activeTerminals})`, labelAr: "أجهزة نقاط البيع", icon: Terminal },
-            { id: "transactions", labelEn: `Transactions (${merchantTransactions.length})`, labelAr: "العمليات المالية", icon: ReceiptText },
-            { id: "settlements", labelEn: "Settlements & Payouts", labelAr: "التسويات البنكية", icon: DollarSign },
-            { id: "activity", labelEn: "Activity & Audit Log", labelAr: "سجل النشاط والأمان", icon: History }
+            { id: "profile", label: t("merchants.tabOverview"), icon: Building2 },
+            { id: "terminals", label: `${t("merchants.tabTerminals")} (${(merchant.terminalsList || []).length || merchant.activeTerminals})`, icon: Terminal },
+            { id: "transactions", label: `${t("nav.transactions")} (${merchantTransactions.length})`, icon: ReceiptText },
+            { id: "settlements", label: t("merchants.tabSettlements"), icon: DollarSign },
+            { id: "activity", label: t("merchants.tabActivity"), icon: History }
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -215,14 +212,14 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? "bg-[#00FF24] text-black shadow-md shadow-[#00FF24]/10"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/50"
+                    ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-md shadow-[#D4AF37]/20"
+                    : "text-neutral-400 hover:text-white hover:bg-[#1F1F1F]"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
-                <span>{isAr ? tab.labelAr : tab.labelEn}</span>
+                <span>{tab.label}</span>
               </button>
             );
           })}
@@ -233,144 +230,152 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
       {activeTab === "profile" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Legal Identity Card */}
-          <Card className="p-5 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+          <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
+            <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#00FF24]/10 text-[#00FF24]">
+                <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
                   <ShieldCheck className="h-4 w-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                    Commercial Registration & Tax Verification
+                    {isAr ? "السجل التجاري والضريبي" : "CR & Tax Info"}
                   </h3>
-                  <p className="text-[11px] text-slate-400">Authenticated via Saudi Ministry of Commerce (Wathq API)</p>
+                  <p className="text-[11px] text-neutral-400">
+                    {isAr ? "موثق عبر واثق وزاتكا" : "Verified via Wathq & ZATCA"}
+                  </p>
                 </div>
               </div>
-              <Badge variant="success" className="text-[10px] font-bold">WATHQ VERIFIED</Badge>
+              <Badge variant="success" className="text-[10px] font-bold">
+                {isAr ? "موثق في واثق" : "WATHQ VERIFIED"}
+              </Badge>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <FileText className="h-3.5 w-3.5 text-sky-400" />
-                  Commercial Registration (CR)
+              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <FileText className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  {t("merchants.crLabel")}
                 </span>
-                <div className="flex items-center gap-2 text-sky-400 font-bold tabular-nums">
+                <div className="flex items-center gap-2 text-[#F1D77A] font-bold tabular-nums">
                   <span>{merchant.crNumber}</span>
-                  <button onClick={() => handleCopy(merchant.crNumber, "cr")} className="text-slate-500 hover:text-white">
-                    {copiedField === "cr" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  <button onClick={() => handleCopy(merchant.crNumber, "cr")} className="text-neutral-500 hover:text-white cursor-pointer">
+                    {copiedField === "cr" ? <Check className="h-3.5 w-3.5 text-[#F1D77A]" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <Percent className="h-3.5 w-3.5 text-[#00FF24]" />
-                  ZATCA VAT Tax Number
+              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <Percent className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  {t("merchants.vatLabel")}
                 </span>
                 <div className="flex items-center gap-2 text-white font-bold tabular-nums">
                   <span>{merchant.vatNumber}</span>
-                  <button onClick={() => handleCopy(merchant.vatNumber, "vat")} className="text-slate-500 hover:text-white">
-                    {copiedField === "vat" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  <button onClick={() => handleCopy(merchant.vatNumber, "vat")} className="text-neutral-500 hover:text-white cursor-pointer">
+                    {copiedField === "vat" ? <Check className="h-3.5 w-3.5 text-[#F1D77A]" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <Store className="h-3.5 w-3.5 text-amber-400" />
-                  Owner Authorized Representative
+              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <Store className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  {t("merchants.ownerLabel")}
                 </span>
                 <span className="font-bold text-white">{merchant.ownerName}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <Building2 className="h-3.5 w-3.5 text-indigo-400" />
-                  Owner National ID
+              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <Building2 className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  {t("merchants.nationalIdLabel")}
                 </span>
-                <span className="text-slate-300 font-semibold tabular-nums">{merchant.nationalId}</span>
+                <span className="text-neutral-300 font-semibold tabular-nums">{merchant.nationalId}</span>
               </div>
 
               <div className="flex justify-between items-center py-1.5">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <MapPin className="h-3.5 w-3.5 text-rose-400" />
-                  Physical Location & Address
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  {isAr ? "الموقع والعنوان" : "Physical Address"}
                 </span>
-                <span className="text-slate-300 text-right font-medium">{merchant.address || merchant.city}</span>
+                <span className="text-neutral-300 font-medium">{merchant.address || merchant.city}</span>
               </div>
             </div>
           </Card>
 
           {/* Settlement Banking & Pricing Card */}
-          <Card className="p-5 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+          <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
+            <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
+                <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
                   <DollarSign className="h-4 w-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                    Settlement Banking & Payout Rails
+                    {isAr ? "الحساب المصرفي والتسوية" : "Bank & Settlement"}
                   </h3>
-                  <p className="text-[11px] text-slate-400">Automated Sarie IPS Clearing & Settlement configuration</p>
+                  <p className="text-[11px] text-neutral-400">
+                    {isAr ? "المقاصة عبر سريع" : "Sarie Clearing"}
+                  </p>
                 </div>
               </div>
               <Badge variant={merchant.settlementHold ? "destructive" : "success"} className="text-[10px] font-bold">
-                {merchant.settlementHold ? "PAYOUTS HELD" : "SETTLEMENT ACTIVE"}
+                {merchant.settlementHold ? (isAr ? "التسويات محجوزة" : "PAYOUTS HELD") : (isAr ? "التسويات نشطة" : "SETTLEMENT ACTIVE")}
               </Badge>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <Building2 className="h-3.5 w-3.5 text-sky-400" />
-                  Settlement Partner Bank
+              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <Building2 className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  {t("merchants.settlementBankLabel")}
                 </span>
                 <span className="font-bold text-white">{merchant.settlementBank}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <Coins className="h-3.5 w-3.5 text-[#00FF24]" />
-                  Verified IBAN
+              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <Coins className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  {t("merchants.ibanLabel")}
                 </span>
                 <div className="flex items-center gap-2 text-white text-xs font-bold tabular-nums">
                   <span>{merchant.settlementIban}</span>
-                  <button onClick={() => handleCopy(merchant.settlementIban, "iban")} className="text-slate-500 hover:text-white">
-                    {copiedField === "iban" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  <button onClick={() => handleCopy(merchant.settlementIban, "iban")} className="text-neutral-500 hover:text-white cursor-pointer">
+                    {copiedField === "iban" ? <Check className="h-3.5 w-3.5 text-[#F1D77A]" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <Percent className="h-3.5 w-3.5 text-emerald-400" />
-                  MDR Commission Rate
+              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <Percent className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  {t("merchants.customMdrLabel")}
                 </span>
-                <span className="font-bold text-[#00FF24]">
-                  {merchant.customMdrRate ? `${merchant.customMdrRate}% (Custom Tier)` : "0.80% (Standard Platform)"}
+                <span className="font-bold text-[#F1D77A]">
+                  {merchant.customMdrRate ? `${merchant.customMdrRate}% (${isAr ? "شريحة مخصصة" : "Custom Tier"})` : `0.80% (${isAr ? "النسبة القياسية" : "Standard Platform"})`}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-slate-800/60">
-                <span className="text-slate-400 flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5 text-amber-400" />
-                  Settlement Cutoff Schedule
+              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+                <span className="text-neutral-400 flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  {isAr ? "جدول الإقفال المحاسبي" : "Settlement Cutoff"}
                 </span>
-                <span className="font-semibold text-slate-200">Daily T+0 @ 04:00 AM AST</span>
+                <span className="font-semibold text-neutral-200">
+                  {isAr ? "يومياً T+0 في 04:00 صباحاً" : "Daily T+0 @ 04:00 AM AST"}
+                </span>
               </div>
 
               <div className="flex justify-between items-center py-1.5">
-                <span className="text-slate-400">Payout Action</span>
+                <span className="text-neutral-400">{isAr ? "إجراء حجز التسوية" : "Payout Action"}</span>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => showNotice(`Payout hold toggled for ${merchant.businessName}`)}
-                  className="h-8 text-xs bg-slate-900 border-slate-800 gap-2 text-slate-200 hover:text-white"
+                  onClick={() => showNotice(isAr ? "تم تحديث حالة حجز التسوية" : `Payout hold toggled for ${merchant.businessName}`)}
+                  className="h-8 text-xs bg-[#121212] border-[#262626] gap-2 text-neutral-200 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 cursor-pointer"
                 >
-                  {merchant.settlementHold ? <PlayCircle className="h-3.5 w-3.5 text-emerald-400" /> : <PauseCircle className="h-3.5 w-3.5 text-amber-400" />}
-                  <span>{merchant.settlementHold ? "Release Hold" : "Place Hold"}</span>
+                  {merchant.settlementHold ? <PlayCircle className="h-3.5 w-3.5 text-[#F1D77A]" /> : <PauseCircle className="h-3.5 w-3.5 text-[#D4AF37]" />}
+                  <span>{merchant.settlementHold ? t("merchants.releaseHold") : t("merchants.holdSettlement")}</span>
                 </Button>
               </div>
             </div>
@@ -380,39 +385,41 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Tab 2: SoftPOS Terminals Fleet */}
       {activeTab === "terminals" && (
-        <Card className="p-5 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-800/80">
+        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
+          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#262626]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#00FF24]/10 text-[#00FF24]">
+              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
                 <Terminal className="h-4 w-4" />
               </div>
               <div>
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                  SoftPOS Devices & Terminals Fleet
+                  {isAr ? "أجهزة نقاط البيع (SoftPOS)" : "SoftPOS Terminals"}
                 </h3>
-                <p className="text-[11px] text-slate-400">NFC contactless terminal fleet deployed for this merchant</p>
+                <p className="text-[11px] text-neutral-400">
+                  {isAr ? "الأجهزة ونقاط البيع النشطة" : "Active merchant terminals"}
+                </p>
               </div>
             </div>
             <Button
               size="sm"
               onClick={() => setIsProvisionModalOpen(true)}
-              className="h-8 px-3 text-xs font-bold gap-1.5 bg-[#00FF24] text-black hover:bg-[#00FF24]/90"
+              className="h-8 px-3 text-xs font-bold gap-1.5 bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 shadow-md shadow-[#D4AF37]/20 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>Provision SoftPOS</span>
+              <span>{t("merchants.provisionTerminal")}</span>
             </Button>
           </div>
 
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Terminal ID</TableHead>
-                <TableHead>Device Model & OS</TableHead>
-                <TableHead>NFC SAMA Key</TableHead>
-                <TableHead>Last Heartbeat</TableHead>
-                <TableHead>Daily Volume</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>{isAr ? "معرف الجهاز (Terminal ID)" : "Terminal ID"}</TableHead>
+                <TableHead>{t("merchants.terminalModel")}</TableHead>
+                <TableHead>{t("merchants.terminalNfc")}</TableHead>
+                <TableHead>{t("merchants.terminalHeartbeat")}</TableHead>
+                <TableHead className="text-right">{t("merchants.terminalDailyVol")}</TableHead>
+                <TableHead>{t("common.status")}</TableHead>
+                <TableHead className="text-right">{t("common.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -420,47 +427,47 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 merchant.terminalsList?.map((term) => (
                   <TableRow key={term.id}>
                     <TableCell>
-                      <span className="font-semibold text-sky-400 text-xs tabular-nums">{term.terminalId}</span>
+                      <span className="font-semibold text-[#F1D77A] text-xs tabular-nums">{term.terminalId}</span>
                     </TableCell>
                     <TableCell>
                       <div className="font-semibold text-xs text-white">{term.model}</div>
-                      <div className="text-[10px] text-slate-400">{term.osVersion}</div>
+                      <div className="text-[10px] text-neutral-400">{term.osVersion}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={term.nfcStatus === "active" ? "success" : "warning"} className="text-[10px] font-bold">
-                        {term.nfcStatus.toUpperCase()}
+                      <Badge variant={term.nfcStatus === "active" ? "gold" : "warning"} className="text-[10px] font-bold">
+                        {term.nfcStatus === "active" ? (isAr ? "نشط" : "ACTIVE") : (isAr ? "معلق" : "PENDING")}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <span className="text-xs text-slate-300">{term.lastHeartbeat}</span>
+                      <span className="text-xs text-neutral-300">{term.lastHeartbeat}</span>
                     </TableCell>
-                    <TableCell>
-                      <div className="font-extrabold text-[#00FF24] text-xs tabular-nums">
-                        SAR {term.dailyVolumeSar.toLocaleString()}
+                    <TableCell className="text-right">
+                      <div className="font-extrabold text-[#F1D77A] text-xs tabular-nums">
+                        {formatCurrency(term.dailyVolumeSar)}
                       </div>
-                      <div className="text-[10px] text-slate-400">{term.dailyTxCount} tx today</div>
+                      <div className="text-[10px] text-neutral-400">{term.dailyTxCount} {isAr ? "عملية اليوم" : "tx today"}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={term.status === "online" ? "success" : "secondary"} className="text-[10px] font-bold">
-                        {term.status.toUpperCase()}
+                      <Badge variant={term.status === "online" ? "gold" : "secondary"} className="text-[10px] font-bold">
+                        {term.status === "online" ? (isAr ? "متصل" : "ONLINE") : (isAr ? "غير متصل" : "OFFLINE")}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-right">
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => showNotice(`Terminal ${term.terminalId} decommissioned`)}
-                        className="h-7 px-2.5 text-xs font-semibold"
+                        onClick={() => showNotice(isAr ? `تم إلغاء تفعيل نقطة البيع ${term.terminalId}` : `Terminal ${term.terminalId} decommissioned`)}
+                        className="h-7 px-2.5 text-xs font-semibold cursor-pointer"
                       >
-                        Revoke
+                        {isAr ? "إلغاء" : "Revoke"}
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-6 text-slate-500 text-xs">
-                    No active terminals currently assigned. Click "Provision SoftPOS" to deploy.
+                  <TableCell colSpan={7} className="text-center py-6 text-neutral-500 text-xs">
+                    {isAr ? "لا توجد أجهزة نقاط بيع مخصصة حالياً. انقر 'إصدار نقطة بيع' للبدء." : "No active terminals currently assigned. Click 'Provision SoftPOS' to deploy."}
                   </TableCell>
                 </TableRow>
               )}
@@ -471,34 +478,36 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Tab 3: Complete Transaction History */}
       {activeTab === "transactions" && (
-        <Card className="p-5 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-slate-800/80">
+        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
+          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#262626]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#00FF24]/10 text-[#00FF24]">
+              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
                 <ReceiptText className="h-4 w-4" />
               </div>
               <div>
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Full Transaction History for {merchant.businessName}
+                  {isAr ? "سجل العمليات" : "Transactions"}
                 </h3>
-                <p className="text-[11px] text-slate-400">All customer checkouts and payments received</p>
+                <p className="text-[11px] text-neutral-400">
+                  {isAr ? "مدفوعات ومشتريات العملاء" : "Customer checkouts & payments"}
+                </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-slate-300 font-semibold">
-              {merchantTransactions.length} operations
+            <Badge variant="outline" className="text-xs text-neutral-300 font-semibold border-[#262626]">
+              {merchantTransactions.length} {isAr ? "عملية" : "operations"}
             </Badge>
           </div>
 
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Order Ref & Time</TableHead>
-                <TableHead>Customer / Sender</TableHead>
-                <TableHead>Gross Amount</TableHead>
-                <TableHead>MDR Take</TableHead>
-                <TableHead>Payment Method</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>{t("ledger.tableOrderRef")}</TableHead>
+                <TableHead>{isAr ? "العميل / المرسل" : "Customer / Sender"}</TableHead>
+                <TableHead className="text-right">{t("ledger.tableAmount")}</TableHead>
+                <TableHead className="text-right">{t("ledger.tableMdr")}</TableHead>
+                <TableHead>{t("ledger.tablePaymentMethod")}</TableHead>
+                <TableHead>{t("common.status")}</TableHead>
+                <TableHead className="text-right">{t("common.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -506,41 +515,41 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 merchantTransactions.map((tx) => (
                   <TableRow key={tx.id}>
                     <TableCell>
-                      <div className="font-semibold text-sky-400 text-xs">{tx.orderRef}</div>
-                      <div className="text-[10px] text-slate-400">{new Date(tx.timestamp).toLocaleTimeString()}</div>
+                      <div className="font-semibold text-[#F1D77A] text-xs">{tx.orderRef}</div>
+                      <div className="text-[10px] text-neutral-400">{formatDate(tx.timestamp, "time")}</div>
                     </TableCell>
                     <TableCell>
                       <div className="font-semibold text-white text-xs">{tx.senderName}</div>
-                      <div className="text-[10px] text-slate-400">{tx.cardLast4 ? `Card ending *${tx.cardLast4}` : "Digital Wallet"}</div>
+                      <div className="text-[10px] text-neutral-400">{tx.cardLast4 ? `${isAr ? "بطاقة تنتهي بـ" : "Card ending"} *${tx.cardLast4}` : (isAr ? "محفظة رقمية" : "Digital Wallet")}</div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <span className="font-bold text-white text-xs tabular-nums">{formatCurrency(tx.amount)}</span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <span className="font-bold text-[#F1D77A] text-xs tabular-nums">{formatCurrency(tx.platformMdrSar)}</span>
                     </TableCell>
                     <TableCell>
-                      <span className="font-bold text-white text-xs tabular-nums">SAR {tx.amount.toFixed(2)}</span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-bold text-amber-400 text-xs tabular-nums">SAR {tx.platformMdrSar.toFixed(2)}</span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1.5 text-xs font-semibold uppercase">
-                        {tx.paymentMethod === "apple_pay" ? <SmartphoneNfc className="h-3.5 w-3.5 text-sky-400" /> : <CreditCard className="h-3.5 w-3.5 text-[#00FF24]" />}
-                        <span className="text-slate-200">{tx.paymentMethod}</span>
+                      <div className="flex items-center gap-1.5 text-xs font-semibold">
+                        {tx.paymentMethod === "apple_pay" ? <SmartphoneNfc className="h-3.5 w-3.5 text-[#F1D77A]" /> : <CreditCard className="h-3.5 w-3.5 text-[#D4AF37]" />}
+                        <span className="text-neutral-200">{translatePaymentMethod(tx.paymentMethod)}</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={tx.status} />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-right">
                       {tx.status !== "refunded" && (
                         <Button
                           variant="destructive"
                           size="sm"
                           onClick={() => {
                             if (onExecuteRefund) onExecuteRefund(tx.id);
-                            showNotice(`Refund processed for order ${tx.orderRef}`);
+                            showNotice(isAr ? `تم تنفيذ الاسترجاع للطلب ${tx.orderRef}` : `Refund processed for order ${tx.orderRef}`);
                           }}
-                          className="h-7 px-2.5 text-xs gap-1.5 font-semibold"
+                          className="h-7 px-2.5 text-xs gap-1.5 font-semibold cursor-pointer"
                         >
                           <RotateCcw className="h-3 w-3" />
-                          <span>Refund</span>
+                          <span>{t("ledger.refundBtn")}</span>
                         </Button>
                       )}
                     </TableCell>
@@ -548,8 +557,8 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-6 text-slate-500 text-xs">
-                    No transactions found for this merchant.
+                  <TableCell colSpan={7} className="text-center py-6 text-neutral-500 text-xs">
+                    {t("common.noResults")}
                   </TableCell>
                 </TableRow>
               )}
@@ -560,32 +569,36 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Tab 4: Settlement Batches */}
       {activeTab === "settlements" && (
-        <Card className="p-5 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
+          <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
                 <DollarSign className="h-4 w-4" />
               </div>
               <div>
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Historical Bank Settlement Batches
+                  {isAr ? "سجل دفعات التسوية" : "Settlement Batches"}
                 </h3>
-                <p className="text-[11px] text-slate-400">Disbursed net earnings after MDR and VAT deductions</p>
+                <p className="text-[11px] text-neutral-400">
+                  {isAr ? "صافي التحويلات بعد الرسوم" : "Net payouts after deductions"}
+                </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-slate-300">Automated Clearing</Badge>
+            <Badge variant="outline" className="text-xs text-neutral-300 border-[#262626]">
+              {isAr ? "تسوية آلية" : "Automated Clearing"}
+            </Badge>
           </div>
 
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Batch Ref & Date</TableHead>
-                <TableHead>Bank Channel</TableHead>
-                <TableHead>Gross Volume</TableHead>
-                <TableHead>MDR & VAT Take</TableHead>
-                <TableHead>Net Disbursed</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Recon Ref</TableHead>
+                <TableHead>{isAr ? "المرجع والتاريخ" : "Batch Ref & Date"}</TableHead>
+                <TableHead>{t("settlements.partnerBank")}</TableHead>
+                <TableHead className="text-right">{t("settlements.grossSar")}</TableHead>
+                <TableHead className="text-right">{t("settlements.mdrDeductions")}</TableHead>
+                <TableHead className="text-right">{t("settlements.netDisbursed")}</TableHead>
+                <TableHead>{t("common.status")}</TableHead>
+                <TableHead>{isAr ? "المرجع المطابق" : "Recon Ref"}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -593,39 +606,39 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 merchant.settlementRecords?.map((stl) => (
                   <TableRow key={stl.id}>
                     <TableCell>
-                      <div className="font-semibold text-sky-400 text-xs">{stl.batchRef}</div>
-                      <div className="text-[10px] text-slate-400">{stl.payoutDate}</div>
+                      <div className="font-semibold text-[#F1D77A] text-xs">{stl.batchRef}</div>
+                      <div className="text-[10px] text-neutral-400">{stl.payoutDate}</div>
                     </TableCell>
                     <TableCell>
                       <span className="font-semibold text-xs text-white">{stl.bankName}</span>
                     </TableCell>
-                    <TableCell>
-                      <span className="font-semibold text-xs text-slate-200 tabular-nums">SAR {stl.grossAmountSar.toLocaleString()}</span>
+                    <TableCell className="text-right">
+                      <span className="font-semibold text-xs text-neutral-200 tabular-nums">{formatCurrency(stl.grossAmountSar)}</span>
                     </TableCell>
-                    <TableCell>
-                      <span className="font-bold text-amber-400 text-xs tabular-nums">
-                        SAR {(stl.mdrFeeSar + stl.vatSar).toFixed(2)}
+                    <TableCell className="text-right">
+                      <span className="font-bold text-[#F1D77A] text-xs tabular-nums">
+                        {formatCurrency(stl.mdrFeeSar + stl.vatSar)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <span className="font-extrabold text-[#F1D77A] text-xs tabular-nums">
+                        {formatCurrency(stl.netDisbursedSar)}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="font-extrabold text-[#00FF24] text-xs tabular-nums">
-                        SAR {stl.netDisbursedSar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="success" className="text-[10px] font-bold">
+                      <Badge variant="gold" className="text-[10px] font-bold">
                         {stl.status.toUpperCase()}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <span className="text-xs text-slate-400 tabular-nums">{stl.reconciliationRef}</span>
+                      <span className="text-xs text-neutral-400 tabular-nums">{stl.reconciliationRef}</span>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-6 text-slate-500 text-xs">
-                    No historical settlement disbursements recorded.
+                  <TableCell colSpan={7} className="text-center py-6 text-neutral-500 text-xs">
+                    {isAr ? "لا توجد تسويات مسجلة سابقاً لهذا التاجر." : "No historical settlement disbursements recorded."}
                   </TableCell>
                 </TableRow>
               )}
@@ -636,20 +649,24 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Tab 5: Activity & Audit Trail */}
       {activeTab === "activity" && (
-        <Card className="p-5 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
+          <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#00FF24]/10 text-[#00FF24]">
+              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
                 <History className="h-4 w-4" />
               </div>
               <div>
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                  Live Audit & Telemetry Events
+                  {isAr ? "سجل الأحداث والتدقيق" : "Audit Events"}
                 </h3>
-                <p className="text-[11px] text-slate-400">Security and configuration ledger</p>
+                <p className="text-[11px] text-neutral-400">
+                  {isAr ? "سجل العمليات المشفر" : "Operations log"}
+                </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-slate-300">Immutable Log</Badge>
+            <Badge variant="outline" className="text-xs text-neutral-300 border-[#262626]">
+              {isAr ? "سجل مشفر" : "Immutable Log"}
+            </Badge>
           </div>
 
           <div className="space-y-3">
@@ -657,24 +674,24 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               merchant.activityLogs?.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3.5 rounded-xl bg-[#10182A] border border-slate-800/80 space-y-1.5 hover:border-slate-700 transition-colors"
+                  className="p-3.5 rounded-xl bg-[#121212] border border-[#262626] space-y-1.5 hover:border-[#D4AF37]/40 transition-colors"
                 >
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-white flex items-center gap-2">
-                      <Activity className="h-3.5 w-3.5 text-[#00FF24]" />
+                      <Activity className="h-3.5 w-3.5 text-[#F1D77A]" />
                       {log.title}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-medium">{log.timestamp}</span>
+                    <span className="text-[10px] text-neutral-400 font-medium">{log.timestamp}</span>
                   </div>
-                  <p className="text-xs text-slate-400">{log.details}</p>
-                  <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-800/60">
-                    <span>Actor: <strong className="text-slate-300">{log.actor}</strong></span>
+                  <p className="text-xs text-neutral-400">{log.details}</p>
+                  <div className="text-[10px] text-neutral-500 pt-1 border-t border-[#262626]">
+                    <span>{isAr ? "المنفذ:" : "Actor:"} <strong className="text-neutral-300">{log.actor}</strong></span>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-6 text-slate-500 text-xs">
-                No activity logs available for this merchant.
+              <div className="text-center py-6 text-neutral-500 text-xs">
+                {t("common.noData")}
               </div>
             )}
           </div>
@@ -683,16 +700,18 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Provision SoftPOS Modal */}
       <Dialog open={isProvisionModalOpen} onOpenChange={setIsProvisionModalOpen}>
-        <DialogContent className="max-w-md p-6">
+        <DialogContent className="max-w-md p-6 bg-[#171717] border-[#262626]">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-[#00FF24]/10 text-[#00FF24] border border-[#00FF24]/20">
+              <div className="p-2.5 rounded-xl bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/30">
                 <Terminal className="h-6 w-6" />
               </div>
               <div>
-                <DialogTitle className="text-base font-bold text-white">Provision SoftPOS Terminal</DialogTitle>
-                <DialogDescription className="text-xs text-slate-400">
-                  Allocate a new SAMA-compliant SoftPOS terminal for {merchant.businessName}
+                <DialogTitle className="text-base font-bold text-white">
+                  {t("merchants.provisionTerminal")}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-neutral-400">
+                  {isAr ? "إصدار وتفعيل نقطة بيع جديدة للتاجر" : `Allocate a new terminal for ${merchant.businessName}`}
                 </DialogDescription>
               </div>
             </div>
@@ -700,26 +719,28 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
           <div className="space-y-4 py-3">
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300">Target Device Platform</label>
+              <label className="text-xs font-semibold text-neutral-300">
+                {isAr ? "منصة الجهاز" : "Platform"}
+              </label>
               <select
                 value={newTerminalModel}
                 onChange={(e) => setNewTerminalModel(e.target.value)}
-                className="w-full h-10 px-3 text-xs bg-[#10182A] border border-slate-800 rounded-xl text-white outline-none focus:border-[#00FF24]/50"
+                className="w-full h-10 px-3 text-xs bg-[#121212] border border-[#262626] rounded-xl text-white outline-none focus:border-[#D4AF37]"
               >
-                <option value="Apple SoftPOS (iPhone iOS 18+)">Apple SoftPOS (iPhone iOS 18+ Secure Enclave)</option>
-                <option value="Android SoftPOS (Samsung / Google)">Android SoftPOS (Android 14+ Knox TEE)</option>
-                <option value="PAX A920 Pro SmartPOS">PAX A920 Pro SmartPOS (Hardware Terminal)</option>
-                <option value="Sunmi V2s Handheld POS">Sunmi V2s Handheld POS (Integrated Printer)</option>
+                <option value="Apple SoftPOS (iPhone iOS 18+)">Apple SoftPOS (iOS 18+)</option>
+                <option value="Android SoftPOS (Samsung / Google)">Android SoftPOS (Android 14+)</option>
+                <option value="PAX A920 Pro SmartPOS">PAX A920 Pro SmartPOS</option>
+                <option value="Sunmi V2s Handheld POS">Sunmi V2s Handheld POS</option>
               </select>
             </div>
 
-            <div className="p-3 bg-slate-900/60 border border-slate-800 rounded-xl space-y-1.5 text-xs">
+            <div className="p-3 bg-[#121212] border border-[#262626] rounded-xl space-y-1 text-xs">
               <span className="font-bold text-white flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-[#00FF24]" />
-                SAMA Compliance Security Check
+                <ShieldCheck className="h-4 w-4 text-[#F1D77A]" />
+                {isAr ? "فحص الأمان والشهادات" : "Security Check"}
               </span>
-              <p className="text-[11px] text-slate-400">
-                A cryptographic L1/L2 kernel certificate and merchant encryption keys will be securely injected.
+              <p className="text-[11px] text-neutral-400">
+                {isAr ? "حقن مفاتيح التشفير اللاتلامسي تلقائياً." : "Encryption keys will be injected automatically."}
               </p>
             </div>
           </div>
@@ -729,19 +750,19 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               variant="outline"
               size="sm"
               onClick={() => setIsProvisionModalOpen(false)}
-              className="border-slate-800 hover:bg-slate-800"
+              className="border-[#262626] hover:bg-[#262626] cursor-pointer text-neutral-300"
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               size="sm"
               onClick={() => {
-                showNotice(`New Terminal provisioned for ${merchant.businessName} on ${newTerminalModel}`);
+                showNotice(isAr ? `تم إصدار وتفعيل نقطة بيع جديدة بنجاح` : `New Terminal provisioned for ${merchant.businessName}`);
                 setIsProvisionModalOpen(false);
               }}
-              className="bg-[#00FF24] text-black hover:bg-[#00FF24]/90 font-bold"
+              className="bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 font-bold cursor-pointer shadow-md shadow-[#D4AF37]/20"
             >
-              Confirm Provisioning
+              {isAr ? "تأكيد الإصدار والتفعيل" : "Confirm Provisioning"}
             </Button>
           </DialogFooter>
         </DialogContent>

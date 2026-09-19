@@ -751,3 +751,156 @@ export const mockInsightsData = {
     { hour: "22:00", tps: 140, volumeSar: 190000 }
   ]
 };
+
+export const mockAdminTeamMembers: AdminUser[] = [
+  {
+    id: "usr_admin_01",
+    name: "Tariq Al-Harbi",
+    email: "admin@qtpay.sa",
+    role: "superadmin",
+    avatar: "TA",
+    lastLogin: "Today, 10:45 AM (Riyadh HQ)",
+    ipAddress: "10.14.22.8",
+    status: "active"
+  },
+  {
+    id: "usr_admin_02",
+    name: "Noura Al-Otaibi",
+    email: "noura@qtpay.sa",
+    role: "compliance_officer",
+    avatar: "NO",
+    lastLogin: "Today, 09:12 AM",
+    ipAddress: "10.14.22.15",
+    status: "active"
+  },
+  {
+    id: "usr_admin_03",
+    name: "Faisal Bin Saud",
+    email: "faisal@qtpay.sa",
+    role: "settlement_manager",
+    avatar: "FS",
+    lastLogin: "Yesterday, 04:30 PM",
+    ipAddress: "10.14.22.20",
+    status: "active"
+  },
+  {
+    id: "usr_admin_04",
+    name: "Sara Al-Dosari",
+    email: "sara@qtpay.sa",
+    role: "risk_analyst",
+    avatar: "SD",
+    lastLogin: "Yesterday, 02:15 PM",
+    ipAddress: "10.14.22.31",
+    status: "active"
+  }
+];
+
+export const mockAdminPermissions: AdminPermission[] = [
+  {
+    id: "perm_merchants_manage",
+    name: "Merchant Onboarding & KYB Approval",
+    description: "Approve commercial registries, SoftPOS allocations, and tariff overrides",
+    category: "merchants",
+    superadmin: true,
+    compliance_officer: true,
+    settlement_manager: false,
+    risk_analyst: false,
+    support_lead: false
+  },
+  {
+    id: "perm_settlement_dispatch",
+    name: "Bank Settlement Clearing Execution",
+    description: "Authorize and dispatch T+0 daily disbursements to partner bank IBANs",
+    category: "settlements",
+    superadmin: true,
+    compliance_officer: false,
+    settlement_manager: true,
+    risk_analyst: false,
+    support_lead: false
+  },
+  {
+    id: "perm_refund_execute",
+    name: "Dispute & Direct Transaction Refunds",
+    description: "Execute card chargebacks and reversals directly back to cardholder",
+    category: "transactions",
+    superadmin: true,
+    compliance_officer: false,
+    settlement_manager: true,
+    risk_analyst: true,
+    support_lead: false
+  },
+  {
+    id: "perm_account_freeze",
+    name: "Account Suspension & Asset Freezing",
+    description: "Enforce immediate SAR withdrawal holds on flagged accounts",
+    category: "users",
+    superadmin: true,
+    compliance_officer: true,
+    settlement_manager: false,
+    risk_analyst: true,
+    support_lead: false
+  },
+  {
+    id: "perm_fee_tariff_edit",
+    name: "MDR Fee & Tariff Matrix Overrides",
+    description: "Modify scheme interchange rates, fixed fees, and merchant caps",
+    category: "system",
+    superadmin: true,
+    compliance_officer: false,
+    settlement_manager: true,
+    risk_analyst: false,
+    support_lead: false
+  }
+];
+
+export const mockSamaAuditLogs: SamaAuditLog[] = [
+  {
+    id: "aud_01",
+    timestamp: "2026-09-17 11:45:10",
+    adminName: "Tariq Al-Harbi",
+    adminEmail: "admin@qtpay.sa",
+    action: "FEE_OVERRIDE",
+    category: "FEE_OVERRIDE",
+    targetEntity: "Tamimi Supermarkets (mch_101)",
+    details: "Adjusted custom mada MDR rate from 0.80% to 0.65%",
+    ipAddress: "10.14.22.8",
+    status: "SUCCESS"
+  },
+  {
+    id: "aud_02",
+    timestamp: "2026-09-17 10:15:22",
+    adminName: "Noura Al-Otaibi",
+    adminEmail: "noura@qtpay.sa",
+    action: "KYB_APPROVAL",
+    category: "KYB_APPROVAL",
+    targetEntity: "Al-Safwa Luxury Perfumes (mch_102)",
+    details: "Commercial Registry 1010923841 verified via Wathq API",
+    ipAddress: "10.14.22.15",
+    status: "SUCCESS"
+  },
+  {
+    id: "aud_03",
+    timestamp: "2026-09-17 04:15:00",
+    adminName: "Faisal Bin Saud",
+    adminEmail: "faisal@qtpay.sa",
+    action: "SETTLEMENT_DISPATCH",
+    category: "SETTLEMENT_DISPATCH",
+    targetEntity: "Al Rajhi Clearing Batch (SET-20260917-RJHI-01)",
+    details: "Dispatched SAR 3,046,300.40 to 80 merchant IBANs",
+    ipAddress: "10.14.22.20",
+    status: "SUCCESS"
+  },
+  {
+    id: "aud_04",
+    timestamp: "2026-09-16 18:30:11",
+    adminName: "Sara Al-Dosari",
+    adminEmail: "sara@qtpay.sa",
+    action: "AML_FLAG",
+    category: "AML_FLAG",
+    targetEntity: "Terminal TRM-44912 (mch_105)",
+    details: "Suspicious velocity breach resolved after merchant identity confirmation",
+    ipAddress: "10.14.22.31",
+    status: "SUCCESS"
+  }
+];
+

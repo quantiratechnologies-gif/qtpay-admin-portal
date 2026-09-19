@@ -2,19 +2,15 @@ import React, { useState } from "react";
 import {
   ShieldCheck,
   UserPlus,
-  ShieldAlert,
   Users,
   Check,
-  X,
-  Lock,
-  UserCheck,
-  MoreVertical,
-  KeyRound
+  X
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
+import { StatusBadge } from "../components/Badge";
 import {
   Table,
   TableHeader,
@@ -36,14 +32,15 @@ import {
   mockAdminPermissions,
   mockAdminTeamMembers
 } from "../services/mockData";
+import { useTranslation } from "../lib/i18n/LanguageContext";
 import type { AdminUser, AdminRole, AdminPermission } from "../types";
 
 interface RolesAndPermissionsProps {
-  lang: "en" | "ar";
+  lang?: "en" | "ar";
 }
 
-export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }) => {
-  const isAr = lang === "ar";
+export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
+  const { lang, isAr, formatNumber } = useTranslation();
   const [teamMembers, setTeamMembers] = useState<AdminUser[]>(mockAdminTeamMembers);
   const [permissions, setPermissions] = useState<AdminPermission[]>(mockAdminPermissions);
   const [activeTab, setActiveTab] = useState<"roles" | "staff" | "matrix">("roles");
@@ -90,8 +87,8 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
         .join("")
         .toUpperCase()
         .slice(0, 2),
-      lastLogin: "Never (Invited)",
-      ipAddress: "Pending",
+      lastLogin: isAr ? "لم يسجل بعد (تمت الدعوة)" : "Never (Invited)",
+      ipAddress: isAr ? "قيد الانتظار" : "Pending",
       status: "active"
     };
 
@@ -101,49 +98,108 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
     setNewEmail("");
   };
 
+  const getRoleDisplayName = (role: AdminRole) => {
+    if (!isAr) {
+      switch (role) {
+        case "superadmin":
+          return "Super Admin";
+        case "compliance_officer":
+          return "Compliance & AML Officer";
+        case "settlement_manager":
+          return "Operations Manager";
+        case "risk_analyst":
+          return "Risk & Fraud Analyst";
+        case "support_lead":
+          return "Support Lead";
+      }
+    }
+    switch (role) {
+      case "superadmin":
+        return "المدير العام الأعلى للنظام";
+      case "compliance_officer":
+        return "مسؤول الامتثال ومكافحة غسل الأموال";
+      case "settlement_manager":
+        return "مدير التسويات والعمليات المصرفية";
+      case "risk_analyst":
+        return "محلل الاحتيال وإدارة المخاطر";
+      case "support_lead":
+        return "رئيس فريق الدعم والعمليات";
+    }
+  };
+
+  const getPermissionName = (perm: AdminPermission) => {
+    if (!isAr) return perm.name;
+    const map: Record<string, string> = {
+      "perm_kyb_approve": "اعتماد وتوثيق طلبات KYB للتجار",
+      "perm_terminal_provision": "إصدار وتفعيل أجهزة نقاط البيع (SoftPOS)",
+      "perm_settlement_dispatch": "تنفيذ وإرسال دفعات المقاصة والتسوية للبنوك",
+      "perm_settlement_hold": "حجز وتعليق التسويات المصرفية للتاجر",
+      "perm_user_freeze": "تجميد الحسابات والمحافظ احترازياً",
+      "perm_refund_execute": "تنفيذ عمليات الاسترجاع المالي المباشر عبر ساما",
+      "perm_rate_override": "تعديل مصفوفة العمولات ورسوم المعالجة (MDR)",
+      "perm_audit_view": "استعراض سجلات التدقيق والامتثال المشفرة"
+    };
+    return map[perm.id] || perm.name;
+  };
+
+  const getPermissionDesc = (perm: AdminPermission) => {
+    if (!isAr) return perm.description;
+    const map: Record<string, string> = {
+      "perm_kyb_approve": "صلاحية مراجعة واعتماد السجلات التجارية والوثائق الضريبية",
+      "perm_terminal_provision": "تخصيص تراخيص الاتصال اللاتلامسي NFC للأجهزة",
+      "perm_settlement_dispatch": "إرسال أوامر التحويل الآلي إلى البنوك الشريكة عبر سريع",
+      "perm_settlement_hold": "إيقاف صرف المستحقات للآيبان لأسباب الاشتباه والمخاطر",
+      "perm_user_freeze": "تعليق الحوالات الصادرة للأفراد وفق لوائح الامتثال",
+      "perm_refund_execute": "إرجاع مبالغ العمليات إلى وسائل الدفع الأصلية للعملاء",
+      "perm_rate_override": "تخصيص نسب الاستقطاع والرسوم الثابتة للعمليات",
+      "perm_audit_view": "الاطلاع على البصمات المشفرة وسجلات النشاط الإداري"
+    };
+    return map[perm.id] || perm.description;
+  };
+
   return (
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2.5">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-[#7FE87F]" />
+          <ShieldCheck className="h-5 w-5 text-[#F1D77A]" />
           <h2 className="text-base font-extrabold text-white">
-            {isAr ? "الأدوار والصلاحيات (RBAC)" : "Roles & Access Control (RBAC)"}
+            {isAr ? "الأدوار والصلاحيات والأمان (RBAC)" : "Roles & Access Control (RBAC)"}
           </h2>
-          <Badge variant="secondary" className="text-[11px]">
-            {teamMembers.length} Staff
+          <Badge variant="gold" className="text-[11px]">
+            {formatNumber(teamMembers.length)} {isAr ? "مسؤول إداري" : "Staff"}
           </Badge>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Sub Navigation */}
-          <div className="inline-flex rounded-lg bg-[#0E1526] p-1 border border-slate-800/80">
+          <div className="inline-flex rounded-lg bg-[#121212] p-1 border border-[#262626]">
             <button
               onClick={() => setActiveTab("roles")}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
                 activeTab === "roles"
-                  ? "bg-[#7FE87F] text-[#080C14]"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-sm"
+                  : "text-neutral-400 hover:text-white"
               }`}
             >
               {isAr ? "الأدوار" : "Role Definitions"}
             </button>
             <button
               onClick={() => setActiveTab("staff")}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
                 activeTab === "staff"
-                  ? "bg-[#7FE87F] text-[#080C14]"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-sm"
+                  : "text-neutral-400 hover:text-white"
               }`}
             >
               {isAr ? "فريق الإدارة" : "Admin Staff"}
             </button>
             <button
               onClick={() => setActiveTab("matrix")}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
                 activeTab === "matrix"
-                  ? "bg-[#7FE87F] text-[#080C14]"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-sm"
+                  : "text-neutral-400 hover:text-white"
               }`}
             >
               {isAr ? "مصفوفة الصلاحيات" : "Permission Matrix"}
@@ -153,7 +209,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
           <Button
             size="sm"
             onClick={() => setIsAddUserOpen(true)}
-            className="gap-1.5 h-8 text-xs font-bold"
+            className="gap-1.5 h-8 text-xs font-bold bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 shadow-md shadow-[#D4AF37]/20"
           >
             <UserPlus className="h-3.5 w-3.5" />
             <span>{isAr ? "إضافة مسؤول" : "Invite Admin"}</span>
@@ -165,7 +221,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
       {activeTab === "roles" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {mockRoleDefinitions.map((role) => (
-            <Card key={role.id} className="p-4 space-y-3">
+            <Card key={role.id} className="p-4 space-y-3 bg-[#171717] border-[#262626]">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-white">
@@ -175,20 +231,22 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
                     {role.id.toUpperCase().replace(/_/g, " ")}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-slate-400 font-semibold tabular-nums">
+                <div className="flex items-center gap-1 text-xs text-neutral-400 font-semibold tabular-nums">
                   <Users className="h-3.5 w-3.5" />
-                  <span>{teamMembers.filter((m) => m.role === role.id).length}</span>
+                  <span>{formatNumber(teamMembers.filter((m) => m.role === role.id).length)}</span>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+              <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed">
                 {role.description}
               </p>
 
-              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px]">
-                <span className="text-slate-500">Access Level</span>
-                <span className="font-bold text-[#7FE87F]">
-                  {role.id === "superadmin" ? "Root / Full Platform" : "Scoped Authority"}
+              <div className="pt-2 border-t border-[#262626] flex items-center justify-between text-[11px]">
+                <span className="text-neutral-500">{isAr ? "مستوى الوصول" : "Access Level"}</span>
+                <span className="font-bold text-[#F1D77A]">
+                  {role.id === "superadmin"
+                    ? (isAr ? "صلاحية شاملة / وصول جذري" : "Root / Full Platform")
+                    : (isAr ? "صلاحيات مخصصة" : "Scoped Authority")}
                 </span>
               </div>
             </Card>
@@ -214,12 +272,12 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
               <TableRow key={member.id}>
                 <TableCell>
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-[#7FE87F]/15 border border-[#7FE87F]/30 text-[#7FE87F] font-extrabold flex items-center justify-center text-[10px]">
+                    <div className="w-7 h-7 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#F1D77A] font-extrabold flex items-center justify-center text-[10px]">
                       {member.avatar}
                     </div>
                     <div>
                       <div className="font-bold text-white text-xs">{member.name}</div>
-                      <div className="text-[10px] text-slate-400">{member.email}</div>
+                      <div className="text-[10px] text-neutral-400 font-mono">{member.email}</div>
                     </div>
                   </div>
                 </TableCell>
@@ -228,28 +286,23 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
                     value={member.role}
                     disabled={member.role === "superadmin"}
                     onChange={(e) => handleChangeMemberRole(member.id, e.target.value as AdminRole)}
-                    className="h-7 px-2 text-xs bg-[#10182A] border border-slate-800/80 rounded-md text-slate-200 outline-none cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="h-7 px-2 text-xs bg-[#121212] border border-[#262626] rounded-md text-neutral-200 outline-none cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed focus:border-[#D4AF37]"
                   >
-                    <option value="superadmin">Super Admin</option>
-                    <option value="compliance_officer">Compliance & AML Officer</option>
-                    <option value="settlement_manager">Operations Manager</option>
-                    <option value="risk_analyst">Risk & Fraud Analyst</option>
-                    <option value="support_lead">Support Lead</option>
+                    <option value="superadmin">{getRoleDisplayName("superadmin")}</option>
+                    <option value="compliance_officer">{getRoleDisplayName("compliance_officer")}</option>
+                    <option value="settlement_manager">{getRoleDisplayName("settlement_manager")}</option>
+                    <option value="risk_analyst">{getRoleDisplayName("risk_analyst")}</option>
+                    <option value="support_lead">{getRoleDisplayName("support_lead")}</option>
                   </select>
                 </TableCell>
                 <TableCell>
-                  <span className="text-xs text-slate-300 font-medium">{member.lastLogin}</span>
+                  <span className="text-xs text-neutral-300 font-medium">{member.lastLogin}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-xs font-semibold text-sky-400 tabular-nums">{member.ipAddress}</span>
+                  <span className="text-xs font-semibold text-[#F1D77A] tabular-nums font-mono">{member.ipAddress}</span>
                 </TableCell>
                 <TableCell>
-                  <Badge
-                    variant={member.status === "active" ? "success" : "destructive"}
-                    className="text-[10px]"
-                  >
-                    {member.status.toUpperCase()}
-                  </Badge>
+                  <StatusBadge status={member.status} />
                 </TableCell>
                 <TableCell>
                   {member.role !== "superadmin" && (
@@ -277,19 +330,19 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
           <TableHeader>
             <TableRow>
               <TableHead>{isAr ? "الصلاحية" : "Permission"}</TableHead>
-              <TableHead className="text-center">Super Admin</TableHead>
-              <TableHead className="text-center">Compliance</TableHead>
-              <TableHead className="text-center">Ops & Settle</TableHead>
-              <TableHead className="text-center">Risk Analyst</TableHead>
-              <TableHead className="text-center">Support</TableHead>
+              <TableHead className="text-center">{isAr ? "المدير العام" : "Super Admin"}</TableHead>
+              <TableHead className="text-center">{isAr ? "الامتثال" : "Compliance"}</TableHead>
+              <TableHead className="text-center">{isAr ? "التسويات" : "Ops & Settle"}</TableHead>
+              <TableHead className="text-center">{isAr ? "المخاطر" : "Risk Analyst"}</TableHead>
+              <TableHead className="text-center">{isAr ? "الدعم" : "Support"}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {permissions.map((perm) => (
               <TableRow key={perm.id}>
                 <TableCell>
-                  <div className="font-bold text-white text-xs">{perm.name}</div>
-                  <div className="text-[10px] text-slate-400">{perm.description}</div>
+                  <div className="font-bold text-white text-xs">{getPermissionName(perm)}</div>
+                  <div className="text-[10px] text-neutral-400">{getPermissionDesc(perm)}</div>
                 </TableCell>
                 {(["superadmin", "compliance_officer", "settlement_manager", "risk_analyst", "support_lead"] as AdminRole[]).map(
                   (role) => {
@@ -302,8 +355,8 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
                           disabled={role === "superadmin"}
                           className={`w-6 h-6 rounded-md inline-flex items-center justify-center transition-all ${
                             isGranted
-                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                              : "bg-slate-800/40 text-slate-600 border border-slate-800"
+                              ? "bg-[#D4AF37]/20 text-[#F1D77A] border border-[#D4AF37]/40"
+                              : "bg-[#121212] text-neutral-600 border border-[#262626]"
                           } ${role !== "superadmin" ? "cursor-pointer hover:scale-105" : "cursor-default"}`}
                         >
                           {isGranted ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
@@ -320,48 +373,60 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
 
       {/* Invite Admin Dialog */}
       <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-[#171717] border-[#262626]">
           <DialogHeader>
-            <DialogTitle>Invite New Administrator</DialogTitle>
-            <DialogDescription>
-              Assign role and access permissions for a verified team member.
+            <DialogTitle className="text-white">
+              {isAr ? "دعوة مسؤول إداري جديد" : "Invite New Administrator"}
+            </DialogTitle>
+            <DialogDescription className="text-neutral-400">
+              {isAr
+                ? "تعيين الدور وصلاحيات الوصول للمسؤول المصرح له في البوابة."
+                : "Assign role and access permissions for a verified team member."}
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleCreateStaff} className="space-y-3.5 py-1">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400">Full Name</label>
+              <label className="text-xs font-semibold text-neutral-400">
+                {isAr ? "الاسم الكامل" : "Full Name"}
+              </label>
               <Input
                 type="text"
                 required
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="e.g. Tariq Al-Husseini"
+                placeholder={isAr ? "مثال: طارق الحسيني" : "e.g. Tariq Al-Husseini"}
+                className="bg-[#121212] border-[#262626] text-white focus:border-[#D4AF37]"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400">Corporate Email</label>
+              <label className="text-xs font-semibold text-neutral-400">
+                {isAr ? "البريد الإلكتروني الرسمي" : "Corporate Email"}
+              </label>
               <Input
                 type="email"
                 required
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="e.g. t.husseini@qtpay.sa"
+                placeholder={isAr ? "t.husseini@qtpay.sa" : "e.g. t.husseini@qtpay.sa"}
+                className="bg-[#121212] border-[#262626] text-white focus:border-[#D4AF37]"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400">Initial Role</label>
+              <label className="text-xs font-semibold text-neutral-400">
+                {isAr ? "الدور الإداري الابتدائي" : "Initial Role"}
+              </label>
               <select
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value as AdminRole)}
-                className="w-full h-9 px-3 text-xs bg-[#10182A] border border-slate-800/80 rounded-lg text-white outline-none"
+                className="w-full h-9 px-3 text-xs bg-[#121212] border border-[#262626] rounded-lg text-white outline-none focus:border-[#D4AF37]"
               >
-                <option value="compliance_officer">Compliance & AML Officer</option>
-                <option value="settlement_manager">Operations & Settlements Manager</option>
-                <option value="risk_analyst">Risk & Fraud Analyst</option>
-                <option value="support_lead">Customer Support Lead</option>
+                <option value="compliance_officer">{getRoleDisplayName("compliance_officer")}</option>
+                <option value="settlement_manager">{getRoleDisplayName("settlement_manager")}</option>
+                <option value="risk_analyst">{getRoleDisplayName("risk_analyst")}</option>
+                <option value="support_lead">{getRoleDisplayName("support_lead")}</option>
               </select>
             </div>
 
@@ -371,11 +436,12 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
                 variant="outline"
                 size="sm"
                 onClick={() => setIsAddUserOpen(false)}
+                className="border-[#262626] hover:bg-[#262626] text-neutral-300"
               >
-                Cancel
+                {isAr ? "إلغاء" : "Cancel"}
               </Button>
-              <Button type="submit" size="sm">
-                Send Invitation
+              <Button type="submit" size="sm" className="bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 font-bold shadow-md shadow-[#D4AF37]/20">
+                {isAr ? "إرسال الدعوة" : "Send Invitation"}
               </Button>
             </DialogFooter>
           </form>
@@ -384,3 +450,4 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = ({ lang }
     </div>
   );
 };
+

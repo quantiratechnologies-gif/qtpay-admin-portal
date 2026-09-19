@@ -14,7 +14,7 @@ export const Logo: React.FC<LogoProps> = ({
   height = 36,
   width = "auto",
   textColor = "#FFFFFF",
-  accentColor = "#00FF24",
+  accentColor = "#7FE87F",
   showText = true
 }) => {
   return (

@@ -1,28 +1,54 @@
 import React from "react";
 import {
   ShieldAlert,
-  AlertTriangle,
-  Flame,
   CheckCircle2,
-  FileSpreadsheet,
-  Lock,
-  UserX
+  FileSpreadsheet
 } from "lucide-react";
 import { StatusBadge } from "../components/Badge";
+import { useTranslation } from "../lib/i18n/LanguageContext";
 import type { RiskAlert } from "../types";
 
 interface RiskAndAMLProps {
   alerts: RiskAlert[];
   onResolveAlert: (alertId: string) => void;
-  lang: "en" | "ar";
+  lang?: "en" | "ar";
 }
 
 export const RiskAndAML: React.FC<RiskAndAMLProps> = ({
   alerts,
-  onResolveAlert,
-  lang
+  onResolveAlert
 }) => {
-  const isAr = lang === "ar";
+  const { lang, isAr } = useTranslation();
+
+  const getAlertTitle = (alert: RiskAlert) => {
+    if (!isAr) return alert.title;
+    if (alert.id === "rsk_101") return "تكرار سريع لعمليات نقاط البيع (اشتباه تدوير)";
+    if (alert.id === "rsk_102") return "مطابقة جزئية في قائمة حظر ومكافحة غسل الأموال";
+    return alert.title;
+  };
+
+  const getAlertDescription = (alert: RiskAlert) => {
+    if (!isAr) return alert.description;
+    if (alert.id === "rsk_101")
+      return "تم رصد 18 محاولة دفع متتالية خلال 120 ثانية بنفس المبلغ (99.00 ر.س) على الجهاز TRM-44912";
+    if (alert.id === "rsk_102")
+      return "محاولة إنشاء حساب بهوية وطنية مطابقة لمعايير الفحص والاشتباه الصادرة عن البنك المركزي";
+    return alert.description;
+  };
+
+  const getEntityTypeLabel = (type: string) => {
+    if (!isAr) return type.toUpperCase();
+    switch (type) {
+      case "merchant":
+        return "تاجر / منشأة";
+      case "user":
+        return "عميل فردي";
+      case "transaction":
+        return "عملية دفع";
+      default:
+        return type;
+    }
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -36,15 +62,17 @@ export const RiskAndAML: React.FC<RiskAndAMLProps> = ({
       }}>
         <div>
           <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#FFFFFF" }}>
-            {isAr ? "مكافحة غسل الأموال (AML) وإدارة المخاطر والاحتيال" : "Anti-Money Laundering (AML) & Fraud Prevention"}
+            {isAr ? "المخاطر ومكافحة الاحتيال (AML)" : "Risk & AML Monitoring"}
           </h2>
           <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-            {isAr ? "مراقبة الأنشطة المشبوهة، تكرار العمليات، ومطابقة قوائم العقوبات الصادرة عن البنك المركزي" : "SAMA STR reporting, velocity breach detection, sanctions list screening, & fraud blacklists"}
+            {isAr
+              ? "مراقبة الأنشطة المشبوهة وتكرار العمليات وقوائم الحظر"
+              : "Suspicious activity monitoring, velocity breaches, and watchlist screening"}
           </p>
         </div>
 
         <button className="btn-secondary">
-          <FileSpreadsheet size={15} /> {isAr ? "تصدير تقرير SAMA AML الشهري" : "Export SAMA AML Report (STR)"}
+          <FileSpreadsheet size={15} /> {isAr ? "تصدير تقرير AML" : "Export AML Report"}
         </button>
       </div>
 
@@ -80,14 +108,14 @@ export const RiskAndAML: React.FC<RiskAndAMLProps> = ({
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
                   <StatusBadge status={a.severity} />
-                  <span style={{ fontSize: "14px", fontWeight: 800, color: "#FFFFFF" }}>{a.title}</span>
+                  <span style={{ fontSize: "14px", fontWeight: 800, color: "#FFFFFF" }}>{getAlertTitle(a)}</span>
                   <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>• {a.timestamp}</span>
                 </div>
                 <div style={{ fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: "1.4" }}>
-                  {a.description}
+                  {getAlertDescription(a)}
                 </div>
-                <div style={{ fontSize: "11.5px", color: "#38BDF8", marginTop: "6px", fontWeight: 600 }}>
-                  Target: {a.entityName} ({a.entityType.toUpperCase()})
+                <div style={{ fontSize: "11.5px", color: "#F1D77A", marginTop: "6px", fontWeight: 600 }}>
+                  {isAr ? "الكيان:" : "Target:"} {a.entityName} ({getEntityTypeLabel(a.entityType)})
                 </div>
               </div>
             </div>
@@ -99,11 +127,11 @@ export const RiskAndAML: React.FC<RiskAndAMLProps> = ({
                   className="btn-primary"
                   style={{ padding: "8px 14px", fontSize: "12.5px" }}
                 >
-                  <CheckCircle2 size={14} /> {isAr ? "حل والتأشير بالامتثال" : "Resolve Alert"}
+                  <CheckCircle2 size={14} /> {isAr ? "حل التنبيه" : "Resolve Alert"}
                 </button>
               ) : (
-                <span style={{ fontSize: "12px", color: "#10B981", fontWeight: 700 }}>
-                  ✓ Resolved by Admin
+                <span style={{ fontSize: "12px", color: "#F1D77A", fontWeight: 700 }}>
+                  {isAr ? "✓ تم الحل" : "✓ Resolved"}
                 </span>
               )}
             </div>
@@ -113,3 +141,4 @@ export const RiskAndAML: React.FC<RiskAndAMLProps> = ({
     </div>
   );
 };
+

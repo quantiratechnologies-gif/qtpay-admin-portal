@@ -14,24 +14,27 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#7FE87F",
+          hover: "#6FD86F",
+          dark: "#5FBF5F",
+          light: "rgba(127, 232, 127, 0.14)",
+          foreground: "#080C14",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#EF4444",
+          foreground: "#FFFFFF",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#7FE87F",
+          foreground: "#080C14",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -42,10 +45,50 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         brand: {
-          50: "#f0fdf4",
+          DEFAULT: "#7FE87F",
+          hover: "#6FD86F",
+          dark: "#5FBF5F",
+          light: "rgba(127, 232, 127, 0.14)",
+          textOnPrimary: "#080C14"
+        },
+        surface: {
+          DEFAULT: "#111726",
+          elevated: "#182236",
+          hover: "#1E293B",
+          overlay: "rgba(0, 0, 0, 0.75)"
+        },
+        txt: {
+          primary: "#FFFFFF",
+          secondary: "#A2A2BA",
+          muted: "#6E6E85"
+        },
+        bdr: {
+          hairline: "rgba(255, 255, 255, 0.06)",
+          strong: "#2C2C44",
+          focus: "#7FE87F"
+        },
+        gold: {
+          DEFAULT: "#7FE87F",
+          light: "#7FE87F",
+          dark: "#5FBF5F",
+          50: "#F0FDF4",
+          100: "#DCFCE7",
+          200: "#BBF7D0",
+          300: "#86EFAC",
           400: "#7FE87F",
-          500: "#10b981",
-          600: "#059669",
+          500: "#7FE87F",
+          600: "#5FBF5F",
+          700: "#22C55E",
+          800: "#16A34A",
+          900: "#15803D",
+        },
+        dark: {
+          bg: "#080C14",
+          surface: "#111726",
+          card: "#111726",
+          border: "#2C2C44",
+          hover: "#1E293B",
+          muted: "#6E6E85"
         }
       },
       borderRadius: {

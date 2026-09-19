@@ -1,29 +1,20 @@
 import React, { useState } from "react";
-import {
-  Building2,
-  CheckCircle2,
-  Clock,
-  ArrowUpRight,
-  Send,
-  Download,
-  Landmark,
-  ShieldCheck
-} from "lucide-react";
+import { Send } from "lucide-react";
 import { StatusBadge } from "../components/Badge";
+import { useTranslation } from "../lib/i18n/LanguageContext";
 import type { SettlementBatch } from "../types";
 
 interface SettlementsEngineProps {
   batches: SettlementBatch[];
   onDispatchBatch: (batchId: string) => void;
-  lang: "en" | "ar";
+  lang?: "en" | "ar";
 }
 
 export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
   batches,
-  onDispatchBatch,
-  lang
+  onDispatchBatch
 }) => {
-  const isAr = lang === "ar";
+  const { lang, isAr, formatCurrency, formatNumber } = useTranslation();
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
 
   const handleDispatch = (id: string) => {
@@ -32,6 +23,14 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
       onDispatchBatch(id);
       setIsProcessing(null);
     }, 1200);
+  };
+
+  const getBankDisplayName = (bankName: string) => {
+    if (!isAr) return bankName;
+    if (bankName.includes("Rajhi")) return "مصرف الراجحي (ربط مباشر)";
+    if (bankName.includes("SNB") || bankName.includes("National")) return "البنك الأهلي السعودي (مقسم سريع)";
+    if (bankName.includes("Riyad")) return "بنك الرياض (دفعة منتصف اليوم)";
+    return bankName;
   };
 
   return (
@@ -46,10 +45,12 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
       }}>
         <div>
           <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#FFFFFF" }}>
-            {isAr ? "محرك التسويات المصرفية والسيولة النقدية" : "Settlements & Banking Clearing Engine"}
+            {isAr ? "محرك التسويات المصرفية" : "Bank Settlements Engine"}
           </h2>
           <p style={{ fontSize: "12.5px", color: "var(--text-muted)", marginTop: "2px" }}>
-            {isAr ? "إدارة دفعات التحويل الآلي للبنوك السعودية (الراجحي، الأهلي، الرياض) وحسابات الضمان" : "Automated batch clearing to Saudi partner banks (Al Rajhi, SNB, Riyad Bank) & Escrow liquidity"}
+            {isAr
+              ? "إدارة دفعات التحويل للبنوك وحسابات الضمان"
+              : "Manage batch clearing to partner banks & escrow liquidity"}
           </p>
         </div>
       </div>
@@ -57,27 +58,39 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
       {/* Escrow Liquidity Summary Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
         <div className="admin-card">
-          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Total SAMA Escrow Float</span>
-          <div style={{ fontSize: "22px", fontWeight: 800, color: "#7FE87F", marginTop: "4px" }}>
-            SAR 14,890,250.00
+          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+            {isAr ? "رصيد حساب الضمان" : "Escrow Balance"}
+          </span>
+          <div style={{ fontSize: "22px", fontWeight: 800, color: "#F1D77A", marginTop: "4px" }} className="tabular-nums">
+            {formatCurrency(14890250)}
           </div>
-          <span style={{ fontSize: "11px", color: "#10B981" }}>100% Fully Backed in Saudi Central Bank</span>
+          <span style={{ fontSize: "11px", color: "#D4AF37" }}>
+            {isAr ? "محمي بالكامل لدى البنك المركزي" : "100% Backed in Central Bank"}
+          </span>
         </div>
 
         <div className="admin-card">
-          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Today's Cleared Payouts</span>
-          <div style={{ fontSize: "22px", fontWeight: 800, color: "#FFFFFF", marginTop: "4px" }}>
-            SAR 3,046,300.40
+          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+            {isAr ? "تسويات اليوم" : "Today's Payouts"}
+          </span>
+          <div style={{ fontSize: "22px", fontWeight: 800, color: "#FFFFFF", marginTop: "4px" }} className="tabular-nums">
+            {formatCurrency(3046300.40)}
           </div>
-          <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>80 Merchants Disbursed</span>
+          <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
+            {isAr ? "80 تاجراً" : "80 Merchants"}
+          </span>
         </div>
 
         <div className="admin-card">
-          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Rolling Risk Reserve (5%)</span>
-          <div style={{ fontSize: "22px", fontWeight: 800, color: "#F59E0B", marginTop: "4px" }}>
-            SAR 744,512.50
+          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+            {isAr ? "احتياطي المخاطر (5%)" : "Risk Reserve (5%)"}
+          </span>
+          <div style={{ fontSize: "22px", fontWeight: 800, color: "#F1D77A", marginTop: "4px" }} className="tabular-nums">
+            {formatCurrency(744512.50)}
           </div>
-          <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Cover for Chargebacks & Disputes</span>
+          <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
+            {isAr ? "تغطية النزاعات والمستردات" : "Dispute coverage"}
+          </span>
         </div>
       </div>
 
@@ -86,10 +99,10 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
         <table className="admin-table">
           <thead>
             <tr>
-              <th>{isAr ? "رقم الدفعة" : "Batch Reference"}</th>
+              <th>{isAr ? "رقم الدفعة وموعد الإغلاق" : "Batch Reference"}</th>
               <th>{isAr ? "البنك الشريك" : "Partner Bank Integration"}</th>
               <th>{isAr ? "عدد التجار" : "Merchants Count"}</th>
-              <th>{isAr ? "إجمالي المبلغ الإجمالي" : "Gross Volume (SAR)"}</th>
+              <th>{isAr ? "المبلغ الإجمالي" : "Gross Volume"}</th>
               <th>{isAr ? "خصم عمولة المنصة" : "MDR Deducted"}</th>
               <th>{isAr ? "صافي التحويل للآيبان" : "Net Disbursed to IBAN"}</th>
               <th>{isAr ? "حالة الدفعة" : "Status"}</th>
@@ -100,24 +113,34 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
             {batches.map((b) => (
               <tr key={b.id}>
                 <td>
-                  <div style={{ fontFamily: "monospace", fontWeight: 700, color: "#38BDF8" }}>{b.batchRef}</div>
-                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Cutoff: {b.cutoffTime}</div>
+                  <div style={{ fontFamily: "monospace", fontWeight: 700, color: "#F1D77A" }}>{b.batchRef}</div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                    {isAr ? `موعد الإغلاق: ${b.cutoffTime}` : `Cutoff: ${b.cutoffTime}`}
+                  </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 700 }}>{b.bankName}</div>
-                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Code: {b.partnerBankCode}</div>
+                  <div style={{ fontWeight: 700 }}>{getBankDisplayName(b.bankName)}</div>
+                  <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                    {isAr ? `الرمز: ${b.partnerBankCode}` : `Code: ${b.partnerBankCode}`}
+                  </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 600 }}>{b.totalMerchants} merchants</div>
+                  <div style={{ fontWeight: 600 }}>
+                    {formatNumber(b.totalMerchants)} {isAr ? "تاجر" : "merchants"}
+                  </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 700 }}>SAR {b.totalGrossSar.toLocaleString()}</div>
+                  <div style={{ fontWeight: 700 }} className="tabular-nums">{formatCurrency(b.totalGrossSar)}</div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 700, color: "#F59E0B" }}>SAR {b.totalMdrDeductionSar.toLocaleString()}</div>
+                  <div style={{ fontWeight: 700, color: "#F1D77A" }} className="tabular-nums">
+                    {formatCurrency(b.totalMdrDeductionSar)}
+                  </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 800, color: "#7FE87F" }}>SAR {b.totalNetDisbursedSar.toLocaleString()}</div>
+                  <div style={{ fontWeight: 800, color: "#F1D77A" }} className="tabular-nums">
+                    {formatCurrency(b.totalNetDisbursedSar)}
+                  </div>
                 </td>
                 <td>
                   <StatusBadge status={b.status} />
@@ -130,10 +153,10 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
                       className="btn-primary"
                       style={{ padding: "6px 12px", fontSize: "12px" }}
                     >
-                      <Send size={13} /> {isProcessing === b.id ? "Clearing..." : (isAr ? "تنفيذ التسوية الآن" : "Dispatch Now")}
+                      <Send size={13} /> {isProcessing === b.id ? (isAr ? "جاري المقاصة..." : "Clearing...") : (isAr ? "تنفيذ التسوية الآن" : "Dispatch Now")}
                     </button>
                   ) : (
-                    <span style={{ fontSize: "12px", color: "#10B981", fontWeight: 600 }}>
+                    <span style={{ fontSize: "12px", color: "#F1D77A", fontWeight: 600 }}>
                       ✓ {isAr ? "مكتملة ومودعة" : "Executed"}
                     </span>
                   )}
@@ -146,3 +169,4 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
     </div>
   );
 };
+

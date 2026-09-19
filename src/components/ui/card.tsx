@@ -8,7 +8,8 @@ export const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-slate-800/80 bg-[#0E1526] text-slate-100 shadow-sm p-4",
+      "rounded-xl border border-[#2C2C44] bg-gradient-to-b from-[#182236]/95 to-[#111726]/95 text-[#FFFFFF] shadow-xl shadow-black/50 p-4 transition-all duration-300 hover:border-[#7FE87F]/50 hover:shadow-[#7FE87F]/5 relative",
+      "before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#7FE87F]/30 before:to-transparent before:rounded-t-xl before:pointer-events-none",
       className
     )}
     {...props}
@@ -46,7 +47,7 @@ export const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-xs text-slate-400", className)}
+    className={cn("text-xs text-[#A2A2BA]", className)}
     {...props}
   />
 ));
