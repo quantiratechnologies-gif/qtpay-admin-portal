@@ -106,7 +106,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
             variant="outline"
             size="sm"
             onClick={onBack}
-            className="h-8 px-3 bg-[#171717] border-[#262626] text-neutral-300 hover:text-white hover:border-[#D4AF37]/40 gap-1.5 cursor-pointer"
+            className="h-8 px-3 bg-[#111726] border-[#2C2C44] text-neutral-300 hover:text-white hover:border-[#7FE87F]/40 gap-1.5 cursor-pointer"
           >
             <BackIcon className="h-3.5 w-3.5" />
             <span>{isAr ? "العودة" : "Back"}</span>
@@ -152,9 +152,9 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                   : (isAr ? "فشل التصدير" : "Export failed. Please try again.")
               );
             }}
-            className="h-8 px-3 bg-[#171717] border-[#262626] text-neutral-300 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 gap-1.5 text-xs cursor-pointer"
+            className="h-8 px-3 bg-[#111726] border-[#2C2C44] text-neutral-300 hover:text-[#7FE87F] hover:border-[#7FE87F]/40 gap-1.5 text-xs cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5 text-[#F1D77A]" />
+            <Download className="h-3.5 w-3.5 text-[#7FE87F]" />
             <span>{t("common.export")}</span>
           </Button>
 
@@ -179,9 +179,9 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 onUpdateStatus(merchant.id, "active");
                 showNotice(isAr ? `تم اعتماد وتفعيل التاجر ${merchant.businessNameAr || merchant.businessName}` : `Merchant ${merchant.businessName} activated`);
               }}
-              className="h-8 px-3 text-xs gap-1.5 font-bold cursor-pointer bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 shadow-md shadow-[#D4AF37]/20"
+              className="h-8 px-3 text-xs gap-1.5 font-bold cursor-pointer bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:opacity-95 shadow-md shadow-[#7FE87F]/20"
             >
-              <CheckCircle2 className="h-3.5 w-3.5 text-[#0B0B0B]" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#080C14]" />
               <span>{isAr ? "اعتماد وتفعيل" : "Approve & Activate"}</span>
             </Button>
           )}
@@ -189,17 +189,17 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
       </div>
 
       {notice && (
-        <div className="p-3 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl text-[#F1D77A] text-xs font-semibold flex items-center gap-2.5">
-          <CheckCircle2 className="h-4 w-4 text-[#D4AF37]" />
+        <div className="p-3 bg-[#7FE87F]/10 border border-[#7FE87F]/30 rounded-xl text-[#7FE87F] text-xs font-semibold flex items-center gap-2.5">
+          <CheckCircle2 className="h-4 w-4 text-[#7FE87F]" />
           <span>{notice}</span>
         </div>
       )}
 
       {/* Main Header Dossier Card */}
-      <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
+      <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-[#F1D77A]/20 to-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center text-[#F1D77A] p-3 shadow-inner">
+            <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-[#7FE87F]/20 to-[#6FD86F]/10 border border-[#7FE87F]/40 flex items-center justify-center text-[#7FE87F] p-3 shadow-inner">
               <Store className="h-7 w-7" />
             </div>
             <div>
@@ -222,11 +222,11 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
           <div className="flex items-center gap-4">
             <div className={isAr ? "text-left" : "text-right"}>
               <span className="text-[10px] text-neutral-400 block uppercase font-medium">{t("merchants.tableVolume")}</span>
-              <span className="text-xl font-extrabold text-[#F1D77A] tabular-nums">
+              <span className="text-xl font-extrabold text-[#7FE87F] tabular-nums">
                 {formatCurrency(merchant.monthlyVolumeSar, { decimals: 0 })}
               </span>
             </div>
-            <div className="h-9 w-px bg-[#262626]" />
+            <div className="h-9 w-px bg-[#2C2C44]" />
             <div className={isAr ? "text-left" : "text-right"}>
               <span className="text-[10px] text-neutral-400 block uppercase font-medium">{t("merchants.tableTerminals")}</span>
               <span className="text-xl font-extrabold text-white tabular-nums">
@@ -237,7 +237,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
         </div>
 
         {/* Sub Navigation Bar */}
-        <div className="flex items-center gap-1.5 border-t border-[#262626] pt-3 overflow-x-auto">
+        <div className="flex items-center gap-1.5 border-t border-[#2C2C44] pt-3 overflow-x-auto">
           {[
             { id: "profile", label: t("merchants.tabOverview"), icon: Building2 },
             { id: "terminals", label: `${t("merchants.tabTerminals")} (${(merchant.terminalsList || []).length})`, icon: Terminal },
@@ -253,8 +253,8 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-md shadow-[#D4AF37]/20"
-                    : "text-neutral-400 hover:text-white hover:bg-[#1F1F1F]"
+                    ? "bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] font-bold shadow-md shadow-[#7FE87F]/20"
+                    : "text-neutral-400 hover:text-white hover:bg-[#182236]"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -269,10 +269,10 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
       {activeTab === "profile" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Legal Identity Card */}
-          <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-            <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
+          <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+            <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+                <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                   <ShieldCheck className="h-4 w-4" />
                 </div>
                 <div>
@@ -290,43 +290,43 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <FileText className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  <FileText className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("merchants.crLabel")}
                 </span>
-                <div className="flex items-center gap-2 text-[#F1D77A] font-bold tabular-nums">
+                <div className="flex items-center gap-2 text-[#7FE87F] font-bold tabular-nums">
                   <span>{merchant.crNumber}</span>
                   <button onClick={() => handleCopy(merchant.crNumber, "cr")} className="text-neutral-500 hover:text-white cursor-pointer">
-                    {copiedField === "cr" ? <Check className="h-3.5 w-3.5 text-[#F1D77A]" /> : <Copy className="h-3.5 w-3.5" />}
+                    {copiedField === "cr" ? <Check className="h-3.5 w-3.5 text-[#7FE87F]" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Percent className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  <Percent className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("merchants.vatLabel")}
                 </span>
                 <div className="flex items-center gap-2 text-white font-bold tabular-nums">
                   <span>{merchant.vatNumber}</span>
                   <button onClick={() => handleCopy(merchant.vatNumber, "vat")} className="text-neutral-500 hover:text-white cursor-pointer">
-                    {copiedField === "vat" ? <Check className="h-3.5 w-3.5 text-[#F1D77A]" /> : <Copy className="h-3.5 w-3.5" />}
+                    {copiedField === "vat" ? <Check className="h-3.5 w-3.5 text-[#7FE87F]" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Store className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  <Store className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("merchants.ownerLabel")}
                 </span>
                 <span className="font-bold text-white">{merchant.ownerName}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Building2 className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  <Building2 className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("merchants.nationalIdLabel")}
                 </span>
                 <span className="text-neutral-300 font-semibold tabular-nums">{merchant.nationalId}</span>
@@ -334,7 +334,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
               <div className="flex justify-between items-center py-1.5">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <MapPin className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  <MapPin className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {isAr ? "الموقع والعنوان" : "Physical Address"}
                 </span>
                 <span className="text-neutral-300 font-medium">{merchant.address || merchant.city}</span>
@@ -343,10 +343,10 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
           </Card>
 
           {/* Settlement Banking & Pricing Card */}
-          <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-            <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
+          <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+            <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+                <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                   <DollarSign className="h-4 w-4" />
                 </div>
                 <div>
@@ -364,40 +364,40 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Building2 className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  <Building2 className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("merchants.settlementBankLabel")}
                 </span>
                 <span className="font-bold text-white">{merchant.settlementBank}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Coins className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  <Coins className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("merchants.ibanLabel")}
                 </span>
                 <div className="flex items-center gap-2 text-white text-xs font-bold tabular-nums">
                   <span>{merchant.settlementIban}</span>
                   <button onClick={() => handleCopy(merchant.settlementIban, "iban")} className="text-neutral-500 hover:text-white cursor-pointer">
-                    {copiedField === "iban" ? <Check className="h-3.5 w-3.5 text-[#F1D77A]" /> : <Copy className="h-3.5 w-3.5" />}
+                    {copiedField === "iban" ? <Check className="h-3.5 w-3.5 text-[#7FE87F]" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Percent className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  <Percent className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("merchants.customMdrLabel")}
                 </span>
-                <span className="font-bold text-[#F1D77A]">
+                <span className="font-bold text-[#7FE87F]">
                   {merchant.customMdrRate ? `${merchant.customMdrRate}% (${isAr ? "شريحة مخصصة" : "Custom Tier"})` : `0.80% (${isAr ? "النسبة القياسية" : "Standard Platform"})`}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  <Clock className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {isAr ? "جدول الإقفال المحاسبي" : "Settlement Cutoff"}
                 </span>
                 <span className="font-semibold text-neutral-200">
@@ -418,9 +418,9 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                         : (isAr ? "تم تفعيل حجز التسوية احترازياً" : `Payout hold activated for ${merchant.businessName}`)
                     );
                   }}
-                  className="h-8 text-xs bg-[#121212] border-[#262626] gap-2 text-neutral-200 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 cursor-pointer"
+                  className="h-8 text-xs bg-[#182236] border-[#2C2C44] gap-2 text-neutral-200 hover:text-[#7FE87F] hover:border-[#7FE87F]/40 cursor-pointer"
                 >
-                  {merchant.settlementHold ? <PlayCircle className="h-3.5 w-3.5 text-[#F1D77A]" /> : <PauseCircle className="h-3.5 w-3.5 text-[#D4AF37]" />}
+                  {merchant.settlementHold ? <PlayCircle className="h-3.5 w-3.5 text-[#7FE87F]" /> : <PauseCircle className="h-3.5 w-3.5 text-[#7FE87F]" />}
                   <span>{merchant.settlementHold ? t("merchants.releaseHold") : t("merchants.holdSettlement")}</span>
                 </Button>
               </div>
@@ -431,10 +431,10 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Tab 2: SoftPOS Terminals Fleet */}
       {activeTab === "terminals" && (
-        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#262626]">
+        <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#2C2C44]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+              <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                 <Terminal className="h-4 w-4" />
               </div>
               <div>
@@ -449,7 +449,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
             <Button
               size="sm"
               onClick={() => setIsProvisionModalOpen(true)}
-              className="h-8 px-3 text-xs font-bold gap-1.5 bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 shadow-md shadow-[#D4AF37]/20 cursor-pointer"
+              className="h-8 px-3 text-xs font-bold gap-1.5 bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:opacity-95 shadow-md shadow-[#7FE87F]/20 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>{t("merchants.provisionTerminal")}</span>
@@ -473,14 +473,14 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 merchant.terminalsList?.map((term) => (
                   <TableRow key={term.id}>
                     <TableCell>
-                      <span className="font-semibold text-[#F1D77A] text-xs tabular-nums">{term.terminalId}</span>
+                      <span className="font-semibold text-[#7FE87F] text-xs tabular-nums">{term.terminalId}</span>
                     </TableCell>
                     <TableCell>
                       <div className="font-semibold text-xs text-white">{term.model}</div>
                       <div className="text-[10px] text-neutral-400">{term.osVersion}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={term.nfcStatus === "active" ? "gold" : "warning"} className="text-[10px] font-bold">
+                      <Badge variant={term.nfcStatus === "active" ? "primary" : "warning"} className="text-[10px] font-bold">
                         {term.nfcStatus === "active" ? (isAr ? "نشط" : "ACTIVE") : (isAr ? "معلق" : "PENDING")}
                       </Badge>
                     </TableCell>
@@ -488,13 +488,13 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                       <span className="text-xs text-neutral-300">{term.lastHeartbeat}</span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="font-extrabold text-[#F1D77A] text-xs tabular-nums">
+                      <div className="font-extrabold text-[#7FE87F] text-xs tabular-nums">
                         {formatCurrency(term.dailyVolumeSar)}
                       </div>
                       <div className="text-[10px] text-neutral-400">{term.dailyTxCount} {isAr ? "عملية اليوم" : "tx today"}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={term.status === "online" ? "gold" : "secondary"} className="text-[10px] font-bold">
+                      <Badge variant={term.status === "online" ? "primary" : "secondary"} className="text-[10px] font-bold">
                         {term.status === "online" ? (isAr ? "متصل" : "ONLINE") : (isAr ? "غير متصل" : "OFFLINE")}
                       </Badge>
                     </TableCell>
@@ -531,10 +531,10 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Tab 3: Complete Transaction History */}
       {activeTab === "transactions" && (
-        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#262626]">
+        <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#2C2C44]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+              <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                 <ReceiptText className="h-4 w-4" />
               </div>
               <div>
@@ -546,7 +546,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-neutral-300 font-semibold border-[#262626]">
+            <Badge variant="outline" className="text-xs text-neutral-300 font-semibold border-[#2C2C44]">
               {merchantTransactions.length} {isAr ? "عملية" : "operations"}
             </Badge>
           </div>
@@ -568,7 +568,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 merchantTransactions.map((tx) => (
                   <TableRow key={tx.id}>
                     <TableCell>
-                      <div className="font-semibold text-[#F1D77A] text-xs">{tx.orderRef}</div>
+                      <div className="font-semibold text-[#7FE87F] text-xs">{tx.orderRef}</div>
                       <div className="text-[10px] text-neutral-400">{formatDate(tx.timestamp, "time")}</div>
                     </TableCell>
                     <TableCell>
@@ -579,11 +579,11 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                       <span className="font-bold text-white text-xs tabular-nums">{formatCurrency(tx.amount)}</span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <span className="font-bold text-[#F1D77A] text-xs tabular-nums">{formatCurrency(tx.platformMdrSar)}</span>
+                      <span className="font-bold text-[#7FE87F] text-xs tabular-nums">{formatCurrency(tx.platformMdrSar)}</span>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1.5 text-xs font-semibold">
-                        {tx.paymentMethod === "apple_pay" ? <SmartphoneNfc className="h-3.5 w-3.5 text-[#F1D77A]" /> : <CreditCard className="h-3.5 w-3.5 text-[#D4AF37]" />}
+                        {tx.paymentMethod === "apple_pay" ? <SmartphoneNfc className="h-3.5 w-3.5 text-[#7FE87F]" /> : <CreditCard className="h-3.5 w-3.5 text-[#7FE87F]" />}
                         <span className="text-neutral-200">{translatePaymentMethod(tx.paymentMethod)}</span>
                       </div>
                     </TableCell>
@@ -622,10 +622,10 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Tab 4: Settlement Batches */}
       {activeTab === "settlements" && (
-        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-          <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
+        <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+          <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+              <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                 <DollarSign className="h-4 w-4" />
               </div>
               <div>
@@ -637,7 +637,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-neutral-300 border-[#262626]">
+            <Badge variant="outline" className="text-xs text-neutral-300 border-[#2C2C44]">
               {isAr ? "تسوية آلية" : "Automated Clearing"}
             </Badge>
           </div>
@@ -659,7 +659,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 merchant.settlementRecords?.map((stl) => (
                   <TableRow key={stl.id}>
                     <TableCell>
-                      <div className="font-semibold text-[#F1D77A] text-xs">{stl.batchRef}</div>
+                      <div className="font-semibold text-[#7FE87F] text-xs">{stl.batchRef}</div>
                       <div className="text-[10px] text-neutral-400">{stl.payoutDate}</div>
                     </TableCell>
                     <TableCell>
@@ -669,17 +669,17 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                       <span className="font-semibold text-xs text-neutral-200 tabular-nums">{formatCurrency(stl.grossAmountSar)}</span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <span className="font-bold text-[#F1D77A] text-xs tabular-nums">
+                      <span className="font-bold text-[#7FE87F] text-xs tabular-nums">
                         {formatCurrency(stl.mdrFeeSar + stl.vatSar)}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <span className="font-extrabold text-[#F1D77A] text-xs tabular-nums">
+                      <span className="font-extrabold text-[#7FE87F] text-xs tabular-nums">
                         {formatCurrency(stl.netDisbursedSar)}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="gold" className="text-[10px] font-bold">
+                      <Badge variant="primary" className="text-[10px] font-bold">
                         {stl.status.toUpperCase()}
                       </Badge>
                     </TableCell>
@@ -702,10 +702,10 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Tab 5: Activity & Audit Trail */}
       {activeTab === "activity" && (
-        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-          <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
+        <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+          <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+              <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                 <History className="h-4 w-4" />
               </div>
               <div>
@@ -717,7 +717,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-neutral-300 border-[#262626]">
+            <Badge variant="outline" className="text-xs text-neutral-300 border-[#2C2C44]">
               {isAr ? "سجل مشفر" : "Immutable Log"}
             </Badge>
           </div>
@@ -727,17 +727,17 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               merchant.activityLogs?.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3.5 rounded-xl bg-[#121212] border border-[#262626] space-y-1.5 hover:border-[#D4AF37]/40 transition-colors"
+                  className="p-3.5 rounded-xl bg-[#182236] border border-[#2C2C44] space-y-1.5 hover:border-[#7FE87F]/40 transition-colors"
                 >
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-white flex items-center gap-2">
-                      <Activity className="h-3.5 w-3.5 text-[#F1D77A]" />
+                      <Activity className="h-3.5 w-3.5 text-[#7FE87F]" />
                       {log.title}
                     </span>
                     <span className="text-[10px] text-neutral-400 font-medium">{log.timestamp}</span>
                   </div>
                   <p className="text-xs text-neutral-400">{log.details}</p>
-                  <div className="text-[10px] text-neutral-500 pt-1 border-t border-[#262626]">
+                  <div className="text-[10px] text-neutral-500 pt-1 border-t border-[#2C2C44]">
                     <span>{isAr ? "المنفذ:" : "Actor:"} <strong className="text-neutral-300">{log.actor}</strong></span>
                   </div>
                 </div>
@@ -753,10 +753,10 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
 
       {/* Provision SoftPOS Modal */}
       <Dialog open={isProvisionModalOpen} onOpenChange={setIsProvisionModalOpen}>
-        <DialogContent className="max-w-md p-6 bg-[#171717] border-[#262626]">
+        <DialogContent className="max-w-md p-6 bg-[#111726] border-[#2C2C44]">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/30">
+              <div className="p-2.5 rounded-xl bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/30">
                 <Terminal className="h-6 w-6" />
               </div>
               <div>
@@ -778,7 +778,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               <select
                 value={newTerminalModel}
                 onChange={(e) => setNewTerminalModel(e.target.value)}
-                className="w-full h-10 px-3 text-xs bg-[#121212] border border-[#262626] rounded-xl text-white outline-none focus:border-[#D4AF37]"
+                className="w-full h-10 px-3 text-xs bg-[#182236] border border-[#2C2C44] rounded-xl text-white outline-none focus:border-[#7FE87F]"
               >
                 <option value="Apple SoftPOS (iPhone iOS 18+)">Apple SoftPOS (iOS 18+)</option>
                 <option value="Android SoftPOS (Samsung / Google)">Android SoftPOS (Android 14+)</option>
@@ -787,9 +787,9 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               </select>
             </div>
 
-            <div className="p-3 bg-[#121212] border border-[#262626] rounded-xl space-y-1 text-xs">
+            <div className="p-3 bg-[#182236] border border-[#2C2C44] rounded-xl space-y-1 text-xs">
               <span className="font-bold text-white flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-[#F1D77A]" />
+                <ShieldCheck className="h-4 w-4 text-[#7FE87F]" />
                 {isAr ? "فحص الأمان والشهادات" : "Security Check"}
               </span>
               <p className="text-[11px] text-neutral-400">
@@ -803,7 +803,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
               variant="outline"
               size="sm"
               onClick={() => setIsProvisionModalOpen(false)}
-              className="border-[#262626] hover:bg-[#262626] cursor-pointer text-neutral-300"
+              className="border-[#2C2C44] hover:bg-[#182236] cursor-pointer text-neutral-300"
             >
               {t("common.cancel")}
             </Button>
@@ -820,7 +820,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                     : `Terminal provisioned successfully for ${merchant.businessName}`
                 );
               }}
-              className="bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 font-bold cursor-pointer shadow-md shadow-[#D4AF37]/20"
+              className="bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:opacity-95 font-bold cursor-pointer shadow-md shadow-[#7FE87F]/20"
             >
               {isAr ? "تأكيد الإصدار والتفعيل" : "Confirm Provisioning"}
             </Button>

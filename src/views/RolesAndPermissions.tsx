@@ -162,23 +162,23 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2.5">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-[#F1D77A]" />
+          <ShieldCheck className="h-5 w-5 text-[#7FE87F]" />
           <h2 className="text-base font-extrabold text-white">
             {isAr ? "الأدوار والصلاحيات والأمان (RBAC)" : "Roles & Access Control (RBAC)"}
           </h2>
-          <Badge variant="gold" className="text-[11px]">
+          <Badge variant="primary" className="text-[11px]">
             {formatNumber(teamMembers.length)} {isAr ? "مسؤول إداري" : "Staff"}
           </Badge>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Sub Navigation */}
-          <div className="inline-flex rounded-lg bg-[#121212] p-1 border border-[#262626]">
+          <div className="inline-flex rounded-lg bg-[#111726] p-1 border border-[#2C2C44]">
             <button
               onClick={() => setActiveTab("roles")}
               className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
                 activeTab === "roles"
-                  ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-sm"
+                  ? "bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] font-bold shadow-sm"
                   : "text-neutral-400 hover:text-white"
               }`}
             >
@@ -188,7 +188,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
               onClick={() => setActiveTab("staff")}
               className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
                 activeTab === "staff"
-                  ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-sm"
+                  ? "bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] font-bold shadow-sm"
                   : "text-neutral-400 hover:text-white"
               }`}
             >
@@ -198,7 +198,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
               onClick={() => setActiveTab("matrix")}
               className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
                 activeTab === "matrix"
-                  ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-sm"
+                  ? "bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] font-bold shadow-sm"
                   : "text-neutral-400 hover:text-white"
               }`}
             >
@@ -209,7 +209,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
           <Button
             size="sm"
             onClick={() => setIsAddUserOpen(true)}
-            className="gap-1.5 h-8 text-xs font-bold bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 shadow-md shadow-[#D4AF37]/20"
+            className="gap-1.5 h-8 text-xs font-bold bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:opacity-95 shadow-md shadow-[#7FE87F]/20 cursor-pointer"
           >
             <UserPlus className="h-3.5 w-3.5" />
             <span>{isAr ? "إضافة مسؤول" : "Invite Admin"}</span>
@@ -221,7 +221,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
       {activeTab === "roles" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {mockRoleDefinitions.map((role: RoleDefinition) => (
-            <Card key={role.id} className="p-4 space-y-3 bg-[#171717] border-[#262626]">
+            <Card key={role.id} className="p-4 space-y-3 bg-[#111726] border-[#2C2C44]">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-white">
@@ -241,9 +241,9 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
                 {role.description}
               </p>
 
-              <div className="pt-2 border-t border-[#262626] flex items-center justify-between text-[11px]">
+              <div className="pt-2 border-t border-[#2C2C44] flex items-center justify-between text-[11px]">
                 <span className="text-neutral-500">{isAr ? "مستوى الوصول" : "Access Level"}</span>
-                <span className="font-bold text-[#F1D77A]">
+                <span className="font-bold text-[#7FE87F]">
                   {role.id === "superadmin"
                     ? (isAr ? "صلاحية شاملة / وصول جذري" : "Root / Full Platform")
                     : (isAr ? "صلاحيات مخصصة" : "Scoped Authority")}
@@ -272,7 +272,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
               <TableRow key={member.id}>
                 <TableCell>
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#F1D77A] font-extrabold flex items-center justify-center text-[10px]">
+                    <div className="w-7 h-7 rounded-lg bg-[#7FE87F]/15 border border-[#7FE87F]/30 text-[#7FE87F] font-extrabold flex items-center justify-center text-[10px]">
                       {member.avatar}
                     </div>
                     <div>
@@ -286,7 +286,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
                     value={member.role}
                     disabled={member.role === "superadmin"}
                     onChange={(e) => handleChangeMemberRole(member.id, e.target.value as AdminRole)}
-                    className="h-7 px-2 text-xs bg-[#121212] border border-[#262626] rounded-md text-neutral-200 outline-none cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed focus:border-[#D4AF37]"
+                    className="h-7 px-2 text-xs bg-[#111726] border border-[#2C2C44] rounded-md text-neutral-200 outline-none cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed focus:border-[#7FE87F]"
                   >
                     <option value="superadmin">{getRoleDisplayName("superadmin")}</option>
                     <option value="compliance_officer">{getRoleDisplayName("compliance_officer")}</option>
@@ -299,7 +299,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
                   <span className="text-xs text-neutral-300 font-medium">{member.lastLogin}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-xs font-semibold text-[#F1D77A] tabular-nums font-mono">{member.ipAddress}</span>
+                  <span className="text-xs font-semibold text-[#7FE87F] tabular-nums font-mono">{member.ipAddress}</span>
                 </TableCell>
                 <TableCell>
                   <StatusBadge status={member.status} />
@@ -310,7 +310,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
                       variant={member.status === "active" ? "destructive" : "default"}
                       size="sm"
                       onClick={() => handleToggleMemberStatus(member.id)}
-                      className="h-7 px-2 text-xs"
+                      className="h-7 px-2 text-xs cursor-pointer"
                     >
                       {member.status === "active"
                         ? (isAr ? "إيقاف" : "Suspend")
@@ -355,8 +355,8 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
                           disabled={role === "superadmin"}
                           className={`w-6 h-6 rounded-md inline-flex items-center justify-center transition-all ${
                             isGranted
-                              ? "bg-[#D4AF37]/20 text-[#F1D77A] border border-[#D4AF37]/40"
-                              : "bg-[#121212] text-neutral-600 border border-[#262626]"
+                              ? "bg-[#7FE87F]/20 text-[#7FE87F] border border-[#7FE87F]/40"
+                              : "bg-[#111726] text-neutral-600 border border-[#2C2C44]"
                           } ${role !== "superadmin" ? "cursor-pointer hover:scale-105" : "cursor-default"}`}
                         >
                           {isGranted ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
@@ -373,7 +373,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
 
       {/* Invite Admin Dialog */}
       <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
-        <DialogContent className="max-w-md bg-[#171717] border-[#262626]">
+        <DialogContent className="max-w-md bg-[#111726] border-[#2C2C44]">
           <DialogHeader>
             <DialogTitle className="text-white">
               {isAr ? "دعوة مسؤول إداري جديد" : "Invite New Administrator"}
@@ -396,7 +396,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder={isAr ? "مثال: طارق الحسيني" : "e.g. Tariq Al-Husseini"}
-                className="bg-[#121212] border-[#262626] text-white focus:border-[#D4AF37]"
+                className="bg-[#182236] border-[#2C2C44] text-white focus:border-[#7FE87F]"
               />
             </div>
 
@@ -410,7 +410,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 placeholder={isAr ? "t.husseini@qtpay.sa" : "e.g. t.husseini@qtpay.sa"}
-                className="bg-[#121212] border-[#262626] text-white focus:border-[#D4AF37]"
+                className="bg-[#182236] border-[#2C2C44] text-white focus:border-[#7FE87F]"
               />
             </div>
 
@@ -421,7 +421,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
               <select
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value as AdminRole)}
-                className="w-full h-9 px-3 text-xs bg-[#121212] border border-[#262626] rounded-lg text-white outline-none focus:border-[#D4AF37]"
+                className="w-full h-9 px-3 text-xs bg-[#182236] border border-[#2C2C44] rounded-lg text-white outline-none focus:border-[#7FE87F]"
               >
                 <option value="compliance_officer">{getRoleDisplayName("compliance_officer")}</option>
                 <option value="settlement_manager">{getRoleDisplayName("settlement_manager")}</option>
@@ -436,11 +436,11 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsAddUserOpen(false)}
-                className="border-[#262626] hover:bg-[#262626] text-neutral-300"
+                className="border-[#2C2C44] hover:bg-[#182236] text-neutral-300 cursor-pointer"
               >
                 {isAr ? "إلغاء" : "Cancel"}
               </Button>
-              <Button type="submit" size="sm" className="bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 font-bold shadow-md shadow-[#D4AF37]/20">
+              <Button type="submit" size="sm" className="bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:opacity-95 font-bold shadow-md shadow-[#7FE87F]/20 cursor-pointer">
                 {isAr ? "إرسال الدعوة" : "Send Invitation"}
               </Button>
             </DialogFooter>

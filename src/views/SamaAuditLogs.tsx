@@ -81,14 +81,14 @@ export const SamaAuditLogs: React.FC<SamaAuditLogsProps> = ({ logs }) => {
                     fontWeight: 800,
                     padding: "3px 8px",
                     borderRadius: "6px",
-                    background: "rgba(212, 175, 55, 0.15)",
-                    color: "#F1D77A"
+                    background: "rgba(127, 232, 127, 0.15)",
+                    color: "#7FE87F"
                   }}>
                     {getActionLabel(log.action)}
                   </span>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 600, color: "#F1D77A" }}>{log.targetEntity}</div>
+                  <div style={{ fontWeight: 600, color: "#7FE87F" }}>{log.targetEntity}</div>
                 </td>
                 <td>
                   <div style={{ fontSize: "12px", color: "var(--text-secondary)", maxWidth: "340px" }}>{log.details}</div>

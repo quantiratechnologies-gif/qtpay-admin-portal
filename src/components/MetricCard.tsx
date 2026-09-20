@@ -18,7 +18,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   change,
   isPositive = true,
   icon: Icon,
-  accentColor = "#D4AF37"
+  accentColor = "#7FE87F"
 }) => {
   return (
     <div className="admin-card" style={{ position: "relative", overflow: "hidden" }}>
@@ -30,8 +30,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
           width: "36px",
           height: "36px",
           borderRadius: "10px",
-          background: "rgba(212, 175, 55, 0.1)",
-          border: "1px solid rgba(212, 175, 55, 0.2)",
+          background: "rgba(127, 232, 127, 0.1)",
+          border: "1px solid rgba(127, 232, 127, 0.2)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -51,7 +51,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
             display: "inline-flex",
             alignItems: "center",
             gap: "3px",
-            color: isPositive ? "#F1D77A" : "#EF4444",
+            color: isPositive ? "#7FE87F" : "#EF4444",
             fontWeight: 700
           }}>
             {isPositive ? <TrendingUp size={13} /> : <TrendingDown size={13} />}

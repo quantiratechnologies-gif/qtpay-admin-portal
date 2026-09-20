@@ -114,7 +114,7 @@ export const RiskAndAML: React.FC<RiskAndAMLProps> = ({
                 <div style={{ fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: "1.4" }}>
                   {getAlertDescription(a)}
                 </div>
-                <div style={{ fontSize: "11.5px", color: "#F1D77A", marginTop: "6px", fontWeight: 600 }}>
+                <div style={{ fontSize: "11.5px", color: "#7FE87F", marginTop: "6px", fontWeight: 600 }}>
                   {isAr ? "الكيان:" : "Target:"} {a.entityName} ({getEntityTypeLabel(a.entityType)})
                 </div>
               </div>
@@ -130,7 +130,7 @@ export const RiskAndAML: React.FC<RiskAndAMLProps> = ({
                   <CheckCircle2 size={14} /> {isAr ? "حل التنبيه" : "Resolve Alert"}
                 </button>
               ) : (
-                <span style={{ fontSize: "12px", color: "#F1D77A", fontWeight: 700 }}>
+                <span style={{ fontSize: "12px", color: "#7FE87F", fontWeight: 700 }}>
                   {isAr ? "✓ تم الحل" : "✓ Resolved"}
                 </span>
               )}

@@ -98,7 +98,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
             variant="outline"
             size="sm"
             onClick={onBack}
-            className="h-8 px-3 bg-[#171717] border-[#262626] text-neutral-300 hover:text-white hover:border-[#D4AF37]/40 gap-1.5 cursor-pointer"
+            className="h-8 px-3 bg-[#111726] border-[#2C2C44] text-neutral-300 hover:text-white hover:border-[#7FE87F]/40 gap-1.5 cursor-pointer"
           >
             <BackIcon className="h-3.5 w-3.5" />
             <span>{isAr ? "العودة" : "Back"}</span>
@@ -140,9 +140,9 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                   : "Export failed"
               );
             }}
-            className="h-8 px-3 bg-[#171717] border-[#262626] text-neutral-300 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 gap-1.5 text-xs cursor-pointer"
+            className="h-8 px-3 bg-[#111726] border-[#2C2C44] text-neutral-300 hover:text-[#7FE87F] hover:border-[#7FE87F]/40 gap-1.5 text-xs cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5 text-[#F1D77A]" />
+            <Download className="h-3.5 w-3.5 text-[#7FE87F]" />
             <span>{t("common.export")}</span>
           </Button>
 
@@ -154,27 +154,27 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
               showNotice(isAr ? (user.isFrozen ? "تم إلغاء تجميد الحساب" : "تم تجميد الحساب احترازياً") : `Wallet ${user.isFrozen ? "unfrozen" : "frozen"}`);
             }}
             className={`h-8 px-3 text-xs gap-1.5 font-bold cursor-pointer ${
-              user.isFrozen ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95" : ""
+              user.isFrozen ? "bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:opacity-95 shadow-md shadow-[#7FE87F]/20" : ""
             }`}
           >
-            {user.isFrozen ? <Unlock className="h-3.5 w-3.5 text-[#0B0B0B]" /> : <Lock className="h-3.5 w-3.5" />}
+            {user.isFrozen ? <Unlock className="h-3.5 w-3.5 text-[#080C14]" /> : <Lock className="h-3.5 w-3.5" />}
             <span>{user.isFrozen ? t("consumers.unfreezeAccount") : t("consumers.freezeAccount")}</span>
           </Button>
         </div>
       </div>
 
       {notice && (
-        <div className="p-3 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl text-[#F1D77A] text-xs font-semibold flex items-center gap-2.5">
-          <CheckCircle2 className="h-4 w-4 text-[#D4AF37]" />
+        <div className="p-3 bg-[#7FE87F]/10 border border-[#7FE87F]/30 rounded-xl text-[#7FE87F] text-xs font-semibold flex items-center gap-2.5">
+          <CheckCircle2 className="h-4 w-4 text-[#7FE87F]" />
           <span>{notice}</span>
         </div>
       )}
 
       {/* Main Header Dossier Card */}
-      <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
+      <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-[#F1D77A]/20 to-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center text-[#F1D77A] font-black text-lg p-3 shadow-inner">
+            <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-[#7FE87F]/20 to-[#6FD86F]/10 border border-[#7FE87F]/40 flex items-center justify-center text-[#7FE87F] font-black text-lg p-3 shadow-inner">
               {user.fullName.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div>
@@ -184,7 +184,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                 </h1>
                 <StatusBadge status={user.kycStatus} />
                 <Badge
-                  variant={user.riskScore > 70 ? "destructive" : user.riskScore > 30 ? "warning" : "gold"}
+                  variant={user.riskScore > 70 ? "destructive" : user.riskScore > 30 ? "warning" : "primary"}
                 >
                   {isAr ? `مؤشر المخاطر: ${user.riskScore}/100` : `RISK: ${user.riskScore}/100`}
                 </Badge>
@@ -194,7 +194,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
               </div>
               <p className="text-xs text-neutral-400 mt-1 flex items-center gap-2 flex-wrap">
                 <span>{isAr ? "معرف سريع:" : "Sarie Alias:"}</span>
-                <span className="font-semibold text-[#F1D77A] bg-[#D4AF37]/10 px-2 py-0.5 rounded border border-[#D4AF37]/30">{user.sarieUpiId}</span>
+                <span className="font-semibold text-[#7FE87F] bg-[#7FE87F]/10 px-2 py-0.5 rounded border border-[#7FE87F]/30">{user.sarieUpiId}</span>
                 <span>• {isAr ? "تاريخ التسجيل" : "Joined"} {user.joinedAt}</span>
               </p>
             </div>
@@ -203,11 +203,11 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
           <div className="flex items-center gap-4">
             <div className={isAr ? "text-left" : "text-right"}>
               <span className="text-[10px] text-neutral-400 block uppercase font-medium">{t("consumers.walletBalanceLabel")}</span>
-              <span className="text-xl font-extrabold text-[#F1D77A] tabular-nums">
+              <span className="text-xl font-extrabold text-[#7FE87F] tabular-nums">
                 {formatCurrency(user.walletBalanceSar)}
               </span>
             </div>
-            <div className="h-9 w-px bg-[#262626]" />
+            <div className="h-9 w-px bg-[#2C2C44]" />
             <div className={isAr ? "text-left" : "text-right"}>
               <span className="text-[10px] text-neutral-400 block uppercase font-medium">{t("consumers.dailyLimitLabel")}</span>
               <span className="text-xl font-extrabold text-white tabular-nums">
@@ -218,7 +218,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
         </div>
 
         {/* Sub Navigation Bar */}
-        <div className="flex items-center gap-1.5 border-t border-[#262626] pt-3 overflow-x-auto">
+        <div className="flex items-center gap-1.5 border-t border-[#2C2C44] pt-3 overflow-x-auto">
           {[
             { id: "profile", label: t("consumers.tabOverview"), icon: User },
             { id: "transactions", label: `${t("nav.transactions")} (${userTransactions.length})`, icon: ReceiptText },
@@ -233,8 +233,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? "bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] font-bold shadow-md shadow-[#D4AF37]/20"
-                    : "text-neutral-400 hover:text-white hover:bg-[#1F1F1F]"
+                    ? "bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] font-bold shadow-md shadow-[#7FE87F]/20"
+                    : "text-neutral-400 hover:text-white hover:bg-[#182236]"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -249,10 +249,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
       {activeTab === "profile" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Identity Info Card */}
-          <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-            <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
+          <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+            <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+                <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                   <ShieldCheck className="h-4 w-4" />
                 </div>
                 <div>
@@ -264,64 +264,64 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                   </p>
                 </div>
               </div>
-              <Badge variant="gold" className="text-[10px] font-bold">
+              <Badge variant="primary" className="text-[10px] font-bold">
                 {isAr ? "توثيق المستوى الثاني" : "TIER 2 VERIFIED"}
               </Badge>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Fingerprint className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  <Fingerprint className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("consumers.tableNationalId")}
                 </span>
-                <div className="flex items-center gap-2 text-[#F1D77A] font-bold tabular-nums">
+                <div className="flex items-center gap-2 text-[#7FE87F] font-bold tabular-nums">
                   <span>{user.nationalId}</span>
                   <button onClick={() => handleCopy(user.nationalId, "nid")} className="text-neutral-500 hover:text-white cursor-pointer">
-                    {copiedField === "nid" ? <Check className="h-3.5 w-3.5 text-[#F1D77A]" /> : <Copy className="h-3.5 w-3.5" />}
+                    {copiedField === "nid" ? <Check className="h-3.5 w-3.5 text-[#7FE87F]" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Phone className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  <Phone className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("consumers.tableMobile")}
                 </span>
                 <span className="font-semibold text-white tabular-nums">{user.mobile}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Mail className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  <Mail className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {isAr ? "البريد الإلكتروني" : "Email Address"}
                 </span>
                 <span className="text-neutral-300 font-medium">{user.email}</span>
               </div>
 
-              <div className="flex justify-between items-center py-1.5 border-b border-[#262626]/60">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#2C2C44]/60">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Sparkles className="h-3.5 w-3.5 text-[#F1D77A]" />
+                  <Sparkles className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("consumers.tableSarieAlias")}
                 </span>
-                <span className="font-bold text-[#F1D77A]">{user.sarieUpiId}</span>
+                <span className="font-bold text-[#7FE87F]">{user.sarieUpiId}</span>
               </div>
 
               <div className="flex justify-between items-center py-1.5">
                 <span className="text-neutral-400 flex items-center gap-2">
-                  <Calendar className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  <Calendar className="h-3.5 w-3.5 text-[#7FE87F]" />
                   {t("consumers.nafathVerified")}
                 </span>
-                <span className="text-xs text-[#F1D77A] font-semibold">{user.nafathVerifiedAt || (isAr ? "موثق عبر أبشر" : "Verified via Absher")}</span>
+                <span className="text-xs text-[#7FE87F] font-semibold">{user.nafathVerifiedAt || (isAr ? "موثق عبر أبشر" : "Verified via Absher")}</span>
               </div>
             </div>
           </Card>
 
           {/* Transfer Limits & Actions Card */}
-          <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-            <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
+          <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+            <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+                <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                   <Sliders className="h-4 w-4" />
                 </div>
                 <div>
@@ -333,7 +333,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                   </p>
                 </div>
               </div>
-              <Badge variant="outline" className="text-[10px] text-[#F1D77A] border-[#D4AF37]/30 bg-[#D4AF37]/5">
+              <Badge variant="outline" className="text-[10px] text-[#7FE87F] border-[#7FE87F]/30 bg-[#7FE87F]/5">
                 {isAr ? "منظم من ساما" : "SAMA Regulated"}
               </Badge>
             </div>
@@ -346,12 +346,12 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                     {formatCurrency(500)} / {formatCurrency(user.dailyLimitSar || 20000, { decimals: 0 })}
                   </span>
                 </div>
-                <div className="w-full h-2.5 rounded-full bg-[#121212] overflow-hidden border border-[#262626]">
-                  <div className="h-full rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F1D77A]" style={{ width: "2.5%" }} />
+                <div className="w-full h-2.5 rounded-full bg-[#182236] overflow-hidden border border-[#2C2C44]">
+                  <div className="h-full rounded-full bg-gradient-to-r from-[#5FBF5F] to-[#7FE87F]" style={{ width: "2.5%" }} />
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#121212] border border-[#262626] space-y-2.5">
+              <div className="p-3.5 rounded-xl bg-[#182236] border border-[#2C2C44] space-y-2.5">
                 <span className="text-xs font-bold text-white block">{isAr ? "إجراءات الأمان والخدمة" : "Security & Service Triggers"}</span>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Button
@@ -361,27 +361,27 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                       setTempLimit(user.dailyLimitSar || 20000);
                       setIsLimitModalOpen(true);
                     }}
-                    className="h-8 text-xs bg-[#171717] border-[#262626] text-neutral-200 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 gap-1.5 cursor-pointer"
+                    className="h-8 text-xs bg-[#111726] border-[#2C2C44] text-neutral-200 hover:text-[#7FE87F] hover:border-[#7FE87F]/40 gap-1.5 cursor-pointer"
                   >
-                    <Sliders className="h-3.5 w-3.5 text-[#F1D77A]" />
+                    <Sliders className="h-3.5 w-3.5 text-[#7FE87F]" />
                     <span>{isAr ? "تعديل الحد" : "Adjust Limit"}</span>
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => showNotice(isAr ? `تم إرسال تعليمات إعادة تعيين رمز PIN إلى ${user.mobile}` : `Sarie PIN reset sent to ${user.mobile}`)}
-                    className="h-8 text-xs bg-[#171717] border-[#262626] text-neutral-200 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 gap-1.5 cursor-pointer"
+                    className="h-8 text-xs bg-[#111726] border-[#2C2C44] text-neutral-200 hover:text-[#7FE87F] hover:border-[#7FE87F]/40 gap-1.5 cursor-pointer"
                   >
-                    <KeyRound className="h-3.5 w-3.5 text-[#D4AF37]" />
+                    <KeyRound className="h-3.5 w-3.5 text-[#7FE87F]" />
                     <span>{isAr ? "إعادة تعيين PIN" : "Reset PIN"}</span>
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => showNotice(isAr ? `تم طلب إعادة توثيق نفاذ للعميل ${user.fullNameAr || user.fullName}` : `Nafath Re-KYC initiated for ${user.fullName}`)}
-                    className="h-8 text-xs bg-[#171717] border-[#262626] text-neutral-200 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 gap-1.5 cursor-pointer"
+                    className="h-8 text-xs bg-[#111726] border-[#2C2C44] text-neutral-200 hover:text-[#7FE87F] hover:border-[#7FE87F]/40 gap-1.5 cursor-pointer"
                   >
-                    <RefreshCw className="h-3.5 w-3.5 text-[#F1D77A]" />
+                    <RefreshCw className="h-3.5 w-3.5 text-[#7FE87F]" />
                     <span>{isAr ? "إعادة توثيق نفاذ" : "Force Re-KYC"}</span>
                   </Button>
                 </div>
@@ -393,10 +393,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Tab 2: Complete Transaction Ledger */}
       {activeTab === "transactions" && (
-        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#262626]">
+        <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+          <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#2C2C44]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+              <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                 <ReceiptText className="h-4 w-4" />
               </div>
               <div>
@@ -408,7 +408,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-neutral-300 font-semibold border-[#262626]">
+            <Badge variant="outline" className="text-xs text-neutral-300 font-semibold border-[#2C2C44]">
               {userTransactions.length} {isAr ? "عملية" : "operations"}
             </Badge>
           </div>
@@ -431,7 +431,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                   return (
                     <TableRow key={tx.id}>
                       <TableCell>
-                        <div className="font-semibold text-[#F1D77A] text-xs">{tx.orderRef}</div>
+                        <div className="font-semibold text-[#7FE87F] text-xs">{tx.orderRef}</div>
                         <div className="text-[10px] text-neutral-400">{formatDate(tx.timestamp, "time")}</div>
                       </TableCell>
                       <TableCell>
@@ -439,7 +439,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                         <div className="text-[10px] text-neutral-400">{isOutgoing ? (isAr ? "حوالة صادرة" : "Debit / Outgoing") : (isAr ? "حوالة واردة" : "Credit / Incoming")}</div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <span className={`font-bold text-xs tabular-nums ${isOutgoing ? "text-neutral-200" : "text-[#F1D77A]"}`}>
+                        <span className={`font-bold text-xs tabular-nums ${isOutgoing ? "text-neutral-200" : "text-[#7FE87F]"}`}>
                           {isOutgoing ? "-" : "+"}{formatCurrency(tx.amount)}
                         </span>
                       </TableCell>
@@ -447,7 +447,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                         <span className="text-xs font-bold text-neutral-300">{translatePaymentMethod(tx.paymentMethod)}</span>
                       </TableCell>
                       <TableCell>
-                        <span className="text-xs font-semibold text-[#F1D77A] tabular-nums">{tx.sarieUtr || "N/A"}</span>
+                        <span className="text-xs font-semibold text-[#7FE87F] tabular-nums">{tx.sarieUtr || "N/A"}</span>
                       </TableCell>
                       <TableCell>
                         <StatusBadge status={tx.status} />
@@ -469,10 +469,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Tab 3: Bound Devices & Security Sessions */}
       {activeTab === "devices" && (
-        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-          <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
+        <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+          <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+              <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                 <Smartphone className="h-4 w-4" />
               </div>
               <div>
@@ -484,7 +484,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-[#F1D77A] border-[#D4AF37]/30 bg-[#D4AF37]/5">
+            <Badge variant="outline" className="text-xs text-[#7FE87F] border-[#7FE87F]/30 bg-[#7FE87F]/5">
               {isAr ? "مقترن ومحمي" : "Secure Enclave Bound"}
             </Badge>
           </div>
@@ -513,7 +513,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                       <div className="text-[10px] text-neutral-500">{dev.appVersion}</div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="gold" className="text-[10px] font-bold">
+                      <Badge variant="primary" className="text-[10px] font-bold">
                         {isAr ? "بصمة الوجه نشطة" : "FACE ID ACTIVE"}
                       </Badge>
                     </TableCell>
@@ -521,7 +521,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                       <span className="text-xs text-neutral-300">{dev.lastActive}</span>
                     </TableCell>
                     <TableCell>
-                      <div className="text-xs font-semibold text-[#F1D77A] tabular-nums">{dev.ipAddress}</div>
+                      <div className="text-xs font-semibold text-[#7FE87F] tabular-nums">{dev.ipAddress}</div>
                       <div className="text-[10px] text-neutral-400">{dev.city}</div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -557,10 +557,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Tab 4: Activity & Audit Trail */}
       {activeTab === "activity" && (
-        <Card className="p-5 space-y-4 bg-[#171717] border-[#262626]">
-          <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
+        <Card className="p-5 space-y-4 bg-[#111726] border-[#2C2C44]">
+          <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/20">
+              <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
                 <History className="h-4 w-4" />
               </div>
               <div>
@@ -572,7 +572,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs text-neutral-300 border-[#262626]">
+            <Badge variant="outline" className="text-xs text-neutral-300 border-[#2C2C44]">
               {isAr ? "بث مباشر" : "Real-time Stream"}
             </Badge>
           </div>
@@ -582,17 +582,17 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
               user.activityLogs?.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3.5 rounded-xl bg-[#121212] border border-[#262626] space-y-1.5 hover:border-[#D4AF37]/40 transition-colors"
+                  className="p-3.5 rounded-xl bg-[#182236] border border-[#2C2C44] space-y-1.5 hover:border-[#7FE87F]/40 transition-colors"
                 >
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-white flex items-center gap-2">
-                      <Activity className="h-3.5 w-3.5 text-[#F1D77A]" />
+                      <Activity className="h-3.5 w-3.5 text-[#7FE87F]" />
                       {log.title}
                     </span>
                     <span className="text-[10px] text-neutral-400 font-medium">{log.timestamp}</span>
                   </div>
                   <p className="text-xs text-neutral-400">{log.details}</p>
-                  <div className="flex items-center gap-2 text-[10px] text-neutral-500 pt-1 border-t border-[#262626]">
+                  <div className="flex items-center gap-2 text-[10px] text-neutral-500 pt-1 border-t border-[#2C2C44]">
                     <span>{isAr ? "المنفذ:" : "Actor:"} <strong className="text-neutral-300">{log.actor}</strong></span>
                     {log.ipAddress && <span>• IP: <strong className="text-neutral-300">{log.ipAddress}</strong></span>}
                   </div>
@@ -609,10 +609,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
 
       {/* Adjust Limit Dialog */}
       <Dialog open={isLimitModalOpen} onOpenChange={setIsLimitModalOpen}>
-        <DialogContent className="max-w-md p-6 bg-[#171717] border-[#262626]">
+        <DialogContent className="max-w-md p-6 bg-[#111726] border-[#2C2C44]">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-[#D4AF37]/10 text-[#F1D77A] border border-[#D4AF37]/30">
+              <div className="p-2.5 rounded-xl bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/30">
                 <Sliders className="h-6 w-6" />
               </div>
               <div>
@@ -627,10 +627,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
           </DialogHeader>
 
           <div className="space-y-4 py-3">
-            <div className="p-4 bg-[#121212] border border-[#262626] rounded-xl space-y-2">
+            <div className="p-4 bg-[#182236] border border-[#2C2C44] rounded-xl space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-neutral-400 font-medium">{t("consumers.newDailyLimitLabel")}</span>
-                <span className="text-xl font-extrabold text-[#F1D77A] tabular-nums">
+                <span className="text-xl font-extrabold text-[#7FE87F] tabular-nums">
                   {formatCurrency(tempLimit, { decimals: 0 })}
                 </span>
               </div>
@@ -641,7 +641,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                 step="5000"
                 value={tempLimit}
                 onChange={(e) => setTempLimit(parseInt(e.target.value))}
-                className="w-full accent-[#D4AF37] cursor-pointer h-2 bg-[#262626] rounded-lg"
+                className="w-full accent-[#7FE87F] cursor-pointer h-2 bg-[#2C2C44] rounded-lg"
               />
               <div className="flex justify-between text-[10px] text-neutral-400 pt-1 font-medium">
                 <span>{formatCurrency(5000, { decimals: 0 })} ({isAr ? "الافتراضي" : "Tier 1 Default"})</span>
@@ -655,7 +655,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
               variant="outline"
               size="sm"
               onClick={() => setIsLimitModalOpen(false)}
-              className="border-[#262626] hover:bg-[#262626] cursor-pointer text-neutral-300"
+              className="border-[#2C2C44] hover:bg-[#182236] cursor-pointer text-neutral-300"
             >
               {t("common.cancel")}
             </Button>
@@ -666,7 +666,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                 showNotice(isAr ? `تم تحديث الحد اليومي بنجاح إلى ${formatCurrency(tempLimit, { decimals: 0 })}` : `Daily limit set to SAR ${tempLimit.toLocaleString()}`);
                 setIsLimitModalOpen(false);
               }}
-              className="bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 font-bold cursor-pointer shadow-md shadow-[#D4AF37]/20"
+              className="bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:opacity-95 font-bold cursor-pointer shadow-md shadow-[#7FE87F]/20"
             >
               {t("consumers.updateLimitBtn")}
             </Button>

@@ -91,7 +91,7 @@ export const PieChart: React.FC<PieChartProps> = ({
                 d={slice.pathData}
                 fill={slice.color}
                 opacity={hoveredIndex === null || isHovered ? 1 : 0.45}
-                stroke="#171717"
+                stroke="#080C14"
                 strokeWidth={2}
                 className="transition-all duration-200 cursor-pointer"
                 style={{
@@ -127,8 +127,8 @@ export const PieChart: React.FC<PieChartProps> = ({
               onMouseLeave={() => setHoveredIndex(null)}
               className={`flex items-center justify-between p-2 rounded-lg border transition-all cursor-pointer ${
                 isHovered
-                  ? "bg-[#1E1E1E] border-[#D4AF37]/50 shadow-sm"
-                  : "bg-[#121212] border-[#262626] hover:bg-[#1A1A1A]"
+                  ? "bg-[#182236] border-[#7FE87F]/50 shadow-sm"
+                  : "bg-[#111726] border-[#2C2C44] hover:bg-[#182236]"
               }`}
             >
               <div className="flex items-center gap-2">

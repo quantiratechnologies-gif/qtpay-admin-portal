@@ -61,10 +61,10 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
           <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
             {isAr ? "رصيد حساب الضمان" : "Escrow Balance"}
           </span>
-          <div style={{ fontSize: "22px", fontWeight: 800, color: "#F1D77A", marginTop: "4px" }} className="tabular-nums">
+          <div style={{ fontSize: "22px", fontWeight: 800, color: "#7FE87F", marginTop: "4px" }} className="tabular-nums">
             {formatCurrency(14890250)}
           </div>
-          <span style={{ fontSize: "11px", color: "#D4AF37" }}>
+          <span style={{ fontSize: "11px", color: "#7FE87F" }}>
             {isAr ? "محمي بالكامل لدى البنك المركزي" : "100% Backed in Central Bank"}
           </span>
         </div>
@@ -85,7 +85,7 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
           <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
             {isAr ? "احتياطي المخاطر (5%)" : "Risk Reserve (5%)"}
           </span>
-          <div style={{ fontSize: "22px", fontWeight: 800, color: "#F1D77A", marginTop: "4px" }} className="tabular-nums">
+          <div style={{ fontSize: "22px", fontWeight: 800, color: "#7FE87F", marginTop: "4px" }} className="tabular-nums">
             {formatCurrency(744512.50)}
           </div>
           <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
@@ -113,7 +113,7 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
             {batches.map((b) => (
               <tr key={b.id}>
                 <td>
-                  <div style={{ fontFamily: "monospace", fontWeight: 700, color: "#F1D77A" }}>{b.batchRef}</div>
+                  <div style={{ fontFamily: "monospace", fontWeight: 700, color: "#7FE87F" }}>{b.batchRef}</div>
                   <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
                     {isAr ? `موعد الإغلاق: ${b.cutoffTime}` : `Cutoff: ${b.cutoffTime}`}
                   </div>
@@ -133,12 +133,12 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
                   <div style={{ fontWeight: 700 }} className="tabular-nums">{formatCurrency(b.totalGrossSar)}</div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 700, color: "#F1D77A" }} className="tabular-nums">
+                  <div style={{ fontWeight: 700, color: "#7FE87F" }} className="tabular-nums">
                     {formatCurrency(b.totalMdrDeductionSar)}
                   </div>
                 </td>
                 <td>
-                  <div style={{ fontWeight: 800, color: "#F1D77A" }} className="tabular-nums">
+                  <div style={{ fontWeight: 800, color: "#7FE87F" }} className="tabular-nums">
                     {formatCurrency(b.totalNetDisbursedSar)}
                   </div>
                 </td>
@@ -156,7 +156,7 @@ export const SettlementsEngine: React.FC<SettlementsEngineProps> = ({
                       <Send size={13} /> {isProcessing === b.id ? (isAr ? "جاري المقاصة..." : "Clearing...") : (isAr ? "تنفيذ التسوية الآن" : "Dispatch Now")}
                     </button>
                   ) : (
-                    <span style={{ fontSize: "12px", color: "#F1D77A", fontWeight: 600 }}>
+                    <span style={{ fontSize: "12px", color: "#7FE87F", fontWeight: 600 }}>
                       ✓ {isAr ? "مكتملة ومودعة" : "Executed"}
                     </span>
                   )}
