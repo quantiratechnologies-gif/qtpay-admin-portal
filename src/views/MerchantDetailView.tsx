@@ -48,6 +48,7 @@ import {
   DialogFooter
 } from "../components/ui/dialog";
 import { useTranslation } from "../lib/i18n/LanguageContext";
+import { exportCsv } from "../lib/exportCsv";
 import type { Merchant, PlatformTransaction } from "../types";
 
 interface MerchantDetailViewProps {
@@ -56,6 +57,7 @@ interface MerchantDetailViewProps {
   onBack: () => void;
   onUpdateStatus: (merchantId: string, newStatus: Merchant["status"]) => void;
   onExecuteRefund?: (txId: string) => void;
+  onProvisionTerminal?: (merchantId: string, model: string) => void;
   lang?: "en" | "ar";
 }
 
@@ -64,7 +66,8 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
   transactions,
   onBack,
   onUpdateStatus,
-  onExecuteRefund
+  onExecuteRefund,
+  onProvisionTerminal
 }) => {
   const { isAr, t, formatCurrency, formatDate, translateCategory, translatePaymentMethod } = useTranslation();
   const [activeTab, setActiveTab] = useState<"profile" | "terminals" | "transactions" | "settlements" | "activity">("profile");
@@ -112,7 +115,31 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => showNotice(isAr ? "تم تصدير كشف حساب التاجر الرسمي بنجاح" : "Official merchant dossier exported")}
+            onClick={() => {
+              const ok = exportCsv(
+                `${merchant.crNumber}-dossier-${new Date().toISOString().slice(0, 10)}.csv`,
+                merchantTransactions,
+                [
+                  { label: "Order Ref", value: (t) => t.orderRef },
+                  { label: "Date", value: (t) => t.timestamp },
+                  { label: "Sender", value: (t) => t.senderName },
+                  { label: "Receiver", value: (t) => t.receiverName },
+                  { label: "Gross (SAR)", value: (t) => t.amount },
+                  { label: "VAT (SAR)", value: (t) => t.vatAmount },
+                  { label: "MDR (SAR)", value: (t) => t.platformMdrSar },
+                  { label: "Net (SAR)", value: (t) => t.netAmount },
+                  { label: "Method", value: (t) => t.paymentMethod },
+                  { label: "Terminal", value: (t) => t.terminalId },
+                  { label: "mada RRN", value: (t) => t.madaRrn },
+                  { label: "Status", value: (t) => t.status },
+                ]
+              );
+              showNotice(
+                ok
+                  ? (isAr ? "تم تصدير كشف حساب التاجر بنجاح" : "Merchant dossier exported successfully")
+                  : (isAr ? "فشل التصدير" : "Export failed. Please try again.")
+              );
+            }}
             className="h-8 px-3 bg-[#171717] border-[#262626] text-neutral-300 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 gap-1.5 text-xs cursor-pointer"
           >
             <Download className="h-3.5 w-3.5 text-[#F1D77A]" />
@@ -191,7 +218,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
             <div className={isAr ? "text-left" : "text-right"}>
               <span className="text-[10px] text-neutral-400 block uppercase font-medium">{t("merchants.tableTerminals")}</span>
               <span className="text-xl font-extrabold text-white tabular-nums">
-                {merchant.activeTerminals} SoftPOS
+                {(merchant.terminalsList || []).length} SoftPOS
               </span>
             </div>
           </div>
@@ -201,7 +228,7 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
         <div className="flex items-center gap-1.5 border-t border-[#262626] pt-3 overflow-x-auto">
           {[
             { id: "profile", label: t("merchants.tabOverview"), icon: Building2 },
-            { id: "terminals", label: `${t("merchants.tabTerminals")} (${(merchant.terminalsList || []).length || merchant.activeTerminals})`, icon: Terminal },
+            { id: "terminals", label: `${t("merchants.tabTerminals")} (${(merchant.terminalsList || []).length})`, icon: Terminal },
             { id: "transactions", label: `${t("nav.transactions")} (${merchantTransactions.length})`, icon: ReceiptText },
             { id: "settlements", label: t("merchants.tabSettlements"), icon: DollarSign },
             { id: "activity", label: t("merchants.tabActivity"), icon: History }
@@ -757,8 +784,15 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
             <Button
               size="sm"
               onClick={() => {
-                showNotice(isAr ? `تم إصدار وتفعيل نقطة بيع جديدة بنجاح` : `New Terminal provisioned for ${merchant.businessName}`);
+                if (onProvisionTerminal) {
+                  onProvisionTerminal(merchant.id, newTerminalModel);
+                }
                 setIsProvisionModalOpen(false);
+                showNotice(
+                  isAr
+                    ? "تم إصدار وتفعيل نقطة بيع جديدة بنجاح"
+                    : `Terminal provisioned successfully for ${merchant.businessName}`
+                );
               }}
               className="bg-gradient-to-r from-[#F1D77A] via-[#D4AF37] to-[#B38F26] text-[#0B0B0B] hover:opacity-95 font-bold cursor-pointer shadow-md shadow-[#D4AF37]/20"
             >

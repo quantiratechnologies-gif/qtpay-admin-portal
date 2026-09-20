@@ -54,6 +54,12 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
   const [channelFilter, setChannelFilter] = useState("all");
   const [selectedTx, setSelectedTx] = useState<PlatformTransaction | null>(null);
   const [refundConfirmTx, setRefundConfirmTx] = useState<PlatformTransaction | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const showNotice = (msg: string) => {
+    setNotice(msg);
+    setTimeout(() => setNotice(null), 3500);
+  };
 
   const filtered = transactions.filter((tx) => {
     const matchesSearch =
@@ -69,8 +75,15 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
 
   return (
     <div className="space-y-4">
+      {notice && (
+        <div className="p-3 bg-[#7FE87F]/10 border border-[#7FE87F]/30 rounded-xl text-[#7FE87F] text-xs font-semibold flex items-center gap-2.5">
+          <ShieldCheck className="h-4 w-4 text-[#7FE87F]" />
+          <span>{notice}</span>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex items-center justify-between flex-wrap gap-2.5">
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-lg bg-[#7FE87F]/10 border border-[#7FE87F]/30 text-[#7FE87F]">
             <ReceiptText className="h-5 w-5" />
@@ -285,21 +298,30 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0 pt-2">
-              {selectedTx.status !== "refunded" && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => {
-                    const tx = selectedTx;
-                    setSelectedTx(null);
-                    setRefundConfirmTx(tx);
-                  }}
-                  className="gap-2 font-semibold cursor-pointer"
-                >
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  <span>{t("ledger.refundBtn")}</span>
-                </Button>
-              )}
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={selectedTx.status !== "settled"}
+                title={
+                  selectedTx.status === "refunded"
+                    ? (isAr ? "تم استرجاع هذه العملية مسبقاً" : "Already refunded")
+                    : selectedTx.status === "flagged"
+                    ? (isAr ? "يرجى حل بلاغ المخاطر أولاً" : "Resolve AML flag first")
+                    : ""
+                }
+                onClick={() => {
+                  if (selectedTx.status !== "settled") return;
+                  const tx = selectedTx;
+                  setSelectedTx(null);
+                  setRefundConfirmTx(tx);
+                }}
+                className={`gap-2 font-semibold ${
+                  selectedTx.status !== "settled" ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                }`}
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>{selectedTx.status === "refunded" ? (isAr ? "مسترجعة بالفعل" : "Already Refunded") : t("ledger.refundBtn")}</span>
+              </Button>
             </DialogFooter>
           </DialogContent>
         )}
@@ -351,8 +373,16 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
                 variant="destructive"
                 size="sm"
                 onClick={() => {
+                  const amt = refundConfirmTx.amount;
+                  const name = refundConfirmTx.senderName;
                   onExecuteRefund(refundConfirmTx.id);
                   setRefundConfirmTx(null);
+                  setSelectedTx(null);
+                  showNotice(
+                    isAr
+                      ? `تم تنفيذ استرجاع بمبلغ ${formatCurrency(amt)} إلى ${name} بنجاح`
+                      : `Refund of ${formatCurrency(amt)} to ${name} processed successfully`
+                  );
                 }}
                 className="gap-1.5 font-bold cursor-pointer"
               >

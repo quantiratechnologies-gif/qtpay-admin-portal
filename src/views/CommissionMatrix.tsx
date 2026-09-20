@@ -50,6 +50,7 @@ import {
   mockSamaAuditLogs
 } from "../services/mockData";
 import { useTranslation } from "../lib/i18n/LanguageContext";
+import { exportCsv } from "../lib/exportCsv";
 import type { CommissionFeeTier, SettlementBatch, RiskAlert, AdminUser, AdminPermission, AdminRole, SamaAuditLog } from "../types";
 
 interface CommissionMatrixProps {
@@ -102,23 +103,62 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
     setTimeout(() => setNotice(null), 3500);
   };
 
+  const DEMO_CURRENT_PASSWORD = "admin123";
+
+  const validatePasswordChange = (): string | null => {
+    if (!currPass && !newPass && !confirmPass) return null; // profile-only save
+
+    if (!currPass) return isAr ? "يرجى إدخال كلمة المرور الحالية" : "Current password is required";
+    if (currPass !== DEMO_CURRENT_PASSWORD)
+      return isAr ? "كلمة المرور الحالية غير صحيحة" : "Current password is incorrect";
+    if (newPass === currPass)
+      return isAr ? "يجب أن تختلف كلمة المرور الجديدة عن الحالية" : "New password must be different from your current password";
+    if (newPass.length < 12)
+      return isAr ? "يجب أن تكون كلمة المرور 12 خانة على الأقل" : "Password must be at least 12 characters";
+    if (!/[A-Z]/.test(newPass)) return isAr ? "يجب أن تحتوي على حرف كبير" : "Must include an uppercase letter";
+    if (!/[a-z]/.test(newPass)) return isAr ? "يجب أن تحتوي على حرف صغير" : "Must include a lowercase letter";
+    if (!/[0-9]/.test(newPass)) return isAr ? "يجب أن تحتوي على رقم" : "Must include a number";
+    if (!/[^A-Za-z0-9]/.test(newPass)) return isAr ? "يجب أن تحتوي على رمز خاص" : "Must include a special character";
+    if (newPass !== confirmPass)
+      return isAr ? "كلمة المرور الجديدة وتأكيدها غير متطابقين" : "New password and confirmation do not match";
+    return null;
+  };
+
   const handleSaveAdminProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPass && newPass !== confirmPass) {
-      showNotice(
-        isAr
-          ? "كلمة المرور الجديدة وتأكيدها غير متطابقين"
-          : "New password and confirmation do not match"
-      );
+    const err = validatePasswordChange();
+    if (err) {
+      showNotice(err);
       return;
     }
+
+    const changed = !!newPass;
     setCurrPass("");
     setNewPass("");
     setConfirmPass("");
+
+    if (changed) {
+      setAuditLogs((prev) => [
+        {
+          id: `aud_${Date.now()}`,
+          timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
+          adminName,
+          adminEmail,
+          action: "PASSWORD_CHANGED",
+          category: "FEE_OVERRIDE",
+          targetEntity: `${adminName} (${adminId})`,
+          details: "Administrative password rotated. All other sessions invalidated.",
+          ipAddress: "10.14.22.8",
+          status: "SUCCESS"
+        },
+        ...prev
+      ]);
+    }
+
     showNotice(
-      isAr
-        ? "تم تحديث الملف الشخصي وتفضيلات الحساب الإداري بنجاح"
-        : "Admin profile and account settings saved successfully"
+      changed
+        ? (isAr ? "تم تحديث كلمة المرور بنجاح وتسجيل العملية في سجل ساما" : "Password updated successfully and recorded in SAMA audit trail")
+        : (isAr ? "تم تحديث الملف الشخصي وتفضيلات الحساب الإداري بنجاح" : "Admin profile and account settings saved successfully")
     );
   };
 
@@ -563,6 +603,52 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
                     />
                   </div>
                 </div>
+
+                {/* Live Password Rules Checklist */}
+                {newPass.length > 0 && (
+                  <div className="pt-2 border-t border-[#2C2C44]/80 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-[11px]">
+                    {[
+                      {
+                        label: isAr ? "12 خانة على الأقل" : "At least 12 characters",
+                        valid: newPass.length >= 12
+                      },
+                      {
+                        label: isAr ? "حرف كبير (A-Z)" : "Uppercase letter (A-Z)",
+                        valid: /[A-Z]/.test(newPass)
+                      },
+                      {
+                        label: isAr ? "حرف صغير (a-z)" : "Lowercase letter (a-z)",
+                        valid: /[a-z]/.test(newPass)
+                      },
+                      {
+                        label: isAr ? "رقم واحد على الأقل (0-9)" : "At least one number (0-9)",
+                        valid: /[0-9]/.test(newPass)
+                      },
+                      {
+                        label: isAr ? "رمز خاص (!@#$%^&*)" : "Special character (!@#$)",
+                        valid: /[^A-Za-z0-9]/.test(newPass)
+                      },
+                      {
+                        label: isAr ? "تطابق كلمة المرور" : "Passwords match",
+                        valid: !!confirmPass && newPass === confirmPass
+                      }
+                    ].map((rule, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex items-center gap-1.5 transition-colors ${
+                          rule.valid ? "text-[#7FE87F]" : "text-[#6E6E85]"
+                        }`}
+                      >
+                        {rule.valid ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-[#7FE87F] shrink-0" />
+                        ) : (
+                          <div className="h-3 w-3 rounded-full border border-[#6E6E85] shrink-0" />
+                        )}
+                        <span>{rule.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}
@@ -824,7 +910,26 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => showNotice(isAr ? "تم تصدير سجل التدقيق إلى ملف CSV" : "Audit log exported to CSV")}
+              onClick={() => {
+                const ok = exportCsv(
+                  `sama-audit-trail-${new Date().toISOString().slice(0, 10)}.csv`,
+                  auditLogs,
+                  [
+                    { label: "Timestamp", value: (l) => l.timestamp },
+                    { label: "Admin User", value: (l) => l.adminEmail },
+                    { label: "Action", value: (l) => l.category },
+                    { label: "Target Entity", value: (l) => l.targetEntity },
+                    { label: "Details", value: (l) => l.details },
+                    { label: "IP Address", value: (l) => l.ipAddress },
+                    { label: "Status", value: (l) => l.status },
+                  ]
+                );
+                showNotice(
+                  ok
+                    ? (isAr ? "تم تصدير سجل التدقيق بنجاح" : "Audit trail exported successfully")
+                    : (isAr ? "فشل التصدير" : "Export failed. Please try again.")
+                );
+              }}
               className="h-8 px-3 text-xs bg-[#111726] border-[#2C2C44] text-[#7FE87F] hover:bg-[#182236] gap-1.5 cursor-pointer"
             >
               <Download className="h-3.5 w-3.5" />

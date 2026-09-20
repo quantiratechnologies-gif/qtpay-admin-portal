@@ -32,10 +32,15 @@ interface AdminLoginProps {
   lang?: "en" | "ar";
 }
 
+const DEMO_CREDENTIALS = [
+  { email: "a.alqahtani@qtpay.sa", password: "admin123" },
+  { email: "admin@qtpay.sa", password: "admin123" },
+];
+
 export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   const { isAr, t, toggleLang } = useTranslation();
-  const [email, setEmail] = useState("admin@qtpay.sa");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("a.alqahtani@qtpay.sa");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +50,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   // Forgot Password Modal State
   const [isForgotOpen, setIsForgotOpen] = useState(false);
   const [forgotStep, setForgotStep] = useState<"email" | "otp" | "new_password" | "success">("email");
-  const [resetEmail, setResetEmail] = useState("admin@qtpay.sa");
+  const [resetEmail, setResetEmail] = useState("a.alqahtani@qtpay.sa");
   const [resetOtp, setResetOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -63,11 +68,26 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
       return;
     }
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError(isAr ? "صيغة البريد الإلكتروني غير صحيحة" : "Please enter a valid email address");
+      return;
+    }
+
     setIsLoading(true);
     setTimeout(() => {
+      const match = DEMO_CREDENTIALS.find(
+        (c) => c.email.toLowerCase() === email.trim().toLowerCase() && c.password === password
+      );
+
+      if (!match) {
+        setIsLoading(false);
+        setError(isAr ? "بيانات الدخول غير صحيحة" : "Invalid credentials");
+        return;
+      }
+
       const user: AdminUser = {
         ...currentAdminUser,
-        email: email,
+        email: match.email,
         lastLogin: isAr ? "اليوم، 10:45 ص (المقر الرئيسي)" : "Today, 10:45 AM (Riyadh HQ)"
       };
       onLoginSuccess(user);

@@ -33,7 +33,7 @@ import {
   mockAdminTeamMembers
 } from "../services/mockData";
 import { useTranslation } from "../lib/i18n/LanguageContext";
-import type { AdminUser, AdminRole, AdminPermission } from "../types";
+import type { AdminUser, AdminRole, AdminPermission, RoleDefinition } from "../types";
 
 interface RolesAndPermissionsProps {
   lang?: "en" | "ar";
@@ -220,7 +220,7 @@ export const RolesAndPermissions: React.FC<RolesAndPermissionsProps> = () => {
       {/* Tab 1: Roles Overview Cards */}
       {activeTab === "roles" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {mockRoleDefinitions.map((role) => (
+          {mockRoleDefinitions.map((role: RoleDefinition) => (
             <Card key={role.id} className="p-4 space-y-3 bg-[#171717] border-[#262626]">
               <div className="flex items-start justify-between">
                 <div>

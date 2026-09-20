@@ -35,6 +35,7 @@ export const MdrRevenueModal: React.FC<MdrRevenueModalProps> = ({
   const [activeTab, setActiveTab] = useState<"payment_methods" | "merchant_status">("payment_methods");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedMethodKey, setSelectedMethodKey] = useState<string | null>(null);
 
   // Merchant counts
   const totalMerchants = merchants.length;
@@ -306,10 +307,16 @@ export const MdrRevenueModal: React.FC<MdrRevenueModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
               {paymentMethodData.map((item) => {
+                const isSelected = selectedMethodKey === item.key;
                 return (
                   <div
                     key={item.key}
-                    className="p-3 bg-[#111726] border border-[#2C2C44] rounded-xl space-y-2 hover:border-[#7FE87F]/30 transition-colors"
+                    onClick={() => setSelectedMethodKey(isSelected ? null : item.key)}
+                    className={`p-3 bg-[#111726] border rounded-xl space-y-2 transition-all cursor-pointer ${
+                      isSelected
+                        ? "border-[#7FE87F] shadow-lg shadow-[#7FE87F]/20 bg-gradient-to-b from-[#182236] to-[#111726] ring-1 ring-[#7FE87F]"
+                        : "border-[#2C2C44] hover:border-[#7FE87F]/40 hover:bg-[#151D2E]"
+                    }`}
                   >
                     <div className="flex items-center justify-between">
                       <span
@@ -340,6 +347,34 @@ export const MdrRevenueModal: React.FC<MdrRevenueModalProps> = ({
                 );
               })}
             </div>
+
+            {/* Selected Channel Drilldown Strip */}
+            {selectedMethodKey && (() => {
+              const selectedItem = paymentMethodData.find((p) => p.key === selectedMethodKey);
+              if (!selectedItem) return null;
+              return (
+                <div className="mt-3 flex items-center justify-between rounded-xl border border-[#7FE87F]/40 bg-[#7FE87F]/10 px-4 py-3 shadow-inner">
+                  <div>
+                    <div className="text-[10px] uppercase font-bold text-[#7FE87F] flex items-center gap-1.5">
+                      <span className="live-indicator w-1.5 h-1.5" />
+                      <span>{isAr ? "تفاصيل القناة المحددة" : "Selected Payment Channel Analysis"}</span>
+                    </div>
+                    <div className="text-sm font-extrabold text-white mt-0.5">
+                      {selectedItem.name} — {formatCurrency(selectedItem.revenueSar)} ({selectedItem.percentage}% {isAr ? "من إجمالي العمولات" : "of total MDR"})
+                      <span className="text-[#A2A2BA] font-medium text-xs">
+                        {" "}· {formatNumber(selectedItem.txCount)} {isAr ? "عملية منفذة" : "settled transactions"}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSelectedMethodKey(null)}
+                    className="text-[11px] font-bold text-[#A2A2BA] hover:text-white px-2.5 py-1 rounded-md bg-[#111726] border border-[#2C2C44] hover:border-[#7FE87F]/40 cursor-pointer"
+                  >
+                    {isAr ? "إلغاء التحديد" : "Clear"}
+                  </button>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Merchant-Level MDR Breakdown Table */}

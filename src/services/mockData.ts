@@ -14,7 +14,7 @@ import type {
 export const currentAdminUser: AdminUser = {
   id: "adm_902183",
   name: "Eng. Abdulaziz Al-Qahtani",
-  email: "admin@qtpay.sa",
+  email: "a.alqahtani@qtpay.sa",
   role: "superadmin",
   avatar: "AQ",
   lastLogin: "Today, 10:45 AM (Riyadh HQ)",
@@ -294,7 +294,80 @@ export const mockMerchants: Merchant[] = [
     monthlyVolumeSar: 1250000,
     joinedAt: "2026-09-14",
     settlementHold: true,
-    terminalsList: [],
+    terminalsList: [
+      {
+        id: "term_najd_01",
+        terminalId: "TRM-662101",
+        merchantId: "mch_103",
+        model: "iPhone 15 Pro (Apple SoftPOS)",
+        osVersion: "iOS 18.2 (Kernel 24.1)",
+        nfcStatus: "active",
+        lastHeartbeat: "2 mins ago",
+        dailyVolumeSar: 34500.00,
+        dailyTxCount: 142,
+        status: "online"
+      },
+      {
+        id: "term_najd_02",
+        terminalId: "TRM-662102",
+        merchantId: "mch_103",
+        model: "Samsung Galaxy S24 (Android SoftPOS)",
+        osVersion: "Android 15 (OneUI 7.0)",
+        nfcStatus: "active",
+        lastHeartbeat: "5 mins ago",
+        dailyVolumeSar: 28900.00,
+        dailyTxCount: 110,
+        status: "online"
+      },
+      {
+        id: "term_najd_03",
+        terminalId: "TRM-662103",
+        merchantId: "mch_103",
+        model: "PAX A920 Pro SmartPOS",
+        osVersion: "PayDroid 10.0",
+        nfcStatus: "active",
+        lastHeartbeat: "12 mins ago",
+        dailyVolumeSar: 19800.00,
+        dailyTxCount: 78,
+        status: "online"
+      },
+      {
+        id: "term_najd_04",
+        terminalId: "TRM-662104",
+        merchantId: "mch_103",
+        model: "iPhone 14 (Checkout #4)",
+        osVersion: "iOS 18.1",
+        nfcStatus: "active",
+        lastHeartbeat: "18 mins ago",
+        dailyVolumeSar: 22100.00,
+        dailyTxCount: 89,
+        status: "online"
+      },
+      {
+        id: "term_najd_05",
+        terminalId: "TRM-662105",
+        merchantId: "mch_103",
+        model: "Samsung Galaxy A55 (Checkout #5)",
+        osVersion: "Android 14",
+        nfcStatus: "active",
+        lastHeartbeat: "25 mins ago",
+        dailyVolumeSar: 15400.00,
+        dailyTxCount: 64,
+        status: "online"
+      },
+      {
+        id: "term_najd_06",
+        terminalId: "TRM-662106",
+        merchantId: "mch_103",
+        model: "PAX A920 Pro SmartPOS (Express Lane)",
+        osVersion: "PayDroid 10.0",
+        nfcStatus: "active",
+        lastHeartbeat: "30 mins ago",
+        dailyVolumeSar: 18200.00,
+        dailyTxCount: 71,
+        status: "online"
+      }
+    ],
     activityLogs: [
       {
         id: "act_m_06",
@@ -330,7 +403,20 @@ export const mockMerchants: Merchant[] = [
     monthlyVolumeSar: 340000,
     joinedAt: "2026-09-10",
     settlementHold: false,
-    terminalsList: [],
+    terminalsList: [
+      {
+        id: "term_rt_01",
+        terminalId: "TRM-551901",
+        merchantId: "mch_104",
+        model: "iPhone 15 Pro (Storefront Terminal)",
+        osVersion: "iOS 18.2",
+        nfcStatus: "active",
+        lastHeartbeat: "8 mins ago",
+        dailyVolumeSar: 24500.00,
+        dailyTxCount: 38,
+        status: "online"
+      }
+    ],
     activityLogs: []
   },
   {
@@ -903,4 +989,48 @@ export const mockSamaAuditLogs: SamaAuditLog[] = [
     status: "SUCCESS"
   }
 ];
+
+export const mockRoleDefinitions: RoleDefinition[] = [
+  {
+    id: "superadmin",
+    title: "Super Admin",
+    titleAr: "مدير النظام العام",
+    description: "Full, unrestricted administrative access across the entire QTPay ecosystem, security policies, fee matrices, and SAMA logs.",
+    badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    memberCount: 2
+  },
+  {
+    id: "compliance_officer",
+    title: "SAMA Compliance Officer",
+    titleAr: "مسؤول الامتثال الرقابي (ساما)",
+    description: "Full visibility into SAMA regulatory audit logs, merchant KYB dossiers, Nafath authentications, and tax audit streams.",
+    badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    memberCount: 3
+  },
+  {
+    id: "settlement_manager",
+    title: "Settlements & Escrow Lead",
+    titleAr: "مسؤول التسويات والمقاصة البنكية",
+    description: "Authority to review, trigger, and reconcile multi-bank settlement batches (SNB, Al Rajhi, Riyad Bank) and manage escrow holds.",
+    badgeColor: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    memberCount: 2
+  },
+  {
+    id: "risk_analyst",
+    title: "Risk & AML Lead Analyst",
+    titleAr: "محلل المخاطر ومكافحة غسل الأموال",
+    description: "Real-time surveillance of velocity rules, SARIE anomaly alerts, consumer account freezes, and fraud mitigation.",
+    badgeColor: "bg-red-500/10 text-red-400 border-red-500/20",
+    memberCount: 2
+  },
+  {
+    id: "support_lead",
+    title: "Operations & Support Lead",
+    titleAr: "مشرف العمليات والدعم الفني",
+    description: "First-line merchant SoftPOS provisioning support, consumer query resolution, transaction receipt verification, and PIN reset tracking.",
+    badgeColor: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+    memberCount: 4
+  }
+];
+
 

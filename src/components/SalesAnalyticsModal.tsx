@@ -37,6 +37,7 @@ export const SalesAnalyticsModal: React.FC<SalesAnalyticsModalProps> = ({
   const { isAr, t, formatCurrency, formatNumber, formatPercent } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState<SalesPeriod>(initialPeriod);
   const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null);
+  const [selectedBarIndex, setSelectedBarIndex] = useState<number | null>(null);
 
   if (!isOpen) return null;
 
@@ -214,7 +215,10 @@ export const SalesAnalyticsModal: React.FC<SalesAnalyticsModalProps> = ({
                 return (
                   <button
                     key={period}
-                    onClick={() => setSelectedPeriod(period)}
+                    onClick={() => {
+                      setSelectedPeriod(period);
+                      setSelectedBarIndex(null);
+                    }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       isSelected
                         ? "bg-gradient-to-r from-[#7FE87F] to-[#6FD86F] text-[#080C14] shadow-md shadow-[#7FE87F]/20 font-black"
@@ -326,10 +330,12 @@ export const SalesAnalyticsModal: React.FC<SalesAnalyticsModalProps> = ({
                 {current.chartBars.map((bar, index) => {
                   const heightPercent = Math.max(15, Math.round((bar.value / maxBarValue) * 100));
                   const isHovered = hoveredBarIndex === index;
+                  const isSelected = selectedBarIndex === index;
                   return (
                     <div
                       key={index}
                       className="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer"
+                      onClick={() => setSelectedBarIndex(selectedBarIndex === index ? null : index)}
                       onMouseEnter={() => setHoveredBarIndex(index)}
                       onMouseLeave={() => setHoveredBarIndex(null)}
                     >
@@ -350,7 +356,9 @@ export const SalesAnalyticsModal: React.FC<SalesAnalyticsModalProps> = ({
                       <div
                         style={{ height: `${heightPercent}%` }}
                         className={`w-full max-w-[42px] rounded-t-lg transition-all duration-300 relative ${
-                          isHovered
+                          isSelected
+                            ? "bg-gradient-to-t from-[#7FE87F] via-[#A8F5A8] to-white shadow-lg shadow-[#7FE87F]/50 ring-2 ring-[#7FE87F] scale-x-110"
+                            : isHovered
                             ? "bg-gradient-to-t from-[#7FE87F] to-[#D0FAD0] shadow-lg shadow-[#7FE87F]/30 scale-x-105"
                             : "bg-gradient-to-t from-[#5FBF5F]/70 via-[#6FD86F]/85 to-[#7FE87F] hover:brightness-110"
                         }`}
@@ -368,14 +376,43 @@ export const SalesAnalyticsModal: React.FC<SalesAnalyticsModalProps> = ({
                 {current.chartBars.map((bar, index) => (
                   <div
                     key={index}
-                    className={`flex-1 text-center text-[10px] font-semibold transition-colors ${
-                      hoveredBarIndex === index ? "text-[#7FE87F] font-bold" : "text-[#A2A2BA]"
+                    onClick={() => setSelectedBarIndex(selectedBarIndex === index ? null : index)}
+                    className={`flex-1 text-center text-[10px] font-semibold transition-colors cursor-pointer ${
+                      selectedBarIndex === index
+                        ? "text-[#7FE87F] font-black underline underline-offset-4"
+                        : hoveredBarIndex === index
+                        ? "text-[#7FE87F] font-bold"
+                        : "text-[#A2A2BA]"
                     }`}
                   >
                     {bar.label}
                   </div>
                 ))}
               </div>
+
+              {/* Selected Period Detail Strip */}
+              {selectedBarIndex !== null && current.chartBars[selectedBarIndex] && (
+                <div className="mt-3 flex items-center justify-between rounded-xl border border-[#7FE87F]/40 bg-[#7FE87F]/10 px-4 py-3 shadow-inner">
+                  <div>
+                    <div className="text-[10px] uppercase font-bold text-[#7FE87F] flex items-center gap-1.5">
+                      <span className="live-indicator w-1.5 h-1.5" />
+                      <span>{isAr ? "تفاصيل الفترة المحددة" : "Selected Period Breakdown"}</span>
+                    </div>
+                    <div className="text-sm font-extrabold text-white mt-0.5">
+                      {current.chartBars[selectedBarIndex].label} — {formatCurrency(current.chartBars[selectedBarIndex].value)}
+                      <span className="text-[#A2A2BA] font-medium text-xs">
+                        {" "}· {formatNumber(current.chartBars[selectedBarIndex].tx)} {isAr ? "عملية منفذة" : "settled operations"}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSelectedBarIndex(null)}
+                    className="text-[11px] font-bold text-[#A2A2BA] hover:text-white px-2.5 py-1 rounded-md bg-[#111726] border border-[#2C2C44] hover:border-[#7FE87F]/40 cursor-pointer"
+                  >
+                    {isAr ? "إلغاء التحديد" : "Clear"}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

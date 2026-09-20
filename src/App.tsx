@@ -22,7 +22,8 @@ import type {
   Merchant,
   CustomerUser,
   PlatformTransaction,
-  CommissionFeeTier
+  CommissionFeeTier,
+  SoftPosTerminal
 } from "./types";
 
 function AppContent() {
@@ -33,6 +34,7 @@ function AppContent() {
 
   const [currentTab, setCurrentTab] = useState<NavTab>("dashboard");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date>(new Date());
 
   // Application Data States
   const [merchants, setMerchants] = useState<Merchant[]>(mockMerchants);
@@ -94,16 +96,76 @@ function AppContent() {
   const handleUpdateFee = (id: string, newRate: number, newFixed: number) => {
     setFeeTiers((prev) =>
       prev.map((t) =>
-        t.id === id ? { ...t, ratePercentage: newRate, fixedFeeSar: newFixed, lastUpdated: isAr ? "الآن" : "Just Now" } : t
+        t.id === id
+          ? {
+              ...t,
+              ratePercentage: newRate,
+              fixedFeeSar: newFixed,
+              lastUpdated: isAr ? "الآن" : "Just Now"
+            }
+          : t
       )
     );
+  };
+
+  const handleProvisionTerminal = (merchantId: string, model: string) => {
+    setMerchants((prev) =>
+      prev.map((m) => {
+        if (m.id !== merchantId) return m;
+        const list = m.terminalsList || [];
+        const newTerminalId = `TRM-${Math.floor(100000 + Math.random() * 900000)}`;
+        const newTerminal: SoftPosTerminal = {
+          id: `trm_${Date.now()}`,
+          terminalId: newTerminalId,
+          merchantId,
+          model,
+          osVersion:
+            model.includes("Apple") || model.includes("iPhone") || model.includes("iPad")
+              ? "iOS 18.2"
+              : "Android 15",
+          nfcStatus: "active",
+          lastHeartbeat: "Just Now",
+          dailyVolumeSar: 0,
+          dailyTxCount: 0,
+          status: "online"
+        };
+        const updatedList = [newTerminal, ...list];
+        const updatedIds = [...(m.terminalIds || []), newTerminalId];
+        return {
+          ...m,
+          terminalsList: updatedList,
+          terminalIds: updatedIds,
+          activeTerminals: updatedList.length
+        };
+      })
+    );
+  };
+
+  const handleAddMerchant = (m: Omit<Merchant, "id">) => {
+    const newMerchant: Merchant = {
+      ...m,
+      id: `mch_${Date.now()}`
+    };
+    setMerchants((prev) => [newMerchant, ...prev]);
+  };
+
+  const handleAddCustomer = (c: Omit<CustomerUser, "id">) => {
+    const newCustomer: CustomerUser = {
+      ...c,
+      id: `usr_${Date.now()}`
+    };
+    setCustomers((prev) => [newCustomer, ...prev]);
   };
 
   const handleRefreshData = () => {
     setIsRefreshing(true);
     setTimeout(() => {
+      setTransactions((prev) => [...prev]);
+      setMerchants((prev) => [...prev]);
+      setCustomers((prev) => [...prev]);
+      setLastSyncedAt(new Date());
       setIsRefreshing(false);
-    }, 500);
+    }, 600);
   };
 
   return (
@@ -124,6 +186,11 @@ function AppContent() {
           onToggleLang={toggleLang}
           onRefreshData={handleRefreshData}
           isRefreshing={isRefreshing}
+          lastSyncedAt={lastSyncedAt}
+          merchants={merchants}
+          customers={customers}
+          transactions={transactions}
+          onNavigate={(tab) => setCurrentTab(tab)}
         />
 
         <main className="flex-1 p-4 sm:p-5 lg:p-6 overflow-y-auto">
@@ -152,6 +219,8 @@ function AppContent() {
               transactions={transactions}
               onUpdateMerchantStatus={handleUpdateMerchantStatus}
               onExecuteRefund={handleExecuteRefund}
+              onProvisionTerminal={handleProvisionTerminal}
+              onAddMerchant={handleAddMerchant}
               lang={lang}
             />
           )}
@@ -162,6 +231,7 @@ function AppContent() {
               transactions={transactions}
               onToggleFreezeAccount={handleToggleFreezeAccount}
               onUpdateDailyLimit={handleUpdateDailyLimit}
+              onAddCustomer={handleAddCustomer}
               lang={lang}
             />
           )}
