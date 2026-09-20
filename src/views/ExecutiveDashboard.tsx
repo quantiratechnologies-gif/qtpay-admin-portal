@@ -256,10 +256,12 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
             </div>
           </div>
           <div className="text-2xl font-extrabold text-[#7FE87F] text-glow-primary tracking-tight tabular-nums">
-            {formatCurrency(Math.round(activeSales.value * 0.01), { decimals: 0 })}
+            {formatCurrency(48529, { decimals: 0 })}
           </div>
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[#A2A2BA] font-semibold">{activeSales.label} · 1.0% {isAr ? "متوسط العمولة" : "avg take"}</span>
+            <span className="text-[#A2A2BA] font-semibold">
+              {isAr ? "هذا الشهر · 1.0% متوسط العمولة" : "This month · 1.0% avg take"}
+            </span>
             <span className="text-[10px] text-[#7FE87F] font-bold flex items-center gap-0.5 group-hover:underline">
               {t("dashboard.viewDetails")}
             </span>
