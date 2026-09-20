@@ -238,7 +238,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder={isAr ? "أدخل كلمة المرور" : "Enter password"}
                   className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
                     isAr ? "pr-9 pl-9" : "pl-9 pr-9"
                   }`}
@@ -434,7 +434,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
                       required
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={isAr ? "12 خانة على الأقل" : "At least 12 characters"}
                       className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
                         isAr ? "pr-9 pl-9" : "pl-9 pr-9"
                       }`}
@@ -464,7 +464,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={isAr ? "أعد إدخال كلمة المرور" : "Re-enter password"}
                       className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
                         isAr ? "pr-9 pl-3" : "pl-9 pr-3"
                       }`}

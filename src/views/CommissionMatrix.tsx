@@ -570,7 +570,7 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
                     </label>
                     <Input
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={isAr ? "أدخل كلمة المرور الحالية" : "Enter current password"}
                       value={currPass}
                       onChange={(e) => setCurrPass(e.target.value)}
                       className="h-8 text-xs bg-[#182236] border-[#2C2C44] focus:border-[#7FE87F]"
@@ -583,7 +583,7 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
                     </label>
                     <Input
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={isAr ? "12 خانة على الأقل" : "At least 12 characters"}
                       value={newPass}
                       onChange={(e) => setNewPass(e.target.value)}
                       className="h-8 text-xs bg-[#182236] border-[#2C2C44] focus:border-[#7FE87F]"
@@ -596,7 +596,7 @@ export const CommissionMatrix: React.FC<CommissionMatrixProps> = ({
                     </label>
                     <Input
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={isAr ? "أعد إدخال كلمة المرور الجديدة" : "Re-enter new password"}
                       value={confirmPass}
                       onChange={(e) => setConfirmPass(e.target.value)}
                       className="h-8 text-xs bg-[#182236] border-[#2C2C44] focus:border-[#7FE87F]"
