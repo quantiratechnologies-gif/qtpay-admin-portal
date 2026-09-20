@@ -256,10 +256,10 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
             </div>
           </div>
           <div className="text-2xl font-extrabold text-[#7FE87F] text-glow-primary tracking-tight tabular-nums">
-            {formatCurrency(48529, { decimals: 0 })}
+            {formatCurrency(Math.round(activeSales.value * 0.01), { decimals: 0 })}
           </div>
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[#A2A2BA] font-semibold">{t("dashboard.avgTakeRate")}</span>
+            <span className="text-[#A2A2BA] font-semibold">{activeSales.label} · 1.0% {isAr ? "متوسط العمولة" : "avg take"}</span>
             <span className="text-[10px] text-[#7FE87F] font-bold flex items-center gap-0.5 group-hover:underline">
               {t("dashboard.viewDetails")}
             </span>
@@ -313,7 +313,13 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               </div>
 
               {/* Button 1: Active Merchants */}
-              <div className="w-full text-left p-2.5 rounded-lg bg-[#7FE87F]/10 border border-[#7FE87F]/25 hover:bg-[#7FE87F]/20 hover:border-[#7FE87F]/45 transition-all flex items-center justify-between group/btn cursor-pointer">
+              <div
+                onClick={() => {
+                  setIsMerchantDropdownOpen(false);
+                  onSelectTab?.("merchants");
+                }}
+                className="w-full text-left p-2.5 rounded-lg bg-[#7FE87F]/10 border border-[#7FE87F]/25 hover:bg-[#7FE87F]/20 hover:border-[#7FE87F]/45 transition-all flex items-center justify-between group/btn cursor-pointer"
+              >
                 <div className="flex items-center gap-2.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-[#7FE87F] shadow-[0_0_8px_#7FE87F] animate-pulse flex-shrink-0" />
                   <div>
@@ -339,7 +345,13 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               </div>
 
               {/* Button 2: Inactive Merchants */}
-              <div className="w-full text-left p-2.5 rounded-lg bg-[#182236] border border-[#2C2C44] hover:bg-[#1E293B] transition-all flex items-center justify-between group/btn cursor-pointer">
+              <div
+                onClick={() => {
+                  setIsMerchantDropdownOpen(false);
+                  onSelectTab?.("merchants");
+                }}
+                className="w-full text-left p-2.5 rounded-lg bg-[#182236] border border-[#2C2C44] hover:bg-[#1E293B] transition-all flex items-center justify-between group/btn cursor-pointer"
+              >
                 <div className="flex items-center gap-2.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-amber-400 flex-shrink-0" />
                   <div>
@@ -368,11 +380,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
       </div>
 
-      {/* Realtime Stream Table */}
-      <Card className="p-4 sm:p-5 space-y-4">
+      {/* Realtime Live Transaction Stream Card */}
+      <Card className="p-4 sm:p-5 space-y-3 bg-[#111726]/80 border-[#2C2C44]">
         <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F] border border-[#7FE87F]/20">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-[#7FE87F]/10 text-[#7FE87F]">
               <Activity className="h-4 w-4" />
             </div>
             <div>
@@ -420,8 +432,8 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               </div>
 
               <div className={isAr ? "text-left" : "text-right"}>
-                <div className="text-xs font-extrabold text-[#7FE87F] tabular-nums">
-                  +{formatCurrency(tx.amount)}
+                <div className={`text-xs font-extrabold tabular-nums ${tx.status === "refunded" ? "text-amber-400" : "text-[#7FE87F]"}`}>
+                  {tx.status === "refunded" ? "−" : "+"}{formatCurrency(tx.amount)}
                 </div>
                 <div className="mt-1">
                   <StatusBadge status={tx.status} />

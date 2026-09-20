@@ -16,14 +16,14 @@ export const StatusBadge: React.FC<BadgeProps> = ({ status, text }) => {
   let border = "border-[#2C2C44]";
   let dot = "bg-[#A2A2BA]";
 
-  const s = status.toLowerCase();
+  const s = (status || "").toLowerCase();
 
-  if (["active", "settled", "completed", "verified", "low", "online"].includes(s)) {
+  if (["active", "settled", "completed", "verified", "low", "online", "resolved"].includes(s)) {
     bg = "bg-[#7FE87F]/15";
     color = "text-[#7FE87F]";
     border = "border-[#7FE87F]/35";
     dot = "bg-[#7FE87F]";
-  } else if (["pending", "pending_kyb", "processing", "scheduled", "medium", "action_required"].includes(s)) {
+  } else if (["pending", "pending_kyb", "processing", "scheduled", "medium", "action_required", "held", "refunded"].includes(s)) {
     bg = "bg-amber-500/10";
     color = "text-amber-300";
     border = "border-amber-500/25";

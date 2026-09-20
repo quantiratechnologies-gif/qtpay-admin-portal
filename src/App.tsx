@@ -141,6 +141,43 @@ function AppContent() {
     );
   };
 
+  const handleDecommissionTerminal = (merchantId: string, terminalId: string) => {
+    setMerchants((prev) =>
+      prev.map((m) => {
+        if (m.id !== merchantId) return m;
+        const list = (m.terminalsList || []).filter((t) => t.terminalId !== terminalId);
+        const updatedIds = (m.terminalIds || []).filter((id) => id !== terminalId);
+        return {
+          ...m,
+          terminalsList: list,
+          terminalIds: updatedIds,
+          activeTerminals: list.length
+        };
+      })
+    );
+  };
+
+  const handleTogglePayoutHold = (merchantId: string) => {
+    setMerchants((prev) =>
+      prev.map((m) =>
+        m.id === merchantId ? { ...m, settlementHold: !m.settlementHold } : m
+      )
+    );
+  };
+
+  const handleRevokeDevice = (userId: string, deviceId: string) => {
+    setCustomers((prev) =>
+      prev.map((c) => {
+        if (c.id !== userId) return c;
+        const list = (c.registeredDevices || []).filter((d) => d.id !== deviceId);
+        return {
+          ...c,
+          registeredDevices: list
+        };
+      })
+    );
+  };
+
   const handleAddMerchant = (m: Omit<Merchant, "id">) => {
     const newMerchant: Merchant = {
       ...m,
@@ -220,6 +257,8 @@ function AppContent() {
               onUpdateMerchantStatus={handleUpdateMerchantStatus}
               onExecuteRefund={handleExecuteRefund}
               onProvisionTerminal={handleProvisionTerminal}
+              onDecommissionTerminal={handleDecommissionTerminal}
+              onTogglePayoutHold={handleTogglePayoutHold}
               onAddMerchant={handleAddMerchant}
               lang={lang}
             />
@@ -231,6 +270,7 @@ function AppContent() {
               transactions={transactions}
               onToggleFreezeAccount={handleToggleFreezeAccount}
               onUpdateDailyLimit={handleUpdateDailyLimit}
+              onRevokeDevice={handleRevokeDevice}
               onAddCustomer={handleAddCustomer}
               lang={lang}
             />

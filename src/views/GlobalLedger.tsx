@@ -14,12 +14,14 @@ import {
   ArrowRight,
   ArrowLeft,
   AlertTriangle,
-  FileText
+  FileText,
+  Download
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 import { StatusBadge } from "../components/Badge";
+import { exportCsv } from "../lib/exportCsv";
 import {
   Table,
   TableHeader,
@@ -71,6 +73,30 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
     return matchesSearch && matchesChannel;
   });
 
+  const handleExportTransactions = () => {
+    const ok = exportCsv(
+      `qtpay-transactions-${new Date().toISOString().slice(0, 10)}.csv`,
+      filtered,
+      [
+        { label: "Order Ref", value: (tx) => tx.orderRef },
+        { label: "Date & Time", value: (tx) => tx.timestamp },
+        { label: "Sender", value: (tx) => tx.senderName },
+        { label: "Receiver", value: (tx) => tx.receiverName },
+        { label: "Amount (SAR)", value: (tx) => tx.amount },
+        { label: "Fee (SAR)", value: (tx) => tx.platformMdrSar || 0 },
+        { label: "Channel", value: (tx) => tx.channel },
+        { label: "Payment Method", value: (tx) => tx.paymentMethod },
+        { label: "SARIE UTR", value: (tx) => tx.sarieUtr || "" },
+        { label: "Status", value: (tx) => tx.status }
+      ]
+    );
+    showNotice(
+      ok
+        ? (isAr ? "تم تصدير سجل العمليات بنجاح" : "Transactions ledger exported successfully")
+        : "Export failed"
+    );
+  };
+
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
   return (
@@ -103,8 +129,8 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-2.5">
+        {/* Filters & Export */}
+        <div className="flex items-center gap-2.5 flex-wrap">
           <div className="relative w-52 sm:w-64">
             <Search className={`absolute top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#6E6E85] pointer-events-none ${
               isAr ? "right-2.5" : "left-2.5"
@@ -129,6 +155,16 @@ export const GlobalLedger: React.FC<GlobalLedgerProps> = ({
             <option value="consumer_p2p">{translateChannel("consumer_p2p")}</option>
             <option value="ecommerce_checkout">{translateChannel("ecommerce_checkout")}</option>
           </select>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportTransactions}
+            className="h-8 px-2.5 text-xs bg-[#111726] border-[#2C2C44] text-[#A2A2BA] hover:text-white hover:border-[#7FE87F]/50 gap-1.5 cursor-pointer"
+          >
+            <Download className="h-3.5 w-3.5 text-[#7FE87F]" />
+            <span>{t("common.export")}</span>
+          </Button>
         </div>
       </div>
 

@@ -58,6 +58,8 @@ interface MerchantDetailViewProps {
   onUpdateStatus: (merchantId: string, newStatus: Merchant["status"]) => void;
   onExecuteRefund?: (txId: string) => void;
   onProvisionTerminal?: (merchantId: string, model: string) => void;
+  onDecommissionTerminal?: (merchantId: string, terminalId: string) => void;
+  onTogglePayoutHold?: (merchantId: string) => void;
   lang?: "en" | "ar";
 }
 
@@ -67,7 +69,9 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
   onBack,
   onUpdateStatus,
   onExecuteRefund,
-  onProvisionTerminal
+  onProvisionTerminal,
+  onDecommissionTerminal,
+  onTogglePayoutHold
 }) => {
   const { isAr, t, formatCurrency, formatDate, translateCategory, translatePaymentMethod } = useTranslation();
   const [activeTab, setActiveTab] = useState<"profile" | "terminals" | "transactions" | "settlements" | "activity">("profile");
@@ -398,7 +402,14 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => showNotice(isAr ? "تم تحديث حالة حجز التسوية" : `Payout hold toggled for ${merchant.businessName}`)}
+                  onClick={() => {
+                    onTogglePayoutHold?.(merchant.id);
+                    showNotice(
+                      merchant.settlementHold
+                        ? (isAr ? "تم رفع حجز التسوية بنجاح" : `Payout hold released for ${merchant.businessName}`)
+                        : (isAr ? "تم تفعيل حجز التسوية احترازياً" : `Payout hold activated for ${merchant.businessName}`)
+                    );
+                  }}
                   className="h-8 text-xs bg-[#121212] border-[#262626] gap-2 text-neutral-200 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 cursor-pointer"
                 >
                   {merchant.settlementHold ? <PlayCircle className="h-3.5 w-3.5 text-[#F1D77A]" /> : <PauseCircle className="h-3.5 w-3.5 text-[#D4AF37]" />}
@@ -483,7 +494,14 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => showNotice(isAr ? `تم إلغاء تفعيل نقطة البيع ${term.terminalId}` : `Terminal ${term.terminalId} decommissioned`)}
+                        onClick={() => {
+                          onDecommissionTerminal?.(merchant.id, term.terminalId);
+                          showNotice(
+                            isAr
+                              ? `تم إلغاء تفعيل وسحب نقطة البيع ${term.terminalId}`
+                              : `Terminal ${term.terminalId} decommissioned & revoked`
+                          );
+                        }}
                         className="h-7 px-2.5 text-xs font-semibold cursor-pointer"
                       >
                         {isAr ? "إلغاء" : "Revoke"}

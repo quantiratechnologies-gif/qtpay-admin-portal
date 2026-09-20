@@ -7,7 +7,8 @@ import {
   Copy,
   Plus,
   UserPlus,
-  ShieldCheck
+  ShieldCheck,
+  Download
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -31,6 +32,7 @@ import {
 } from "../components/ui/dialog";
 import { UserDetailView } from "./UserDetailView";
 import { useTranslation } from "../lib/i18n/LanguageContext";
+import { exportCsv } from "../lib/exportCsv";
 import type { CustomerUser, PlatformTransaction } from "../types";
 
 interface ConsumerKYCProps {
@@ -38,6 +40,7 @@ interface ConsumerKYCProps {
   transactions?: PlatformTransaction[];
   onToggleFreezeAccount: (customerId: string) => void;
   onUpdateDailyLimit?: (customerId: string, newLimit: number) => void;
+  onRevokeDevice?: (customerId: string, deviceId: string) => void;
   onAddCustomer?: (customer: Omit<CustomerUser, "id">) => void;
   lang?: "en" | "ar";
 }
@@ -47,6 +50,7 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
   transactions = [],
   onToggleFreezeAccount,
   onUpdateDailyLimit,
+  onRevokeDevice,
   onAddCustomer
 }) => {
   const { isAr, t, formatCurrency, formatNumber } = useTranslation();
@@ -168,6 +172,28 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
     );
   };
 
+  const handleExportCustomers = () => {
+    const ok = exportCsv(
+      `qtpay-consumers-${new Date().toISOString().slice(0, 10)}.csv`,
+      filtered,
+      [
+        { label: "Full Name (EN)", value: (c) => c.fullName },
+        { label: "Full Name (AR)", value: (c) => c.fullNameAr || c.fullName },
+        { label: "National ID / Iqama", value: (c) => c.nationalId },
+        { label: "Mobile", value: (c) => c.mobile },
+        { label: "Email", value: (c) => c.email },
+        { label: "SARIE Alias", value: (c) => c.sarieUpiId },
+        { label: "Wallet Balance (SAR)", value: (c) => c.walletBalanceSar },
+        { label: "Daily Limit (SAR)", value: (c) => c.dailyLimitSar || 20000 },
+        { label: "KYC Status", value: (c) => c.kycStatus },
+        { label: "Risk Score", value: (c) => c.riskScore },
+        { label: "Frozen", value: (c) => c.isFrozen ? "Yes" : "No" },
+        { label: "Joined Date", value: (c) => c.joinedAt }
+      ]
+    );
+    showNotice(ok ? (isAr ? "تم تصدير سجل المستخدمين بنجاح" : "Consumers directory exported successfully") : "Export failed");
+  };
+
   const selectedUser = customers.find((c) => c.id === selectedUserId);
 
   // If a user is selected, render the dedicated Sub-Screen!
@@ -179,6 +205,7 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
         onBack={() => setSelectedUserId(null)}
         onToggleFreeze={onToggleFreezeAccount}
         onUpdateDailyLimit={onUpdateDailyLimit}
+        onRevokeDevice={onRevokeDevice}
         lang={isAr ? "ar" : "en"}
       />
     );
@@ -238,6 +265,17 @@ export const ConsumerKYC: React.FC<ConsumerKYCProps> = ({
               }`}
             />
           </div>
+
+          {/* Export CSV Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportCustomers}
+            className="h-8 px-2.5 text-xs bg-[#111726] border-[#2C2C44] text-[#A2A2BA] hover:text-white hover:border-[#7FE87F]/50 gap-1.5 cursor-pointer"
+          >
+            <Download className="h-3.5 w-3.5 text-[#7FE87F]" />
+            <span>{t("common.export")}</span>
+          </Button>
 
           {/* Add Customer Button */}
           <Button

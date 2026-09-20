@@ -127,8 +127,21 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   const handleResetPassword = (e: React.FormEvent) => {
     e.preventDefault();
     setForgotError("");
-    if (!newPassword || newPassword.length < 6) {
-      setForgotError(isAr ? "يجب أن تكون كلمة المرور 6 خانات على الأقل" : "Password must be at least 6 characters");
+    if (!newPassword || newPassword.length < 12) {
+      setForgotError(isAr ? "يجب أن تكون كلمة المرور 12 خانة على الأقل" : "Password must be at least 12 characters");
+      return;
+    }
+    if (
+      !/[A-Z]/.test(newPassword) ||
+      !/[a-z]/.test(newPassword) ||
+      !/[0-9]/.test(newPassword) ||
+      !/[^A-Za-z0-9]/.test(newPassword)
+    ) {
+      setForgotError(
+        isAr
+          ? "يجب أن تحتوي كلمة المرور على أحرف كبيرة وصغيرة وأرقام ورموز خاصة"
+          : "Password must contain uppercase, lowercase, numbers, and special characters"
+      );
       return;
     }
     if (newPassword !== confirmPassword) {

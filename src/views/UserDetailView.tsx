@@ -44,6 +44,7 @@ import {
   DialogFooter
 } from "../components/ui/dialog";
 import { useTranslation } from "../lib/i18n/LanguageContext";
+import { exportCsv } from "../lib/exportCsv";
 import type { CustomerUser, PlatformTransaction } from "../types";
 
 interface UserDetailViewProps {
@@ -52,6 +53,7 @@ interface UserDetailViewProps {
   onBack: () => void;
   onToggleFreeze: (userId: string) => void;
   onUpdateDailyLimit?: (userId: string, newLimit: number) => void;
+  onRevokeDevice?: (userId: string, deviceId: string) => void;
   lang?: "en" | "ar";
 }
 
@@ -60,7 +62,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
   transactions,
   onBack,
   onToggleFreeze,
-  onUpdateDailyLimit
+  onUpdateDailyLimit,
+  onRevokeDevice
 }) => {
   const { isAr, t, formatCurrency, formatDate, translatePaymentMethod } = useTranslation();
   const [activeTab, setActiveTab] = useState<"profile" | "transactions" | "devices" | "activity">("profile");
@@ -108,7 +111,27 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => showNotice(isAr ? "تم تصدير ملف العميل المعتمد بنجاح" : "Customer audit dossier exported")}
+            onClick={() => {
+              const ok = exportCsv(
+                `${user.nationalId}-customer-dossier-${new Date().toISOString().slice(0, 10)}.csv`,
+                userTransactions,
+                [
+                  { label: "Order Ref", value: (t) => t.orderRef },
+                  { label: "Date & Time", value: (t) => t.timestamp },
+                  { label: "Counterparty", value: (t) => t.receiverName },
+                  { label: "Amount (SAR)", value: (t) => t.amount },
+                  { label: "Channel", value: (t) => t.channel },
+                  { label: "Payment Method", value: (t) => t.paymentMethod },
+                  { label: "SARIE UTR", value: (t) => t.sarieUtr || "" },
+                  { label: "Status", value: (t) => t.status }
+                ]
+              );
+              showNotice(
+                ok
+                  ? (isAr ? "تم تصدير ملف العميل المعتمد بنجاح" : "Customer audit dossier exported successfully")
+                  : "Export failed"
+              );
+            }}
             className="h-8 px-3 bg-[#171717] border-[#262626] text-neutral-300 hover:text-[#F1D77A] hover:border-[#D4AF37]/40 gap-1.5 text-xs cursor-pointer"
           >
             <Download className="h-3.5 w-3.5 text-[#F1D77A]" />
@@ -191,7 +214,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
           {[
             { id: "profile", label: t("consumers.tabOverview"), icon: User },
             { id: "transactions", label: `${t("nav.transactions")} (${userTransactions.length})`, icon: ReceiptText },
-            { id: "devices", label: `${t("consumers.tabDevices")} (${(user.registeredDevices || []).length || 1})`, icon: Smartphone },
+            { id: "devices", label: `${t("consumers.tabDevices")} (${(user.registeredDevices || []).length})`, icon: Smartphone },
             { id: "activity", label: t("consumers.tabActivity"), icon: History }
           ].map((tab) => {
             const Icon = tab.icon;
@@ -497,7 +520,14 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => showNotice(isAr ? `تم إلغاء اقتران الجهاز ${dev.deviceName}` : `Device session revoked for ${dev.deviceName}`)}
+                        onClick={() => {
+                          onRevokeDevice?.(user.id, dev.id);
+                          showNotice(
+                            isAr
+                              ? `تم إلغاء اقتران وجلسة الجهاز ${dev.deviceName}`
+                              : `Device session revoked for ${dev.deviceName}`
+                          );
+                        }}
                         className="h-7 px-2.5 text-xs font-semibold cursor-pointer"
                       >
                         {isAr ? "إلغاء الجلسة" : "Revoke"}

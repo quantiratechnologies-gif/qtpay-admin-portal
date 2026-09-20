@@ -9,7 +9,8 @@ import {
   Plus,
   Building2,
   ShieldCheck,
-  FileText
+  FileText,
+  Download
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -33,6 +34,7 @@ import {
 } from "../components/ui/dialog";
 import { MerchantDetailView } from "./MerchantDetailView";
 import { useTranslation } from "../lib/i18n/LanguageContext";
+import { exportCsv } from "../lib/exportCsv";
 import type { Merchant, PlatformTransaction } from "../types";
 
 interface MerchantOperationsProps {
@@ -41,6 +43,8 @@ interface MerchantOperationsProps {
   onUpdateMerchantStatus: (merchantId: string, newStatus: Merchant["status"]) => void;
   onExecuteRefund?: (txId: string) => void;
   onProvisionTerminal?: (merchantId: string, model: string) => void;
+  onDecommissionTerminal?: (merchantId: string, terminalId: string) => void;
+  onTogglePayoutHold?: (merchantId: string) => void;
   onAddMerchant?: (merchant: Omit<Merchant, "id">) => void;
   lang?: "en" | "ar";
 }
@@ -51,6 +55,8 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
   onUpdateMerchantStatus,
   onExecuteRefund,
   onProvisionTerminal,
+  onDecommissionTerminal,
+  onTogglePayoutHold,
   onAddMerchant
 }) => {
   const { isAr, t, formatCurrency, translateCategory } = useTranslation();
@@ -177,21 +183,6 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
 
   const selectedMerchant = merchants.find((m) => m.id === selectedMerchantId);
 
-  // If a merchant is selected, render the dedicated Sub-Screen!
-  if (selectedMerchant) {
-    return (
-      <MerchantDetailView
-        merchant={selectedMerchant}
-        transactions={transactions}
-        onBack={() => setSelectedMerchantId(null)}
-        onUpdateStatus={onUpdateMerchantStatus}
-        onExecuteRefund={onExecuteRefund}
-        onProvisionTerminal={onProvisionTerminal}
-        lang={isAr ? "ar" : "en"}
-      />
-    );
-  }
-
   const filtered = merchants.filter((m) => {
     const matchesSearch =
       m.businessName.toLowerCase().includes(search.toLowerCase()) ||
@@ -202,6 +193,46 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
     const matchesStatus = statusFilter === "all" || m.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const handleExportMerchants = () => {
+    const ok = exportCsv(
+      `qtpay-merchants-${new Date().toISOString().slice(0, 10)}.csv`,
+      filtered,
+      [
+        { label: "Business Name (EN)", value: (m) => m.businessName },
+        { label: "Business Name (AR)", value: (m) => m.businessNameAr || m.businessName },
+        { label: "CR Number", value: (m) => m.crNumber },
+        { label: "VAT Number", value: (m) => m.vatNumber },
+        { label: "City", value: (m) => m.city },
+        { label: "Category", value: (m) => m.category },
+        { label: "Owner Name", value: (m) => m.ownerName },
+        { label: "Mobile", value: (m) => m.mobile },
+        { label: "Settlement Bank", value: (m) => m.settlementBank },
+        { label: "Settlement IBAN", value: (m) => m.settlementIban },
+        { label: "Active Terminals", value: (m) => m.activeTerminals },
+        { label: "Monthly Volume (SAR)", value: (m) => m.monthlyVolumeSar },
+        { label: "Status", value: (m) => m.status }
+      ]
+    );
+    showNotice(ok ? (isAr ? "تم تصدير سجل التجار بنجاح" : "Merchants directory exported successfully") : "Export failed");
+  };
+
+  // If a merchant is selected, render the dedicated Sub-Screen!
+  if (selectedMerchant) {
+    return (
+      <MerchantDetailView
+        merchant={selectedMerchant}
+        transactions={transactions}
+        onBack={() => setSelectedMerchantId(null)}
+        onUpdateStatus={onUpdateMerchantStatus}
+        onExecuteRefund={onExecuteRefund}
+        onProvisionTerminal={onProvisionTerminal}
+        onDecommissionTerminal={onDecommissionTerminal}
+        onTogglePayoutHold={onTogglePayoutHold}
+        lang={isAr ? "ar" : "en"}
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -259,6 +290,17 @@ export const MerchantOperations: React.FC<MerchantOperationsProps> = ({
             <option value="action_required">{t("common.actionRequired")}</option>
             <option value="suspended">{t("common.suspended")}</option>
           </select>
+
+          {/* Export CSV Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportMerchants}
+            className="h-8 px-2.5 text-xs bg-[#111726] border-[#2C2C44] text-[#A2A2BA] hover:text-white hover:border-[#7FE87F]/50 gap-1.5 cursor-pointer"
+          >
+            <Download className="h-3.5 w-3.5 text-[#7FE87F]" />
+            <span>{t("common.export")}</span>
+          </Button>
 
           {/* Add Merchant Button */}
           <Button
