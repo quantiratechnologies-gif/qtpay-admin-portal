@@ -42,7 +42,8 @@ function AppContent() {
   const [transactions, setTransactions] = useState<PlatformTransaction[]>(mockTransactions);
   const [feeTiers, setFeeTiers] = useState<CommissionFeeTier[]>(mockFeeTiers);
 
-  // Connect to Supabase Realtime Platform Stream
+  // Connect to Supabase Realtime Platform Stream (disabled in demo mode for clean console)
+  /*
   useEffect(() => {
     if (!currentUser) return;
 
@@ -54,6 +55,7 @@ function AppContent() {
       unsubscribe();
     };
   }, [currentUser]);
+  */
 
   const handleLoginSuccess = (user: AdminUser) => {
     setCurrentUser(user);

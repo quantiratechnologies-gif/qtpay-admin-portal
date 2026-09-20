@@ -120,6 +120,14 @@ export const MerchantDetailView: React.FC<MerchantDetailViewProps> = ({
             variant="outline"
             size="sm"
             onClick={() => {
+              if (merchantTransactions.length === 0) {
+                showNotice(
+                  isAr
+                    ? "لا توجد عمليات لتصديرها لهذا التاجر حالياً"
+                    : "No transactions to export for this merchant"
+                );
+                return;
+              }
               const ok = exportCsv(
                 `${merchant.crNumber}-dossier-${new Date().toISOString().slice(0, 10)}.csv`,
                 merchantTransactions,

@@ -112,6 +112,14 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({
             variant="outline"
             size="sm"
             onClick={() => {
+              if (userTransactions.length === 0) {
+                showNotice(
+                  isAr
+                    ? "لا توجد عمليات لتصديرها لهذا العميل حالياً"
+                    : "No transactions to export for this customer"
+                );
+                return;
+              }
               const ok = exportCsv(
                 `${user.nationalId}-customer-dossier-${new Date().toISOString().slice(0, 10)}.csv`,
                 userTransactions,

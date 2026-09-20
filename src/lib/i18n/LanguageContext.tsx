@@ -154,7 +154,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const date = new Date(dateInput);
       if (isNaN(date.getTime())) return String(dateInput);
 
-      const locale = isAr ? "ar-SA" : "en-US";
+      const locale = isAr ? "ar-SA-u-nu-latn" : "en-US";
 
       if (formatStyle === "time") {
         return new Intl.DateTimeFormat(locale, {

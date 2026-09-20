@@ -12,7 +12,7 @@ interface LogoProps {
 export const Logo: React.FC<LogoProps> = ({
   className = "",
   height = 36,
-  width = "auto",
+  width,
   textColor = "#FFFFFF",
   accentColor = "#7FE87F",
   showText = true
@@ -24,7 +24,7 @@ export const Logo: React.FC<LogoProps> = ({
       version="1.1"
       viewBox="0 0 1580.1 568"
       height={height}
-      width={width}
+      {...(typeof width === "number" ? { width } : {})}
       className={className}
       style={{ display: "inline-block", verticalAlign: "middle" }}
     >
