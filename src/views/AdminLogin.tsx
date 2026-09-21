@@ -39,7 +39,7 @@ const DEMO_CREDENTIALS = [
 
 export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   const { isAr, t, toggleLang } = useTranslation();
-  const [email, setEmail] = useState("a.alqahtani@qtpay.sa");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -50,7 +50,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   // Forgot Password Modal State
   const [isForgotOpen, setIsForgotOpen] = useState(false);
   const [forgotStep, setForgotStep] = useState<"email" | "otp" | "new_password" | "success">("email");
-  const [resetEmail, setResetEmail] = useState("a.alqahtani@qtpay.sa");
+  const [resetEmail, setResetEmail] = useState("");
   const [resetOtp, setResetOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -106,7 +106,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
     setTimeout(() => {
       setIsForgotLoading(false);
       setForgotStep("otp");
-      setResetOtp("123456"); // Pre-filled for seamless testing
+      setResetOtp("");
     }, 500);
   };
 
@@ -307,6 +307,17 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
           </form>
         </CardContent>
       </Card>
+
+      {/* Demo Credentials Reference Box */}
+      <div className="mt-4 p-3 bg-[#182236]/80 border border-[#7FE87F]/30 rounded-xl text-center text-xs space-y-1 z-10 max-w-[420px] w-full shadow-lg backdrop-blur-sm">
+        <div className="text-[11px] font-semibold text-[#A2A2BA]">
+          {isAr ? "بيانات الدخول الإدارية (يرجى الإدخال يدوياً):" : "Valid Admin Credentials (Enter manually):"}
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-mono text-[#7FE87F]">
+          <span><strong className="text-white font-sans">{isAr ? "البريد:" : "Email:"}</strong> a.alqahtani@qtpay.sa</span>
+          <span><strong className="text-white font-sans">{isAr ? "كلمة المرور:" : "Password:"}</strong> admin123</span>
+        </div>
+      </div>
 
       {/* Interactive Forgot Password Modal */}
       {isForgotOpen && (
