@@ -1,0 +1,692 @@
+import React, { useState } from "react";
+import {
+  Lock,
+  Mail,
+  ArrowRight,
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Languages,
+  KeyRound,
+  CheckCircle2,
+  ShieldAlert,
+  X,
+  Smartphone
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent
+} from "../components/ui/card";
+import { Logo } from "../components/Logo";
+import { useTranslation } from "../lib/i18n/LanguageContext";
+import { currentAdminUser } from "../services/mockData";
+import type { AdminUser } from "../types";
+
+interface AdminLoginProps {
+  onLoginSuccess: (user: AdminUser) => void;
+  lang?: "en" | "ar";
+}
+
+const DEFAULT_CREDENTIALS: Record<string, string> = {
+  "adminquantira@gmail.com": "admin123",
+  "admin@qtpay.sa": "admin123",
+};
+
+const getStoredCredentials = (): Record<string, string> => {
+  try {
+    const saved = localStorage.getItem("qtpay_admin_credentials");
+    if (saved) {
+      return { ...DEFAULT_CREDENTIALS, ...JSON.parse(saved) };
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return DEFAULT_CREDENTIALS;
+};
+
+const saveStoredCredentials = (credentials: Record<string, string>) => {
+  try {
+    localStorage.setItem("qtpay_admin_credentials", JSON.stringify(credentials));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
+  const { isAr, t, toggleLang } = useTranslation();
+  const [credentials, setCredentials] = useState<Record<string, string>>(getStoredCredentials);
+  const [email, setEmail] = useState("adminquantira@gmail.com");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  // Forgot Password Modal State
+  const [isForgotOpen, setIsForgotOpen] = useState(false);
+  const [forgotStep, setForgotStep] = useState<"email" | "otp" | "new_password" | "success">("email");
+  const [resetEmail, setResetEmail] = useState("adminquantira@gmail.com");
+  const [resetOtp, setResetOtp] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [forgotError, setForgotError] = useState("");
+  const [isForgotLoading, setIsForgotLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMsg("");
+
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setError(isAr ? "يرجى إدخال بريد إلكتروني صحيح" : "please enter a valid mail id");
+      return;
+    }
+
+    const currentCreds = getStoredCredentials();
+    const currentExpectedPassword = currentCreds[trimmedEmail.toLowerCase()];
+
+    if (currentExpectedPassword === undefined) {
+      setError(isAr ? "يرجى إدخال بريد إلكتروني صحيح" : "please enter a valid mail id");
+      return;
+    }
+
+    if (!password || password.length < 8) {
+      setError(isAr ? "8 أحرف على الأقل" : "minimum 8 character");
+      return;
+    }
+
+    if (password.length > 32) {
+      setError(isAr ? "لا يمكنك إدخال أكثر من 32 حرفاً" : "you can't type more than 32 characters");
+      return;
+    }
+
+    if (currentExpectedPassword !== password) {
+      setError(isAr ? "يرجى إدخال كلمة مرور صحيحة" : "please enter valid password");
+      return;
+    }
+
+    setIsLoading(true);
+    setTimeout(() => {
+      const user: AdminUser = {
+        ...currentAdminUser,
+        email: trimmedEmail,
+        lastLogin: isAr ? "اليوم، 10:45 ص (المقر الرئيسي)" : "Today, 10:45 AM (Riyadh HQ)"
+      };
+      onLoginSuccess(user);
+      setIsLoading(false);
+    }, 350);
+  };
+
+  const handleSendOtp = (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError("");
+    const trimmedReset = resetEmail.trim().toLowerCase();
+    const currentCreds = getStoredCredentials();
+    if (currentCreds[trimmedReset] === undefined) {
+      setForgotError(isAr ? "يرجى إدخال البريد الإداري المصرح به" : "please enter the authorized admin email");
+      return;
+    }
+    setIsForgotLoading(true);
+    setTimeout(() => {
+      setIsForgotLoading(false);
+      setForgotStep("otp");
+      setResetOtp("123456"); // Pre-filled for seamless testing
+    }, 500);
+  };
+
+  const handleVerifyOtp = (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError("");
+    if (!resetOtp || resetOtp.trim() !== "123456") {
+      setForgotError(isAr ? "رمز التحقق غير صحيح" : "Invalid OTP. Please enter the correct 6-digit code");
+      return;
+    }
+    setIsForgotLoading(true);
+    setTimeout(() => {
+      setIsForgotLoading(false);
+      setForgotStep("new_password");
+    }, 400);
+  };
+
+  const handleResetPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError("");
+    const trimmedReset = resetEmail.trim().toLowerCase();
+    const currentCreds = getStoredCredentials();
+    const expectedOldPassword = currentCreds[trimmedReset] || "admin123";
+
+    if (!oldPassword) {
+      setForgotError(isAr ? "يرجى إدخال كلمة المرور القديمة" : "Please enter your old password");
+      return;
+    }
+
+    if (oldPassword !== expectedOldPassword) {
+      setForgotError(isAr ? "كلمة المرور القديمة غير صحيحة" : "Old password is incorrect");
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      setForgotError(isAr ? "يجب أن تكون كلمة المرور 8 أحرف على الأقل" : "Password must be at least 8 characters");
+      return;
+    }
+
+    if (newPassword.length > 32) {
+      setForgotError(isAr ? "لا يمكنك إدخال أكثر من 32 حرفاً" : "Password cannot exceed 32 characters");
+      return;
+    }
+
+    if (newPassword === oldPassword) {
+      setForgotError(
+        isAr
+          ? "يجب أن تختلف كلمة المرور الجديدة عن كلمة المرور القديمة"
+          : "New password must be different from old password"
+      );
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setForgotError(isAr ? "كلمات المرور غير متطابقة" : "Passwords do not match");
+      return;
+    }
+
+    setIsForgotLoading(true);
+    setTimeout(() => {
+      const updated = {
+        ...currentCreds,
+        [trimmedReset]: newPassword,
+      };
+      saveStoredCredentials(updated);
+      setCredentials(updated);
+      setIsForgotLoading(false);
+      setPassword(newPassword);
+      setEmail(resetEmail);
+      setForgotStep("success");
+      setSuccessMsg(t("auth.passwordResetSuccess"));
+    }, 500);
+  };
+
+  const closeForgotModal = () => {
+    setIsForgotOpen(false);
+    setForgotStep("email");
+    setForgotError("");
+    setResetOtp("");
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
+  const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
+
+  return (
+    <div className="w-screen min-h-screen bg-[#080C14] bg-[radial-gradient(ellipse_80%_60%_at_50%_30%,rgba(127,232,127,0.14)_0%,transparent_70%)] flex flex-col items-center justify-center p-4 sm:p-5 text-white font-sans relative overflow-hidden">
+      {/* Ambient background glow orbs */}
+      <div className="absolute w-[500px] h-[500px] bg-[#7FE87F]/10 rounded-full blur-[120px] pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+
+      {/* Top Bar with Language Toggle */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={toggleLang}
+          className="h-8 px-3 bg-[#7FE87F]/10 border-[#7FE87F]/40 text-[#7FE87F] hover:bg-[#7FE87F]/25 hover:border-[#7FE87F]/60 text-xs font-bold gap-1.5 cursor-pointer shadow-lg shadow-[#7FE87F]/10"
+        >
+          <Languages className="h-3.5 w-3.5" />
+          <span>{isAr ? "English" : "العربية"}</span>
+        </Button>
+      </div>
+
+      <Card className="w-full max-w-[420px] bg-gradient-to-b from-[#182236]/95 to-[#111726]/98 border border-[#7FE87F]/35 rounded-2xl p-7 sm:p-8 shadow-2xl shadow-black/80 space-y-4 hover:border-[#7FE87F]/60 transition-all relative z-10 before:absolute before:inset-x-0 before:top-0 before:h-[1.5px] before:bg-gradient-to-r before:from-transparent before:via-[#7FE87F]/60 before:to-transparent">
+        {/* Brand Header with Logo */}
+        <CardHeader className="text-center space-y-2.5 pb-1">
+          <div className="flex justify-center pb-2 drop-shadow-[0_0_15px_rgba(127,232,127,0.3)]">
+            <Logo height={48} textColor="#FFFFFF" accentColor="#7FE87F" />
+          </div>
+          <CardTitle className="text-2xl font-extrabold primary-shimmer-text tracking-tight">
+            {isAr ? "تسجيل الدخول الإداري" : "Admin Login"}
+          </CardTitle>
+          <CardDescription className="text-xs text-[#A2A2BA]">
+            {isAr ? "سجل الدخول للمتابعة إلى لوحة التحكم" : "Sign in to access admin control"}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-4 pt-0">
+          {error && (
+            <div className="bg-red-500/15 border border-red-500/30 rounded-lg p-2.5 text-red-400 text-xs font-semibold text-center">
+              {error}
+            </div>
+          )}
+
+          {successMsg && (
+            <div className="bg-[#7FE87F]/15 border border-[#7FE87F]/40 rounded-lg p-2.5 text-[#7FE87F] text-xs font-bold text-center flex items-center justify-center gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>{successMsg}</span>
+            </div>
+          )}
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            <div className="space-y-1.5">
+              <label className="text-[#A2A2BA] text-xs font-semibold block">
+                {t("auth.emailLabel")}
+              </label>
+              <div className="relative">
+                <Mail className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-[#6E6E85] pointer-events-none ${
+                  isAr ? "right-3" : "left-3"
+                }`} />
+                <Input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onInvalid={(e) => {
+                    e.currentTarget.setCustomValidity(
+                      isAr ? "يرجى إدخال بريد إلكتروني صحيح" : "please enter a valid mail id"
+                    );
+                  }}
+                  onInput={(e) => {
+                    e.currentTarget.setCustomValidity("");
+                  }}
+                  placeholder="admin@qtpay.sa"
+                  className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
+                    isAr ? "pr-9 pl-3" : "pl-9 pr-3"
+                  }`}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-[#A2A2BA] block">
+                {t("auth.passwordLabel")}
+              </label>
+              <div className="relative">
+                <Lock className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-[#6E6E85] pointer-events-none ${
+                  isAr ? "right-3" : "left-3"
+                }`} />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onInvalid={(e) => {
+                    const val = e.currentTarget.value;
+                    if (!val || val.length < 8) {
+                      e.currentTarget.setCustomValidity(
+                        isAr ? "8 أحرف على الأقل" : "minimum 8 character"
+                      );
+                    } else if (val.length > 16) {
+                      e.currentTarget.setCustomValidity(
+                        isAr ? "لا يمكنك إدخال أكثر من 16 حرفاً" : "you can't put type more than 16"
+                      );
+                    } else {
+                      e.currentTarget.setCustomValidity(
+                        isAr ? "يرجى إدخال كلمة مرور صحيحة" : "please enter valid password"
+                      );
+                    }
+                  }}
+                  onInput={(e) => {
+                    e.currentTarget.setCustomValidity("");
+                  }}
+                  placeholder={isAr ? "أدخل كلمة المرور" : "Enter password"}
+                  className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
+                    isAr ? "pr-9 pl-9" : "pl-9 pr-9"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className={`absolute top-1/2 -translate-y-1/2 text-[#6E6E85] hover:text-white cursor-pointer ${
+                    isAr ? "left-3" : "right-3"
+                  }`}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Remember Me & Forgot Password Row */}
+            <div className="flex items-center justify-between text-xs pt-1">
+              <label className="flex items-center gap-2 text-[#A2A2BA] cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="rounded bg-[#111726] border-[#2C2C44] text-[#7FE87F] focus:ring-[#7FE87F]"
+                />
+                <span>{t("auth.rememberMe")}</span>
+              </label>
+
+              {/* Forgot Password Trigger */}
+              <button
+                type="button"
+                onClick={() => setIsForgotOpen(true)}
+                className="text-xs font-bold text-[#7FE87F] hover:text-white hover:underline transition-colors cursor-pointer"
+              >
+                {t("auth.forgotPassword")}
+              </button>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-10 rounded-xl font-black text-xs mt-3 flex items-center justify-center gap-2 cursor-pointer btn-primary-shine bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:brightness-110 shadow-lg shadow-[#7FE87F]/20"
+            >
+              {isLoading ? (
+                <span>{t("auth.signingIn")}</span>
+              ) : (
+                <>
+                  <span>{t("auth.signInBtn")}</span>
+                  <ArrowIcon className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Valid Admin Credentials Banner */}
+      <div
+        onClick={() => {
+          setEmail("adminquantira@gmail.com");
+          setPassword(credentials["adminquantira@gmail.com"] || "admin123");
+        }}
+        className="mt-4 w-full max-w-[420px] bg-[#182236]/90 border border-[#7FE87F]/35 hover:border-[#7FE87F]/60 rounded-2xl p-3.5 shadow-xl text-center relative z-10 cursor-pointer transition-all group"
+        title={isAr ? "انقر للتعبئة التلقائية" : "Click to auto-fill"}
+      >
+        <p className="text-[11px] font-medium text-[#A2A2BA]">
+          {isAr ? "بيانات الدخول المعتمدة (أدخلها يدوياً):" : "Valid Admin Credentials (Enter manually):"}
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-1 text-xs">
+          <div>
+            <span className="font-bold text-white">{isAr ? "البريد الإلكتروني: " : "Email: "}</span>
+            <span className="text-[#7FE87F] font-mono font-semibold">adminquantira@gmail.com</span>
+          </div>
+          <div>
+            <span className="font-bold text-white">{isAr ? "كلمة المرور: " : "Password: "}</span>
+            <span className="text-[#7FE87F] font-mono font-semibold">
+              {credentials["adminquantira@gmail.com"] || "admin123"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Interactive Forgot Password Modal */}
+      {isForgotOpen && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div
+            className="bg-gradient-to-b from-[#182236] to-[#111726] border border-[#7FE87F]/40 rounded-2xl w-full max-w-[420px] p-6 shadow-2xl shadow-black/90 space-y-4 relative before:absolute before:inset-x-0 before:top-0 before:h-[1.5px] before:bg-gradient-to-r before:from-transparent before:via-[#7FE87F]/60 before:to-transparent"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-2 border-b border-[#2C2C44]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-[#7FE87F]/15 border border-[#7FE87F]/35 text-[#7FE87F]">
+                  <KeyRound className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-white">
+                    {t("auth.resetPasswordTitle")}
+                  </h3>
+                  <p className="text-[11px] text-[#A2A2BA]">
+                    {t("auth.resetPasswordSubtitle")}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={closeForgotModal}
+                className="p-1 rounded-lg bg-[#182236] hover:bg-[#1E293B] text-[#A2A2BA] hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {forgotError && (
+              <div className="bg-red-500/15 border border-red-500/30 rounded-lg p-2.5 text-red-400 text-xs font-semibold text-center">
+                {forgotError}
+              </div>
+            )}
+
+            {/* Step 1: Request OTP */}
+            {forgotStep === "email" && (
+              <form onSubmit={handleSendOtp} className="space-y-3.5">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-[#A2A2BA] block">
+                    {t("auth.emailLabel")}
+                  </label>
+                  <div className="relative">
+                    <Mail className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-[#6E6E85] pointer-events-none ${
+                      isAr ? "right-3" : "left-3"
+                    }`} />
+                    <Input
+                      type="email"
+                      required
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      onInvalid={(e) => {
+                        e.currentTarget.setCustomValidity(
+                          isAr ? "يرجى إدخال بريد إلكتروني صحيح" : "please enter the valid email"
+                        );
+                      }}
+                      onInput={(e) => {
+                        e.currentTarget.setCustomValidity("");
+                      }}
+                      placeholder="admin@qtpay.sa"
+                      className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
+                        isAr ? "pr-9 pl-3" : "pl-9 pr-3"
+                      }`}
+                    />
+                  </div>
+                </div>
+
+                <div className="text-[11px] text-[#A2A2BA] bg-[#111726] p-2.5 rounded-lg border border-[#2C2C44]">
+                  {isAr
+                    ? "سيتم إرسال رمز أمان لمرة واحدة (OTP) مكون من 6 أرقام إلى بريدك المعتمد."
+                    : "A 6-digit one-time security OTP will be sent to your registered admin email."}
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isForgotLoading}
+                  className="w-full h-10 rounded-xl font-bold text-xs btn-primary-shine bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:brightness-110 shadow-lg shadow-[#7FE87F]/20 cursor-pointer"
+                >
+                  {isForgotLoading ? (
+                    <span>{isAr ? "جاري الإرسال..." : "Sending OTP..."}</span>
+                  ) : (
+                    <span>{t("auth.sendResetOtp")}</span>
+                  )}
+                </Button>
+              </form>
+            )}
+
+            {/* Step 2: Enter OTP */}
+            {forgotStep === "otp" && (
+              <form onSubmit={handleVerifyOtp} className="space-y-3.5">
+                <div className="bg-[#7FE87F]/10 border border-[#7FE87F]/30 rounded-lg p-2.5 text-[#7FE87F] text-xs font-semibold">
+                  {t("auth.otpSentMessage")}
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-[#A2A2BA] block">
+                    {t("auth.enterOtpLabel")}
+                  </label>
+                  <div className="relative">
+                    <Smartphone className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-[#6E6E85] pointer-events-none ${
+                      isAr ? "right-3" : "left-3"
+                    }`} />
+                    <Input
+                      type="text"
+                      maxLength={6}
+                      required
+                      value={resetOtp}
+                      onChange={(e) => setResetOtp(e.target.value)}
+                      placeholder="123456"
+                      className={`h-10 text-center font-mono tracking-widest text-base font-extrabold bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
+                        isAr ? "pr-9 pl-3" : "pl-9 pr-3"
+                      }`}
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isForgotLoading}
+                  className="w-full h-10 rounded-xl font-bold text-xs btn-primary-shine bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:brightness-110 shadow-lg shadow-[#7FE87F]/20 cursor-pointer"
+                >
+                  {isForgotLoading ? (
+                    <span>{isAr ? "جاري التحقق..." : "Verifying..."}</span>
+                  ) : (
+                    <span>{isAr ? "تحقق ومتابعة" : "Verify & Continue"}</span>
+                  )}
+                </Button>
+              </form>
+            )}
+
+            {/* Step 3: Set New Password */}
+            {forgotStep === "new_password" && (
+              <form onSubmit={handleResetPassword} className="space-y-3.5">
+                {/* Old Password Field */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-[#A2A2BA] block">
+                    {t("auth.oldPasswordLabel")}
+                  </label>
+                  <div className="relative">
+                    <Lock className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-[#6E6E85] pointer-events-none ${
+                      isAr ? "right-3" : "left-3"
+                    }`} />
+                    <Input
+                      type={showOldPassword ? "text" : "password"}
+                      required
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder={isAr ? "أدخل كلمة المرور الحالية" : "Enter old password"}
+                      className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
+                        isAr ? "pr-9 pl-9" : "pl-9 pr-9"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      className={`absolute top-1/2 -translate-y-1/2 text-[#6E6E85] hover:text-white cursor-pointer ${
+                        isAr ? "left-3" : "right-3"
+                      }`}
+                    >
+                      {showOldPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* New Password Field */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-[#A2A2BA] block">
+                    {t("auth.newPasswordLabel")}
+                  </label>
+                  <div className="relative">
+                    <Lock className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-[#6E6E85] pointer-events-none ${
+                      isAr ? "right-3" : "left-3"
+                    }`} />
+                    <Input
+                      type={showNewPassword ? "text" : "password"}
+                      required
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder={isAr ? "8 أحرف على الأقل" : "At least 8 characters"}
+                      className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
+                        isAr ? "pr-9 pl-9" : "pl-9 pr-9"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className={`absolute top-1/2 -translate-y-1/2 text-[#6E6E85] hover:text-white cursor-pointer ${
+                        isAr ? "left-3" : "right-3"
+                      }`}
+                    >
+                      {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirm New Password Field */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-[#A2A2BA] block">
+                    {t("auth.confirmPasswordLabel")}
+                  </label>
+                  <div className="relative">
+                    <Lock className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-[#6E6E85] pointer-events-none ${
+                      isAr ? "right-3" : "left-3"
+                    }`} />
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder={isAr ? "أعد إدخال كلمة المرور" : "Re-enter password"}
+                      className={`h-10 text-xs bg-[#111726] border-[#2C2C44] focus:border-[#7FE87F] ${
+                        isAr ? "pr-9 pl-9" : "pl-9 pr-9"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className={`absolute top-1/2 -translate-y-1/2 text-[#6E6E85] hover:text-white cursor-pointer ${
+                        isAr ? "left-3" : "right-3"
+                      }`}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isForgotLoading}
+                  className="w-full h-10 rounded-xl font-bold text-xs btn-primary-shine bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:brightness-110 shadow-lg shadow-[#7FE87F]/20 cursor-pointer"
+                >
+                  {isForgotLoading ? (
+                    <span>{isAr ? "جاري الحفظ..." : "Saving..."}</span>
+                  ) : (
+                    <span>{t("auth.updatePasswordBtn")}</span>
+                  )}
+                </Button>
+              </form>
+            )}
+
+            {/* Step 4: Success */}
+            {forgotStep === "success" && (
+              <div className="text-center space-y-4 py-2">
+                <div className="w-12 h-12 rounded-full bg-[#7FE87F]/20 text-[#7FE87F] border border-[#7FE87F]/40 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="h-6 w-6" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-extrabold text-white">
+                    {isAr ? "تم تحديث كلمة المرور بنجاح" : "Password Updated Successfully"}
+                  </h4>
+                  <p className="text-xs text-[#A2A2BA] mt-1">
+                    {t("auth.passwordResetSuccess")}
+                  </p>
+                </div>
+                <Button
+                  onClick={closeForgotModal}
+                  className="w-full h-10 rounded-xl font-bold text-xs btn-primary-shine bg-gradient-to-r from-[#7FE87F] via-[#6FD86F] to-[#5FBF5F] text-[#080C14] hover:brightness-110 shadow-lg shadow-[#7FE87F]/20 cursor-pointer"
+                >
+                  {t("auth.backToLogin")}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
